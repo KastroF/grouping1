@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../../gestes/clients_interfaces/react_native/border_control_local"
+		},
+		{
+			"path": "../../../2025/emoney"
+		},
+		{
+			"path": "../../../2024/c"
+		},
+		{
+			"path": "../../../2024/emoney2"
+		},
+		{
+			"path": "../../../2025/agnos"
+		},
+		{
+			"path": "../../../2025/grouping-conf"
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "135035020483",
+    "project_id": "grouping-94f5a",
+    "storage_bucket": "grouping-94f5a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135035020483:android:83660d48f0a4b46cbcae76",
+        "android_client_info": {
+          "package_name": "com.grouping"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "135035020483-rjbmbqpujpvn0utbsoknpfoo99simgd1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.grouping",
+            "certificate_hash": "12cde26567ddbdf7b77830c0f2b6c13f7396ea95"
+          }
+        },
+        {
+          "client_id": "135035020483-4d808jdm0454rvol6vd51sstdvhhrqml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP-8s7RQPwTsiloh3PDJ7fM00tYTmFER4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "135035020483-4d808jdm0454rvol6vd51sstdvhhrqml.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "135035020483-08edlfdf4a7g3d5gquokh2vnsnt2chkk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.grouping"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135035020483:android:98c315da2504eac5bcae76",
+        "android_client_info": {
+          "package_name": "com.grouping2025"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "135035020483-u7eoqr6li02p5fmefuo2pghu2e707l87.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.grouping2025",
+            "certificate_hash": "d1b45aa0d3c81821e6023d9f714ed6a74d42dea2"
+          }
+        },
+        {
+          "client_id": "135035020483-4d808jdm0454rvol6vd51sstdvhhrqml.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP-8s7RQPwTsiloh3PDJ7fM00tYTmFER4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "135035020483-4d808jdm0454rvol6vd51sstdvhhrqml.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "135035020483-08edlfdf4a7g3d5gquokh2vnsnt2chkk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.grouping"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
