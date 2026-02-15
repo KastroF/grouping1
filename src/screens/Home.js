@@ -6,7 +6,6 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 import Entypo from "react-native-vector-icons/Entypo"
 import Feather from "react-native-vector-icons/Feather"
 import FontAwesome from "react-native-vector-icons/FontAwesome"
-import Ionicons from "react-native-vector-icons/Ionicons"
 import SelectItem1 from '../components/SelectItem1';
 import Button1 from '../components/Button1';
 import { useFetchFunctions } from '../infrastructures/functions';
@@ -19,34 +18,24 @@ import messaging from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
 import { navigationRef } from '../navigation/Routes';
 import NotificationBanner from '../components/NotificationBanner';
+import { translate } from '../i18n/locales/translate';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MES_ANNONCES_URL = "https://grouping.glitch.me/api/annonce/announces"; 
+
+const MES_ANNONCES_URL = "https://grouping-node-raar.onrender.com/api/annonce/announces"; 
 //const MES_ANNONCES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/announces"; 
 
 //https://grouping-82aac4e3da78.herokuapp.com/
-const months = [
-    { label: 'Janvier', value: 1 },
-    { label: 'Février', value: 2 },
-    { label: 'Mars', value: 3 },
-    { label: 'Avril', value: 4 },
-    { label: 'Mai', value: 5 },
-    { label: 'Juin', value: 6 },
-    { label: 'Juillet', value: 7 },
-    { label: 'Août', value: 8 },
-    { label: 'Septembre', value: 9 },
-    { label: 'Octobre', value: 10 },
-    { label: 'Novembre', value: 11 },
-    { label: 'Décembre', value: 12 },
-];
+
 
 
 //const currentMonth = new Date().getMonth() + 1;
 
 const ADD_CITY_URL = "https://grouping.glitch.me/api/city/addcity"; 
 const ADD_COUNTRY_URL = "https://grouping.glitch.me/api/country/addcountry"; 
-const GET_CITIES_URL = "https://grouping.glitch.me/api/city/getcitiesbycountryid"; 
-const GET_COUNTRIES_URL = "https://grouping.glitch.me/api/country/getcountries"; 
-const GET_ANNONCES_URLL = "https://grouping.glitch.me/api/annonce/avoirlesannonces"
+const GET_CITIES_URL = "https://grouping-node-raar.onrender.com/api/city/getcitiesbycountryid"; 
+const GET_COUNTRIES_URL = "https://grouping-node-raar.onrender.com/api/country/getcountries"; 
+const GET_ANNONCES_URLL = "https://grouping-node-raar.onrender.com/api/annonce/avoirlesannonces"
 
 export default function Home({navigation}) {
   
@@ -84,6 +73,8 @@ export default function Home({navigation}) {
     const [country, setCountry] = useState(null);
     const [cACountry, setCACountry] = useState(null); 
     const [cDCountry, setCDCountry] = useState(null); 
+    const [cACountry2, setCACountry2] = useState(null); 
+    const [cDCountry2, setCDCountry2] = useState(null); 
     const [kACountry, setKACountry] = useState(null); 
     const [kDCountry, setKDCountry] = useState(null); 
     const [cACities, setCACities] = useState([]); 
@@ -93,7 +84,7 @@ export default function Home({navigation}) {
     const [load, setLoad] = useState(false);
     const [annoucements, setAnnoucements] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-    const {token, user, refresh, setBadgee, setRefresh} = useContext(AuthContext); 
+    const {token, user, refresh, setBadgee, setLanguage, language, setRefresh} = useContext(AuthContext); 
     const [containers, setContainers] = useState([]); 
     const [kilos, setKilos] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
@@ -113,6 +104,39 @@ export default function Home({navigation}) {
     const scrollY = useRef(new Animated.Value(0)).current;
 
     
+    const months = language === "English" ?
+    
+    [
+        { label: 'January', value: 1 },
+        { label: 'Frebruary', value: 2 },
+        { label: 'March', value: 3 },
+        { label: 'April', value: 4 },
+        { label: 'May', value: 5 },
+        { label: 'June', value: 6 },
+        { label: 'July', value: 7 },
+        { label: 'August', value: 8 },
+        { label: 'September', value: 9 },
+        { label: 'October', value: 10 },
+        { label: 'November', value: 11 },
+        { label: 'December', value: 12 },
+    ]
+
+    :
+    
+    [
+        { label: 'Janvier', value: 1 },
+        { label: 'Février', value: 2 },
+        { label: 'Mars', value: 3 },
+        { label: 'Avril', value: 4 },
+        { label: 'Mai', value: 5 },
+        { label: 'Juin', value: 6 },
+        { label: 'Juillet', value: 7 },
+        { label: 'Août', value: 8 },
+        { label: 'Septembre', value: 9 },
+        { label: 'Octobre', value: 10 },
+        { label: 'Novembre', value: 11 },
+        { label: 'Décembre', value: 12 },
+    ];
 
 
     useEffect(() => {
@@ -334,6 +358,10 @@ export default function Home({navigation}) {
         setSearchKilosStartCity("Libreville"); 
         setSearchKilosEndCity("Paris");
         setTransitaireCountry("Gabon"); 
+        setCACountry2(null); 
+        setCDCountry2(null);
+        setCACountry(null); 
+        setCDCountry(null);
         setTransitaireCity("Libreville");
         setTransitaireCountry("Gabon"); 
         setTransitaireCity("Libreville");
@@ -461,13 +489,24 @@ export default function Home({navigation}) {
 
          
 
-            setLoad(true);
+     
 
+
+        if(activee === "kilos"){
+
+            
+            setLoad(true);
 
             postFunction(GET_CITIES_URL, {_id: value, active: activee}).then((data) => {
 
 
-               // console.log()
+                console.log(value);
+
+             //  alert("On est OK");
+
+             if(activee === "kilos"){
+
+               console.log(data);
 
                 if(data && data.status === 0){
 
@@ -636,12 +675,50 @@ export default function Home({navigation}) {
                     
                 }
 
+            }else{
+
+              //  console.log(countries);
+
+            }
+
             }, (err) => {
 
                     console.log(err)
+                    setLoad(false);
             })
 
             
+    }else{
+
+
+        if(type === "a"){
+
+            if(value){
+
+                setCACountry(value); 
+
+                setCACountry2(countries.filter(item => item.value === value)[0].label)
+
+            }
+
+
+
+                //countries.filter(item => item.value === value)[0].label
+
+
+        }else{
+
+               if(value){
+
+                setCDCountry(value);
+                setCDCountry2(countries.filter(item => item.value === value)[0].label);
+
+               }
+
+                
+        }
+
+    }
 
             
     }
@@ -650,32 +727,40 @@ export default function Home({navigation}) {
 
         if(openFor === "container"){
 
+            setModalVisible2(false); 
+
                 if(type === "a"){
 
-                    if(cArrival){
+                    console.log(cACountry);
+
+                  /*  if(cArrival){
 
                         setSearchContainerEndCity(cACities.filter(item => item.value === cArrival)[0].label);
                         setModalVisible2(false); 
 
                     }else{
 
-                            alert("Veillez sélectionner une ville");
-                    }
+                            alert("Veuillez sélectionner une ville");
+                    } */
+
+                    
               
                 }
 
 
                 if(type === "d"){
 
-                    if(cDeparture){
+                    console.log(cDCountry);
+
+                   /* if(cDeparture){
 
                         setSearchContainerStartCity(cDCities.filter(item => item.value === cDeparture)[0].label);
                         setModalVisible2(false); 
 
                     }else{
 
-                            alert("Veillez sélectionner une ville");
-                    }
+                            alert("Veuillez sélectionner une ville");
+                    } */
               
                 }
         
@@ -730,16 +815,16 @@ export default function Home({navigation}) {
 
                 setErrorMessage("La ville de départ ne peut être la même que celle d'arrivée")
     
-            }else if(activee === "container" && searchContainerStartCity && searchContainerStartCity === searchContainerEndCity) {
+            }else if(activee === "container" && cDCountry2 && cDCountry2 === cACountry2) {
     
-                setErrorMessage("La ville de départ ne peut être la même que celle d'arrivée")
+                setErrorMessage("Le pays de départ ne peut être la même que celui d'arrivée")
     
             }else{
     
                 console.log("Tu vois ca comment ?" + months.filter(item => item.value ===  kMonth)[0].label + activee)
     
-                navigation.navigate("Search", {type: activee, start: activee === "kilos" ? searchKilosStartCity : searchContainerStartCity, 
-                end: activee === "kilos" ? searchKilosEndCity : searchContainerEndCity, 
+                navigation.navigate("Search", {type: activee, start: activee === "kilos" ? searchKilosStartCity : cDCountry2, 
+                end: activee === "kilos" ? searchKilosEndCity : cACountry2, 
                 year: activee === "kilos" ?  kYear : cYear, month : activee === "kilos" ? months.filter(item => item.value ===  kMonth)[0].label  : months.filter(item => item.value ===  cMonth)[0].label });
     
            
@@ -749,6 +834,10 @@ export default function Home({navigation}) {
                 setSearchContainerEndCity("Marseille")
                 setSearchKilosStartCity("Libreville"); 
                 setSearchKilosEndCity("Paris");
+                setCACountry2(null); 
+                setCDCountry2(null);
+                setCACountry(null); 
+                setCDCountry(null);
                 setTransitaireCountry("Gabon"); 
                 setTransitaireCity("Libreville");
                 setTransitaireCountry("Gabon"); 
@@ -765,16 +854,16 @@ export default function Home({navigation}) {
 
                 setErrorMessage("La ville de départ ne peut être la même que celle d'arrivée")
     
-            }else if(active === "container" && searchContainerStartCity && searchContainerStartCity === searchContainerEndCity) {
+            }else if(active === "container" && cDCountry2 && cDCountry2 === cACountry2) {
     
-                setErrorMessage("La ville de départ ne peut être la même que celle d'arrivée")
+                setErrorMessage("Le pays de départ ne peut être la même que celui d'arrivée");
     
             }else{
     
                 console.log("Tu vois ca comment ?" + months.filter(item => item.value ===  kMonth)[0].label + active)
     
-                navigation.navigate("Search", {type: active, start: active === "kilos" ? searchKilosStartCity : searchContainerStartCity, 
-                end: active === "kilos" ? searchKilosEndCity : searchContainerEndCity, 
+                navigation.navigate("Search", {type: active, start: active === "kilos" ? searchKilosStartCity : cDCountry2, 
+                end: active === "kilos" ? searchKilosEndCity : cACountry2, 
                 year: active === "kilos" ?  kYear : cYear, month : active === "kilos" ? months.filter(item => item.value ===  kMonth)[0].label  : months.filter(item => item.value ===  cMonth)[0].label });
     
 
@@ -785,6 +874,10 @@ export default function Home({navigation}) {
                 setSearchKilosStartCity("Libreville"); 
                 setSearchKilosEndCity("Paris");
                 setTransitaireCountry("Gabon"); 
+                setCACountry2(null); 
+                setCDCountry2(null);
+                setCACountry(null); 
+                setCDCountry(null);
                 setTransitaireCity("Libreville");
                 setTransitaireCountry("Gabon"); 
                 setTransitaireCity("Libreville");
@@ -943,29 +1036,41 @@ transparent={true}
                     <AntDesign name='left' size={25} color={COLORS.primary}  />
         
             </TouchableOpacity> 
+
+            <View style={{
+                marginLeft: 15
+            }}>
+                <Text style={{
+                    fontFamily: FONTS.bold, 
+                    color: COLORS.primary, 
+                    fontSize: SIZES.h4
+                }}>
+                     { language === "English" ? "Search" : "Recherche"} {activee ===  "kilos" ? language === "English" ?  "Air Cargo Space" : " de kilos" : language === "English" ? "container" : "conteneur" }
+                </Text>
+            </View>
         </View>
        
 
 
 {
-                    currentType === "c" && <View>
+                    active === "container" && <View>
 
                         <SelectItem1 
-                            label1="Sélectionnez un mois de départ"
+                            label1={language === "English" ? "Select a departure month" : "Sélectionnez un mois de départ"}
                             label2={`${months.filter(item => item.value === cMonth)[0].label} ${cYear}`}
                             onPress={() => { setCurrentSelect("c"); open("container")}}
                         />
 
                         <SelectItem1 
-                            label1="Ville de départ"
-                            label2={searchContainerStartCity}
+                            label1={language === "English" ? "Departure country" : "Pays de départ"}
+                            label2={cDCountry2}
                             onPress={() => {setOpenFor("container"); setType("d"); setModalVisible2(true)}}
                             marginTop={10}
                         />  
 
                          <SelectItem1 
-                            label1="Ville d'arrivée"
-                            label2={searchContainerEndCity}
+                            label1={language === "English" ? "Destination country": "Pays d'arrivée"}
+                            label2={cACountry2}
                             onPress={() => {setOpenFor("container"); setType("a"); setModalVisible2(true)}}
                             marginTop={10}
                         />    
@@ -974,7 +1079,7 @@ transparent={true}
 
                             backgroundColor={COLORS.primary}
                             borderRadius={8}
-                            label="Rechercher"
+                            label={language === "English" ? "Search" : "Rechercher"}
                             textColor="#fff"
                             fontFamily="AristotelicaProTx-Rg"
                             fontSize={SIZES.height * 0.03}
@@ -991,23 +1096,23 @@ transparent={true}
                 }
 
                 {
-                    currentType === "k" && <View>
+                    active === "kilos" && <View>
 
                         <SelectItem1 
-                            label1="Sélectionnez un mois de départ"
+                            label1={language === "English" ? "Select a departure month" : "Sélectionnez un mois de départ"}
                             label2={`${months.filter(item => item.value === kMonth)[0].label} ${kYear}`}
                             onPress={() => { open("kilos")}}
                         />
 
                         <SelectItem1 
-                            label1="Ville de départ"
+                            label1={language === "English" ? "Departure city" : "Ville de départ"}
                             label2={searchKilosStartCity}
                             onPress={() => {setOpenFor("kilos"); setType("d"); setModalVisible2(true)}}
                             marginTop={10}
                         />  
 
                          <SelectItem1 
-                            label1="Ville d'arrivée"
+                            label1={language === "English" ? "Destination city": "Ville d'arrivée"}
                             label2={searchKilosEndCity}
                             onPress={() => {setOpenFor("kilos"); setType("a"); setModalVisible2(true)}}
                             marginTop={10}
@@ -1132,7 +1237,7 @@ transparent={true}
                             color: COLORS.primary, 
                             fontSize: 20, 
                             textAlign: "center"
-                        }}>Choisir la ville {type === "d" ? "de départ" : "d'arrivée"}</Text>
+                        }}>Choisir {activee === "kilos" ? "la ville" : "le pays"}  {type === "d" ? "de départ" : "d'arrivée"}</Text>
 
                         <Text style={{
                             fontFamily: FONTS.ligth, 
@@ -1142,7 +1247,7 @@ transparent={true}
                             marginBottom: 20, 
                             textAlign: "center"
                           
-                        }}>Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville</Text>
+                        }}>{active === "kilos" ? "Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville" : "Veuillez sélectionner le pays dans la liste ci-dessous"}</Text>
 
 
                     </View>
@@ -1342,7 +1447,7 @@ transparent={true}
                                            fontSize: 20, 
                           
                                 }}>
-                                  Année  {openFor === "container" ? cYear : kYear}
+                                 {language !== "English" ? "Année" : ""} {openFor === "container" ? cYear : kYear}
                                 </Text>
                                 <View style={{
                                     flexDirection: "row", 
@@ -1387,12 +1492,12 @@ transparent={true}
                                                 }} key={index}>
                                                     <Text style={{
                                                         fontFamily: FONTS.ligth, 
-                                                        color: "#000", 
+                                                        color: openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" : "#000",
                                                         fontSize: 15
                                                     }}>
                                                         {item.label}
                                                     </Text>
-                                                    <FontAwesome name='angle-right' size={25} color="#000" />
+                                                    <FontAwesome name='angle-right' size={25} color={openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" : "#000"} />
                                                 </TouchableOpacity>
                                             )
 
@@ -1443,7 +1548,7 @@ transparent={true}
 
 
 {
-                    currentType === "c" && <View>
+                    active === "container" && <View>
 
                         <SelectItem1 
                             label1="Sélectionnez un mois de départ"
@@ -1452,15 +1557,15 @@ transparent={true}
                         />
 
                         <SelectItem1 
-                            label1="Ville de départ"
-                            label2={searchContainerStartCity}
+                            label1="Pays de départ"
+                            label2={cDCountry2}
                             onPress={() => {setOpenFor("container"); setType("d"); setModalVisible2(true)}}
                             marginTop={10}
                         />  
 
                          <SelectItem1 
-                            label1="Ville d'arrivée"
-                            label2={searchContainerEndCity}
+                            label1="Pays d'arrivée"
+                            label2={cACountry2}
                             onPress={() => {setOpenFor("container"); setType("a"); setModalVisible2(true)}}
                             marginTop={10}
                         />    
@@ -1486,7 +1591,7 @@ transparent={true}
                 }
 
                 {
-                    currentType === "k" && <View>
+                    active === "kilos" && <View>
 
                         <SelectItem1 
                             label1="Sélectionnez un mois de départ"
@@ -1716,7 +1821,7 @@ transparent={true}
                             color: COLORS.primary, 
                             fontSize: 20, 
                             textAlign: "center"
-                        }}>Choisir la ville {type === "d" ? "de départ" : "d'arrivée"}</Text>
+                        }}>{ language === "English" ? `${type === "d" ? "Departure" : "Destination"} ${activee === "kilos" ? "city" : "country"}` :  `${activee === "kilos" ? "la ville" : "le pays"} ${type === "d" ? "de départ" : "d'arrivée"}`}</Text>
 
                         <Text style={{
                             fontFamily: FONTS.ligth, 
@@ -1726,7 +1831,7 @@ transparent={true}
                             marginBottom: 20, 
                             textAlign: "center"
                           
-                        }}>Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville</Text>
+                        }}>{active === "kilos" ? language === "English" ? "Please first select the country, then choose the city" : "Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville" : language === "English" ? "Please select the country from the list below" :  "Veuillez sélectionner le pays dans la liste ci-dessous"}</Text>
 
 
                     </View>
@@ -1735,8 +1840,8 @@ transparent={true}
                         
                     }}>
                         <Dropdown
-                            label="Pays"
-                            placeholder='Sélectionnez le pays'
+                            label= {language === "English" ? "Country" : "Pays"}
+                            placeholder={language === "English" ? 'Select the country' : 'Sélectionnez le pays'}
                             options={countries.map((country) => ({
                                 label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
                                 value: country.value,
@@ -1772,15 +1877,15 @@ transparent={true}
 
                              
 
-                    </View>
-
+                  </View>
+                  {activee === "kilos" && 
                         <View style={{
                             marginTop: 20, 
                             alignItems: "center"
                     }}>
                        { load ? <ActivityIndicator size="large" />  : <Dropdown
-                            label="Ville"
-                            placeholder='Sélectionnez la ville'
+                            label={language === "English" ? "City" : "Ville"}
+                            placeholder={language === "English" ? "Select the city" : 'Sélectionnez la ville'}
 
 
                             options={openFor === "container" ? type === "a" ? 
@@ -1831,13 +1936,13 @@ transparent={true}
 
                              
 
-                    </View>
+                    </View> }
 
                     <View style={{
                            
                     }}>
 
-                        <Button1 onPress={() => toValidCity()} label="Valider" textColor="#fff" backgroundColor={COLORS.primary} 
+                        <Button1 onPress={() => toValidCity()} label={language === "English" ? "Confirm" : "Valider"} textColor="#fff" backgroundColor={COLORS.primary} 
                         borderRadius={12} fontFamily={FONTS.bold} fontSize={15} />
 
                     </View>
@@ -1929,7 +2034,7 @@ transparent={true}
                                            fontSize: 20, 
                           
                                 }}>
-                                  Année  {openFor === "container" ? cYear : kYear}
+                                   {language !== "English" ? "Année" : ""}  {openFor === "container" ? cYear : kYear}
                                 </Text>
                                 <View style={{
                                     flexDirection: "row", 
@@ -1974,12 +2079,12 @@ transparent={true}
                                                 }} key={index}>
                                                     <Text style={{
                                                         fontFamily: FONTS.ligth, 
-                                                        color: "#000", 
+                                                        color: openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" : "#000",
                                                         fontSize: 15
                                                     }}>
                                                         {item.label}
                                                     </Text>
-                                                    <FontAwesome name='angle-right' size={25} color="#000" />
+                                                    <FontAwesome name='angle-right' size={25} color={openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" : "#000"} />
                                                 </TouchableOpacity>
                                             )
 
@@ -2055,7 +2160,7 @@ transparent={true}
                             fontSize: SIZES.h6, 
                             marginLeft: 15, 
                          
-                        }}>Mon compte</Text>
+                        }}>{language === "English" ? translate.home.menu.compte.en: translate.home.menu.compte.fr}</Text>
                     </TouchableOpacity> : 
 
                     <TouchableOpacity activeOpacity={0.9} onPress={() => {setModalVisible3(false);  navigation.navigate("Login")}} style={{
@@ -2080,7 +2185,7 @@ transparent={true}
                             fontSize: SIZES.h6, 
                             marginLeft: 15, 
                         
-                        }}>Créer un compte</Text>
+                        }}>{language === "English" ? translate.home.menu.createAnAccount.en: translate.home.menu.createAnAccount.fr}</Text>
                     </TouchableOpacity>
 
                 }
@@ -2100,7 +2205,7 @@ transparent={true}
                         fontSize: SIZES.h6, 
                         marginLeft: 15, 
                         
-                    }}>Déposer une annonce</Text>
+                    }}>{language === "English" ? translate.home.menu.postAListing.en: translate.home.menu.postAListing.fr}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity  activeOpacity={0.9} onPress={() => setModalVisible3(false)}  style={{
                     paddingVertical: 15, 
@@ -2118,7 +2223,7 @@ transparent={true}
                         fontSize: SIZES.h6, 
                         marginLeft: 15, 
                        
-                    }}>Rechercher une annonce</Text>
+                    }}>{language === "English" ? translate.home.menu.search.en: translate.home.menu.search.fr}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.9} style={{
                     paddingVertical: 15, 
@@ -2136,7 +2241,7 @@ transparent={true}
                         fontSize: SIZES.h6, 
                         marginLeft: 15, 
                         marginTop: 4
-                    }}>Conditions d'utilisation</Text>
+                    }}>{language === "English" ? translate.home.menu.conditions.en: translate.home.menu.conditions.fr}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.9} style={{
                     paddingVertical: 15, 
@@ -2154,24 +2259,65 @@ transparent={true}
                         fontSize: SIZES.h6, 
                         marginLeft: 15, 
                         marginTop: 4
-                    }}>Mentions légales</Text>
+                    }}>{language === "English" ? translate.home.menu.mentions.en: translate.home.menu.mentions.fr}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.9} style={{
+
+                <TouchableOpacity onPress={() => {AsyncStorage.setItem("language", language === "English" ? "Francais" : "English"); setLanguage(language === "English" ? "Francais" : "English"); setModalVisible3(false)}} activeOpacity={0.9} style={{
                     paddingVertical: 15, 
                     paddingHorizontal: 20, 
                     backgroundColor: "#fff", 
                     flexDirection: "row", 
                     alignItems: "center", 
+                    borderBottomWidth: 1, 
+                    borderBottomColor: COLORS.middle_blue
                 }}>
-                    <AntDesign name='questioncircleo' color={COLORS.primary} size={SIZES.h5} />
+                    <Feather name='refresh-ccw' color={COLORS.primary} size={SIZES.h5} />
                     <Text style={{
                         fontFamily: FONTS.regular, 
                         color: COLORS.primary, 
                         fontSize: SIZES.h6, 
                         marginLeft: 15, 
                         marginTop: 4
-                    }}>Aides & FAQ</Text>
+                    }}>{language === "English" ? "Translate to french": "Traduire en anglais"}</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity  activeOpacity={0.9} style={{
+                    paddingVertical: 15, 
+                    paddingHorizontal: 20, 
+                    backgroundColor: "#fff", 
+                    flexDirection: "row", 
+                    alignItems: "center", 
+                    borderBottomWidth: 1, 
+                    borderBottomColor: COLORS.middle_blue
+                }}>
+                    <Feather name='cpu' color={COLORS.primary} size={SIZES.h5} />
+                    <Text style={{
+                        fontFamily: FONTS.regular, 
+                        color: COLORS.primary, 
+                        fontSize: SIZES.h6, 
+                        marginLeft: 15, 
+                        marginTop: 4
+                    }}>{language === "English" ? "Chatbot": "Assistant Grouping"}</Text>
+                </TouchableOpacity>
+
+              { token && <TouchableOpacity 
+                 onPress={() => {setModalVisible3(false);  navigation.navigate("Contacts")}}
+                activeOpacity={0.9} style={{
+                    paddingVertical: 15, 
+                    paddingHorizontal: 20, 
+                    backgroundColor: "#fff", 
+                    flexDirection: "row", 
+                    alignItems: "center", 
+                }}>
+                    <AntDesign name='mail' color={COLORS.primary} size={SIZES.h5} />
+                    <Text style={{
+                        fontFamily: FONTS.regular, 
+                        color: COLORS.primary, 
+                        fontSize: SIZES.h6, 
+                        marginLeft: 15, 
+                        marginTop: 4
+                    }}>Nous contacter</Text>
+                </TouchableOpacity> }
             </View>
 
           
@@ -2242,21 +2388,22 @@ transparent={true}
                 </TouchableOpacity>
 
 
-                <TouchableOpacity style={{
+                <View style={{
                     paddingHorizontal: 15, 
                     paddingVertical: 10, 
-                }}  onPress={() => navigateToAnnouncement() } >
+                }}  >
                    { /* <Ionicons name='add-circle-outline' size={SIZES.height * 0.04} color="#FFF" />  */}
                    <Image 
-                        source={require("../assets/images/last1.png")}
+                        source={require("../assets/images/Grouping2.jpg")}
                         style={{
-                            height: 30, 
-                            width: 50, 
+                            height: 40, 
+                            width: 40,
+                            borderRadius: 20, 
                             resizeMode: "contain"
                         }}
                    />
                   
-                </TouchableOpacity>
+                </View>
             </View>
 
         
@@ -2269,7 +2416,7 @@ transparent={true}
                      fontSize: SIZES.height * 0.043, 
                      color: "#fff"
                 }}>
-                    Bienvenue 
+                    {language === "English" ? translate.home.welcome1.en : translate.home.welcome1.fr} 
                 </Text>
                 <Text style={{
                      fontFamily: "AristotelicaProTx-Bld", 
@@ -2277,7 +2424,7 @@ transparent={true}
                      color: "#fff", 
                      marginTop: Platform.OS === "android" ? -15 : 10, 
                 }}>
-                     sur Grouping !
+                      {language === "English" ? translate.home.welcome2.en : translate.home.welcome2.fr} 
                 </Text>
 
             </View>
@@ -2294,7 +2441,7 @@ transparent={true}
                     fontFamily: "AristotelicaProTx-Rg", 
                     fontSize: SIZES.height * 0.02, 
                     lineHeight: SIZES.height * 0.02
-                }}>Postez vos annonces, partagez votre espace de conteneur ou vos kilos de bagages dans votre ville. </Text>
+                }}>{language === "English" ? translate.home.welcomeSubTitle.en : translate.home.welcomeSubTitle.fr}  </Text>
             </View>
       
 
@@ -2363,7 +2510,7 @@ transparent={true}
                             color: COLORS.primary , 
                             fontSize: SIZES.height * 0.018, 
                          
-                        }}>Conteneurs</Text>
+                        }}>{language === "English" ? translate.home.container.en : translate.home.container.fr}</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {setActive("kilos"); 
@@ -2473,7 +2620,7 @@ transparent={true}
                 {
                     active === "container" && <View>
 
-                        <SelectItem1 
+                       {/* <SelectItem1 
                             label1="Sélectionnez un mois de départ"
                             label2={`${months.filter(item => item.value === cMonth)[0].label} ${cYear}`}
                             onPress={() => { setCurrentSelect("c"); open("container")}}
@@ -2491,20 +2638,61 @@ transparent={true}
                             label2={searchContainerEndCity}
                             onPress={() => {setOpenFor("container"); setType("a"); setModalVisible2(true)}}
                             marginTop={10}
-                        />    
+                        />  */}
+
+                         <Button1 
+
+                            backgroundColor={COLORS.orange}
+                            borderRadius={8}
+                            label={language === "English" ? translate.home.createListing.en : translate.home.createListing.fr}
+                            textColor="#fff"
+                            fontFamily="AristotelicaProTx-Rg"
+                            fontSize={SIZES.height * 0.03}
+                            imagePath= {require("../assets/images/addButton.png")}
+                            iconColor="#fff"
+                            iconSize={SIZES.height * 0.035}
+                            onPress={() => navigateToAnnouncement() }
+                        
+                        />  
 
                         <Button1 
 
                             backgroundColor={COLORS.primary}
                             borderRadius={8}
-                            label="Rechercher"
+                            label={language === "English" ? translate.home.searchListing.en : translate.home.searchListing.fr}
                             textColor="#fff"
                             fontFamily="AristotelicaProTx-Rg"
                             fontSize={SIZES.height * 0.03}
                             imagePath= {require("../assets/images/search.png")}
                             iconColor="#fff"
                             iconSize={SIZES.height * 0.035}
-                            onPress = {onSearch}
+                            onPress = {
+                                () => {
+
+                                    setKYear( new Date().getFullYear()); 
+                                    setKMonth(new Date().getMonth() + 1); 
+                            
+                                    setCYear( new Date().getFullYear()); 
+                                    setCMonth(new Date().getMonth() + 1)
+                            
+                                    setSearchContainerDate(`${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`);
+                                    setSearchKilosDate(`${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`);
+                                    setSearchContainerStartCity("Libreville"); 
+                                    setSearchContainerEndCity("Marseille")
+                                    setSearchKilosStartCity("Libreville"); 
+                                    setSearchKilosEndCity("Paris");
+                                    setTransitaireCountry("Gabon"); 
+                                    setTransitaireCity("Libreville");
+                                    setTransitaireCountry("Gabon"); 
+                                    setTransitaireCity("Libreville");
+                                    setDemenageurCity("Paris");
+                                    setDemenageurCountry("France"); 
+                                    setCurrentType(active === "kilos" ? "k" : "c")
+                                    
+                                    setActivee(active); avoirLesAnnonces(active === "kilos" ? "k" : "c"); setModalVisible6(true)
+                                    
+                                }
+                            }
                         
                         />
 
@@ -2516,7 +2704,7 @@ transparent={true}
                 {
                     active === "kilos" && <View>
 
-                        <SelectItem1 
+                     {/*}   <SelectItem1 
                             label1="Sélectionnez un mois de départ"
                             label2={`${months.filter(item => item.value === kMonth)[0].label} ${kYear}`}
                             onPress={() => { open("kilos")}}
@@ -2536,18 +2724,59 @@ transparent={true}
                             marginTop={10}
                         />    
 
+                */}
+                         <Button1 
+
+                            backgroundColor={COLORS.orange}
+                            borderRadius={8}
+                            label={language === "English" ? translate.home.createListing.en : translate.home.createListing.fr}
+                            textColor="#fff"
+                            fontFamily="AristotelicaProTx-Rg"
+                            fontSize={SIZES.height * 0.03}
+                            imagePath= {require("../assets/images/addButton.png")}
+                            iconColor="#fff"
+                            iconSize={SIZES.height * 0.035}
+                            onPress={() => navigateToAnnouncement() }
+                        
+                        />  
+
                          <Button1 
 
                             backgroundColor={COLORS.primary}
                             borderRadius={12}
-                            label="Rechercher"
+                            label={language === "English" ? translate.home.searchListing.en : translate.home.searchListing.fr}
                             textColor="#fff"
                             fontFamily="AristotelicaProTx-Rg"
                             fontSize={SIZES.height * 0.03}
                             imagePath= {require("../assets/images/search.png")}
                             iconColor="#fff"
                             iconSize={SIZES.height * 0.035}
-                            onPress = {onSearch}
+                            onPress = {
+                                () => {
+
+                                    setKYear( new Date().getFullYear()); 
+                                    setKMonth(new Date().getMonth() + 1); 
+                            
+                                    setCYear( new Date().getFullYear()); 
+                                    setCMonth(new Date().getMonth() + 1)
+                            
+                                    setSearchContainerDate(`${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`);
+                                    setSearchKilosDate(`${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`);
+                                    setSearchContainerStartCity("Libreville"); 
+                                    setSearchContainerEndCity("Marseille")
+                                    setSearchKilosStartCity("Libreville"); 
+                                    setSearchKilosEndCity("Paris");
+                                    setTransitaireCountry("Gabon"); 
+                                    setTransitaireCity("Libreville");
+                                    setTransitaireCountry("Gabon"); 
+                                    setTransitaireCity("Libreville");
+                                    setDemenageurCity("Paris");
+                                    setDemenageurCountry("France"); 
+                                    
+                                    setActivee(active); avoirLesAnnonces(active === "kilos" ? "k" : "c"); setModalVisible6(true)
+
+                                }
+                            }
                         
                         />
 
@@ -2657,7 +2886,7 @@ transparent={true}
                     fontFamily: FONTS.bold, 
                     fontSize: SIZES.h5, 
                     color: COLORS.primary
-                }}>Annonces conteneurs...</Text>
+                }}>{language === "English" ? translate.home.annoncesContainers.en : translate.home.annoncesContainers.fr} ...</Text>
             </View>
 
            { containers.length === 3 && <TouchableOpacity onPress={() => {setCurrentType("c");
@@ -2706,7 +2935,7 @@ transparent={true}
 
                     return (
                         <AnnounceBlock key={item._id} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                        date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} 
+                        date={item.dateOfDeparture} name={item.user && item.user.name} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} 
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})} />
                     )
             })
@@ -2738,7 +2967,7 @@ transparent={true}
                     fontFamily: FONTS.bold, 
                     fontSize: SIZES.h5, 
                     color: COLORS.orange
-                }}>Disponibilités en kilos...</Text>
+                }}>{language === "English" ? translate.home.disponibiliteKilos.en : translate.home.disponibiliteKilos.fr} ...</Text>
             </View>
 
            {kilos.length === 3 && <TouchableOpacity onPress={() => {setCurrentType("k"); setFlatLoading(true); 
@@ -2787,8 +3016,9 @@ transparent={true}
 
                     return (
                         <AnnounceBlock key={item._id} userId={item.userId} status="kilos" city1={item.startCity} city2={item.endCity}
-                        date={item.dateOfDeparture} datee={item.date} onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                        company={item.company} views={item.views} startCity={ item.startCity2 && item.startCity2.code} endCity={item.endCity2 &&  item.endCity2.code} />
+                        date={item.dateOfDeparture}  datee={item.date} onPress= {() => navigation.navigate("Details", {_id: item._id})}
+                        company={item.company} views={item.views} startCity={ item.startCity2 && item.startCity2.code} endCity={item.endCity2 &&  item.endCity2.code}
+                        goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})}  />
                     )
             })
         }

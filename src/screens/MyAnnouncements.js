@@ -10,11 +10,11 @@ import { AuthContext } from '../navigation/AuthProvider';
 
 
 //getannouncementbyid
-const MES_ANNONCES_URL = "https://grouping.glitch.me/api/annonce/getannouncementbyid"; 
+const MES_ANNONCES_URL = "https://grouping-node-raar.onrender.com/api/annonce/getannouncementbyid"; 
 //const MES_ANNONCES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/getannouncementbyid"; 
 
 
-const PLUS_ANNONCES_URL = "https://grouping.glitch.me/api/annonce/moreannounces"; 
+const PLUS_ANNONCES_URL = "https://grouping-node-raar.onrender.com/api/annonce/moreannounces"; 
 //const PLUS_ANNONCES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/moreannounces"; 
 
 //https://grouping-82aac4e3da78.herokuapp.com/
@@ -411,7 +411,7 @@ const renderLoader = () => {
 
                                                 return (
                                                     <AnnounceBlock key={item._id} userId={item.userId}  status="container" city1={item.startCity} city2={item.endCity} onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                                                    date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} />
+                                                    date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} goToModify={(status) => navigation.navigate("AnnouncementForm", {_id:item._id, value: status})} />
                                                 )
                                         })
                                     }

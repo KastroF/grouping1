@@ -11,7 +11,7 @@ import { useFetchFunctions } from '../infrastructures/functions';
 import { AuthContext } from '../navigation/AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ADD_USER_URL = "https://grouping.glitch.me/api/user/register";
+const ADD_USER_URL = "https://grouping-node1-1.onrender.com/api/user/register";
 //const ADD_USER_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/register";
 
 

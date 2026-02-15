@@ -9,6 +9,9 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import BottomTabBar from '../navigation/BottomTabBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../navigation/AuthProvider';
+import { translate } from '../i18n/locales/translate';
+//import { useTranslation } from "react-i18next";
+//import i18n from "i18next";
 
 
 const {height, width} = Dimensions.get("screen");
@@ -16,11 +19,12 @@ const {height, width} = Dimensions.get("screen");
 export default function OnboardingScreen({navigation}) {
 
     const [showHomePage, setShowHomePage] = useState(false); 
-    const {setLanguage} = useContext(AuthContext)
+    const {setLanguage, language} = useContext(AuthContext)
     const [lang, setLang] = useState(false); 
     const [langage, setLangage] = useState("Langage"); 
     const [modalVisible, setModalVisible] = useState(false); 
     const [check, setCheck] = useState(""); 
+    //const { t } = useTranslation();
 
     const goToHome =  async () => {
 
@@ -41,7 +45,9 @@ export default function OnboardingScreen({navigation}) {
                 setLanguage(value1); 
 
                 setLang(true);
-                setLanguage(value1);
+                //setLanguage(value1);
+
+              //  alert(value1);
             }
 
             AsyncStorage.getItem("onboarding").then((value) => {
@@ -71,13 +77,13 @@ export default function OnboardingScreen({navigation}) {
 
         {
             id: 1, 
-            title: "Gagnez de l'argent en partageant votre conteneur dès aujourd'hui !", 
+            title: language === "English" ? translate.slides.text1.en : translate.slides.text1.fr, 
             image: require("../assets/images/container.png")
         }, 
  
         {
             id: 4, 
-            title: "Partagez vos kilos ou recherchez des kilos disponibles dans votre ville.", 
+            title: language === "English" ? translate.slides.text2.en : translate.slides.text2.fr, 
             image: require("../assets/images/avion.png")
         }
 
@@ -124,7 +130,7 @@ export default function OnboardingScreen({navigation}) {
                 width: SIZES.width - 60, 
                 borderRadius: 8
             }}>
-                <TouchableOpacity onPress={() => {setCheck("french"); setLangage("Français"); setModalVisible(false)}} style={{
+                <TouchableOpacity onPress={() => {setCheck("french"); setLangage("Français");  setModalVisible(false)}} style={{
                     paddingVertical: Platform.OS === "android" ? 10 : 15, 
                     paddingHorizontal: 10, 
                     flexDirection: "row", 

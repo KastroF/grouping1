@@ -9,7 +9,7 @@ import { useFetchFunctions } from '../infrastructures/functions'
 import ErrorMessage from '../components/ErrorMessage'
 import Loading from '../components/Loading'
 
-const CHANGE_PASSWORD_URL = "https://grouping.glitch.me/api/user/changepassword"
+const CHANGE_PASSWORD_URL = "https://grouping-node-raar.onrender.com/api/user/changepassword"
 //const CHANGE_PASSWORD_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/changepassword"
 
 //https://grouping-82aac4e3da78.herokuapp.com/

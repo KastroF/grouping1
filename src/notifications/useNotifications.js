@@ -7,7 +7,7 @@ import { useFetchFunctions } from '../infrastructures/functions';
 
 
 const ADD_FCM_TOKEN_URL = "https://mavoiex.glitch.me/api/user/addfcmtoken"; 
-const SAVE_FCMTOKEN_URL = "https://grouping.glitch.me/api/user/updatefcmToken";
+const SAVE_FCMTOKEN_URL = "https://grouping-node-raar.onrender.com/api/user/updatefcmToken";
 //const SAVE_FCMTOKEN_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/updatefcmToken";
 
 const requestUserPermissions = async () => {
@@ -74,3 +74,99 @@ export const useNotifications = () => {
 
     },[token])
 }
+
+/*
+
+import { View, Text, PermissionsAndroid, Platform } from 'react-native'
+import React, { useContext, useEffect } from 'react'
+import messaging from "@react-native-firebase/messaging"
+import { useFetchFunctions } from '../utils/functions';
+import { AuthContext } from '../navigation/AuthProvider';
+
+const ADD_FCM_TOKEN_URL_ANDROID = "https://kredix.onrender.com/api/token/addtoken";
+
+const ADD_FCM_TOKEN_URL_IOS = "https://kredix.onrender.com/api/token/addtoken";
+
+
+const requestUserPermission = async () => {
+
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS); 
+
+        if(granted === PermissionsAndroid.RESULTS.GRANTED){
+
+            console.log("Notification permission granted")
+        
+        }else{
+
+            console.log("Notification permission denied")
+        }
+
+    }
+
+
+
+export default function useNotification() {
+
+    const {postData} = useFetchFunctions(); 
+    const {token} = useContext(AuthContext); 
+
+
+    const getToken = async () => {
+
+        try{
+
+            messaging().requestPermission();
+            const tokenn = await messaging().getToken(); 
+            console.log("FCM Token", tokenn); 
+
+            postData(Platform.OS === "android" ? ADD_FCM_TOKEN_URL_ANDROID : 
+                ADD_FCM_TOKEN_URL_IOS, {token: tokenn, platform: Platform.OS === "android" ? "android" : "ios"}, token
+            ).then((data) => {
+
+                if(data){
+
+                    console.log("Yes", data)
+                }
+
+            }, (err) => {
+
+                    console.log(err);
+            })
+          
+
+
+        }catch(err){
+
+            console.log("Failed to get Fcm Token", err); 
+        }
+}
+
+ useEffect(() => {
+    
+    requestUserPermission();
+    getToken();
+
+ },[]); 
+
+ /*useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('Message reçu en foreground !', remoteMessage);
+  
+      // Affichage local si besoin
+      notifee.displayNotification({
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
+        android: {
+          channelId: 'default',
+          smallIcon: 'ic_launcher', // Utilise ton nom d’icône
+        },
+      });
+    });
+  
+    return unsubscribe;
+  }, []); 
+
+
+
+}
+*/

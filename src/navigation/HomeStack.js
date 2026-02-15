@@ -17,6 +17,7 @@ import Messenger from '../screens/Messenger'
 import Reception from '../screens/Reception'
 import Modify from '../screens/Modify'
 import Connexion from '../screens/Connexion'
+import Contacts from '../screens/Contacts'
 
 const Stack = createStackNavigator()
 
@@ -73,6 +74,9 @@ export default function HomeStack() {
             headerShown: false
         }} />
           <Stack.Screen name='Connexion' component={Connexion} options={{
+            headerShown: false
+        }} />
+           <Stack.Screen name='Contacts' component={Contacts} options={{
             headerShown: false
         }} />
     </Stack.Navigator>

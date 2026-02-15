@@ -11,7 +11,7 @@ import Entypo from "react-native-vector-icons/Entypo"
 import Octicons from "react-native-vector-icons/Octicons"
 
 
-const MON_ANNONCE_URL = "https://grouping.glitch.me/api/annonce/getannoncee"; //
+const MON_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/getannoncee"; //
 //const MON_ANNONCE_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/getannoncee";
 
 export default function AnnonceDetails({navigation, route}) {
@@ -20,7 +20,7 @@ export default function AnnonceDetails({navigation, route}) {
 
     const {_id} = route.params;
 
-    const {token, user, refreshModify} = useContext(AuthContext); 
+    const {token, user, refreshModify, language} = useContext(AuthContext); 
     const {postFunction, timeAgo} = useFetchFunctions()
     const [annonce, setAnnonce] = useState({}); 
     const [userr, setUserr] = useState({}); 
@@ -170,7 +170,7 @@ function calculateContainerVolume(feet) {
                         alignItems: "center", 
                         justifyContent: user && annonce.userId === user._id ? "space-between" : "flex-start",
                         flex: 1, 
-                        width: SIZES.width - 30
+                        width: SIZES.width - 65
                     }}>
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Image source={require("../assets/images/left.png")} style={{
@@ -189,7 +189,7 @@ function calculateContainerVolume(feet) {
                                 color: "#fff", 
                                 fontSize: SIZES.h3, 
                                 marginLeft: - SIZES.h1
-                            }}>Détails</Text>
+                            }}>{language === "English" ? "Details" : "Détails"}</Text>
                         </View>
 
                      {user && annonce.userId === user._id ? <TouchableOpacity disabled={user && annonce.userId !==  user._id} onPress={() => navigation.navigate("AnnouncementForm", {_id, value: annonce.status})} >
@@ -218,7 +218,7 @@ function calculateContainerVolume(feet) {
                             color: "#fff", 
                             fontSize: SIZES.h6, 
                             fontFamily: FONTS.regular
-                        }}>Date de départ : </Text>
+                        }}>{language ==="English" ? "Date of dearture" : "Date de départ : "}</Text>
                     </View>
 
                     <View style={{

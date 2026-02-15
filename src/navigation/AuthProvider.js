@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { io } from 'socket.io-client';
+
 
 export const AuthContext = createContext(); 
 
@@ -18,41 +18,7 @@ export default function AuthProvider({children}) {
   const [refreshh, setRefreshh] = useState(false);
   const [badgee, setBadgee] = useState(0);
   const [refreshModify, setRefreshModify] = useState(false);
-  const [socket, setSocket] = useState(null);
 
-  // 📡 Se connecter automatiquement au socket quand le token change
-  useEffect(() => {
-    if (token) {
-      console.log(token);
-      const s = io('https://grouping.glitch.me', {
-        transports: ['polling'],
-        reconnection: true,
-        auth: { token },
-      });
-
-      s.on('connect', () => {
-        console.log('✅ Socket connecté :', s.id);
-      });
-
-      s.on('disconnect', (reason) => {
-        console.log('🔌 Socket déconnecté :', reason);
-      });
-
-      s.on('connect_error', (err) => {
-        console.log(token);
-        console.log('❌ Erreur socket :', err.message);
-      });
-
-      setSocket(s);
-
-      // Nettoyage à la déconnexion / changement de token
-      return () => {
-        s.disconnect();
-        setSocket(null);
-      };
-    }
-  }, [token]);
-  
 
   return (
     <AuthContext.Provider value={{
@@ -80,7 +46,7 @@ export default function AuthProvider({children}) {
       setBadgee, 
       refreshModify, 
       setRefreshModify, 
-      socket
+      
     }}>
         {children}
     </AuthContext.Provider>

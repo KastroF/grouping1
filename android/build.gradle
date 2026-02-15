@@ -1,25 +1,26 @@
 buildscript {
     ext {
-        buildToolsVersion = "34.0.0"
+        buildToolsVersion = "35.0.0"
         minSdkVersion = 23
-        compileSdkVersion = 34
-        targetSdkVersion = 34
-        ndkVersion = "25.1.8937393"
-        kotlinVersion = "1.8.0"
-        playServicesLocationVersion = "21.0.1"
-        googlePlayServicesAuthVersion = "20.7.0" // <--- use this version or newer
+        compileSdkVersion = 35
+        targetSdkVersion = 35
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.24"
+        playServicesLocationVersion = "21.3.0"
+        googlePlayServicesAuthVersion = "21.1.0" // dernière version stable à ce jour
     }
+
     repositories {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-          classpath 'com.google.gms:google-services:4.4.0'
-    }
 
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.4.1") // dernière version compatible avec Gradle 8.10+
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("com.google.gms:google-services:4.4.2") // mise à jour
+    }
 }
 
 apply plugin: "com.facebook.react.rootproject"

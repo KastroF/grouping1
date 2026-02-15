@@ -5,19 +5,34 @@ import { useFetchFunctions } from '../infrastructures/functions';
 import { AuthContext } from '../navigation/AuthProvider';
 import Entypo from "react-native-vector-icons/Entypo"
 import Octicons from "react-native-vector-icons/Octicons"
+import { translate } from '../i18n/locales/translate';
 
 export default function AnnounceBlock({status, date, startCity, endCity, city1, city2,
-     company, userId, datee, views, goToModify, ...rest}) {
+     company, userId, datee, views, goToModify, name, ...rest}) {
 
-    const {user} = useContext(AuthContext); 
-    const {timeAgo} = useFetchFunctions()
+    const {user, language} = useContext(AuthContext); 
+    const {timeAgo, timeAgoEN} = useFetchFunctions()
     
 
     const getFormattedDay = (date) => {
-        const day = new Date(date).getDate(); // getDate() retourne le jour du mois
+        const day = new Date(date).getDate(); 
         return day.toString().padStart(2, '0');
 
     };
+
+    const MONTHS_EN = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      
+      const formatDateEN = (date) => {
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, "0");
+        const month = MONTHS_EN[d.getMonth()];
+        const year = d.getFullYear();
+      
+        return `${month} ${day}, ${year}`; 
+      };
 
     
   return (
@@ -66,7 +81,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                 color: COLORS.primary, 
                 fontSize: SIZES.h8, 
                 
-            }}>  Date de départ: {`${getFormattedDay(date)} ${MONTHS[new Date(date).getMonth()]} ${new Date(date).getFullYear()}` } </Text>  
+            }}> {language === "English" ? translate.listingItem.dateDepart.en : translate.listingItem.dateDepart.fr}: {language === "English" ? formatDateEN(date) : `${getFormattedDay(date)} ${MONTHS[new Date(date).getMonth()]} ${new Date(date).getFullYear()}` } </Text>  
           </View>
 
           </View>
@@ -250,7 +265,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                         fontSize: SIZES.h8, 
                         color: COLORS.primary, 
                         textTransform: "capitalize"
-                    }}>{company}</Text>
+                    }}>{company} {status === "container" && name}</Text>
                 </View>
 
             </View>
@@ -289,7 +304,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                         fontFamily: FONTS.regular, 
                         fontSize: SIZES.h7, 
                         color: "rgba(0,0,0,0.6)"
-                    }}>Publiée {timeAgo(new Date(datee))}</Text>}
+                    }}> {language === "English" ? `Posted ${timeAgoEN(new Date(datee))}` : `Publiée ${timeAgo(new Date(datee))}`}</Text>}
                    { views && <View style={{
                             flexDirection: "row", 
                             alignItems: "center", 
@@ -305,7 +320,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                              fontFamily: FONTS.regular, 
                              marginLeft: 2,
                              marginTop: 0
-                        }}>{views} {views === 1 ? "vue" : "vues"} <Octicons  name='eye' size={SIZES.h8} color="rgba(0,0,0,0.6)" /> </Text> 
+                        }}>{views} {views === 1 ? language === "English" ? "view" : "vue" : language === "English" ? "views" :  "vues"} <Octicons  name='eye' size={SIZES.h8} color="rgba(0,0,0,0.6)" /> </Text> 
                     </View>
                     </View> }
                  </View>}

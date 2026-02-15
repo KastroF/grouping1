@@ -132,27 +132,27 @@ LocaleConfig.locales['fr'] = {
   LocaleConfig.defaultLocale = 'fr';
 
 
-const GET_CITIES_URL = "https://grouping.glitch.me/api/city/getcitiesbycountryid"; 
+const GET_CITIES_URL = "https://grouping-node-raar.onrender.com/api/city/getcitiesbycountryid"; 
 //const GET_CITIES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/city/getcitiesbycountryid"; 
 
-const GET_COUNTRIES_URL = "https://grouping.glitch.me/api/country/getcountries"; 
+const GET_COUNTRIES_URL = "https://grouping-node-raar.onrender.com/api/country/getcountries"; 
 //const GET_COUNTRIES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/country/getcountries";
 
-const AJOUTER_UNE_ANNONCE_URL = "https://grouping.glitch.me/api/annonce/addannouncement"; 
-const MODIFIER_UNE_ANNONCE_URL = "https://grouping.glitch.me/api/annonce/modifierkilo"; 
+const AJOUTER_UNE_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/addannouncement"; 
+const MODIFIER_UNE_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/modifierkilo"; 
 //const AJOUTER_UNE_ANNONCE_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/addannouncement"; 
 
-const AJOUTER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping.glitch.me/api/annonce/addAnnouncementWithPdf"; 
+const AJOUTER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping-node-raar.onrender.com/api/annonce/addAnnouncementWithPdf"; 
 //const AJOUTER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/addAnnouncementWithPdf"; 
 
 //const AJOUTER_UNE_ANNONCE_AVEC_IMAGE_URL = "https://grouping.glitch.me/api/annonce/addAnnouncementWithImages"; 
 const AJOUTER_UNE_ANNONCE_AVEC_IMAGE_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/addAnnouncementWithImages"; 
 
-const AJOUTER_UN_CONTENEUR_URL = "https://grouping.glitch.me/api/annonce/ajouterunconteneur"; 
-const MODIFIER_UN_CONTENEUR_URL = "https://grouping.glitch.me/api/annonce/modifierannonceimg"; 
-const MODIFIER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping.glitch.me/api/annonce/modifierannoncepdf";
+const AJOUTER_UN_CONTENEUR_URL = "https://grouping-node-raar.onrender.com/api/annonce/ajouterunconteneur"; 
+const MODIFIER_UN_CONTENEUR_URL = "https://grouping-node-raar.onrender.com/api/annonce/modifierannonceimg"; 
+const MODIFIER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping-node-raar.onrender.com/api/annonce/modifierannoncepdf";
 //modifierannonceimg
-const MON_ANNONCE_URL = "https://grouping.glitch.me/api/annonce/getannoncee"; //
+const MON_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/getannoncee"; //
 
 //https://grouping-82aac4e3da78.herokuapp.com/
 export default function AnnouncementForm({route, navigation}) {
@@ -940,9 +940,6 @@ const onRegister = async () => {
 
                 setCitiesError("Veuillez choisir les villes de Départ et de Destination"); 
                 setLoading(false); 
-                setTimeout(() => {
-                    setCitiesError("");
-                }, 7000);
 
             }else{
 
@@ -2189,7 +2186,7 @@ if (good) {
                         
                         borderRadius: 10, 
                         borderWidth: 1, 
-                        borderColor: COLORS.other_blue, 
+                        borderColor: citiesError ? "red" : COLORS.other_blue, 
                         marginLeft: 10, 
                         flexDirection: "row", 
                         alignItems: "center"
@@ -2276,11 +2273,11 @@ if (good) {
 
                     <Pressable onPress={() => {setType("a"); setModalVisible(true)}} style={{
                         width: SIZES.width/2 - 20, 
-                        backgroundColor: COLORS.input_blue, 
+                        backgroundColor:  COLORS.input_blue, 
                      
                         borderRadius: 10, 
                         borderWidth: 1, 
-                        borderColor: COLORS.other_blue, 
+                        borderColor: citiesError ? "red" : COLORS.other_blue, 
                         marginLeft: 10, 
                         flexDirection: "row", 
                         alignItems: "center",
@@ -2350,7 +2347,7 @@ if (good) {
                    
                     borderRadius: 10, 
                     borderWidth: 1, 
-                    borderColor: COLORS.other_blue, 
+                    borderColor: dateError ? "red" : COLORS.other_blue,  
                     flexDirection: "row", 
                     
                 }}> 
@@ -2454,7 +2451,7 @@ if (good) {
            
             width: "100%", 
             borderWidth: 1, 
-            borderColor: COLORS.middle_blue, 
+            borderColor: countKilosError ? "red" : COLORS.middle_blue, 
             borderRadius: 10, 
             paddingHorizontal: 8,
             paddingVertical: Platform.OS === "ios" ? 10 :  3,

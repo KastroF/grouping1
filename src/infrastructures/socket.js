@@ -9,7 +9,7 @@ import { AuthContext } from "../navigation/AuthProvider";
 
 const {token} = useContext(AuthContext)
 
-const SOCKET_URL = "https://grouping.glitch.me"; // Remplacez par votre URL réelle
+const SOCKET_URL = "https://grouping-node-raar.onrender.com"; // Remplacez par votre URL réelle
 
 // Créer l'instance Socket.IO
 

@@ -13,7 +13,7 @@ import { useFetchFunctions } from '../infrastructures/functions';
 import { SocketContext } from '../navigation/SocketProv';
 
 
-const  NOT_READ_URL = "https://grouping.glitch.me/api/notification/notread"; 
+const  NOT_READ_URL = "https://grouping-node-raar.onrender.com/api/notification/notread"; 
 //const  NOT_READ_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/notread"; 
 
 

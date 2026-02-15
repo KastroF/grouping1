@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import { COLORS, FONTS, SIZES } from '../constants/theme';
+import { AuthContext } from '../navigation/AuthProvider';
 
 export default function TrackContainer({ navigation }) {
   const [containerNumber, setContainerNumber] = useState('');
+  const {language} = useContext(AuthContext)
 
   const onSubmit = () => {
     if (!containerNumber.trim()) {
@@ -18,7 +20,7 @@ export default function TrackContainer({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Suivre un container</Text>
+      <Text style={styles.title}>{language ==="English" ? "Track a container" : "Suivre un container"}</Text>
       <Text style={{
         fontFamily: FONTS.regular, 
         fontSize: SIZES.h6, 
@@ -26,19 +28,20 @@ export default function TrackContainer({ navigation }) {
         textAlign: "center", 
         marginBottom: 20
       }}>
-      Entrez le numéro du container tel qu’indiqué sur le connaissement (BL) pour suivre en temps réel sa position 
-      géographique sur la carte. 
-      Ce service vous permet de vérifier l’avancement de l’acheminement de votre marchandise.
+{language ==="English" ? "Enter the container number as shown on the Bill of Lading (BL) to track its real-time geographic location on the map."+
+"This service allows you to monitor the progress of your shipment and verify the delivery status of your goods." : "Entrez le numéro du container tel qu’indiqué sur le connaissement (BL) pour suivre en temps réel sa position"+ 
+      "géographique sur la carte." + 
+      "Ce service vous permet de vérifier l’avancement de l’acheminement de votre marchandise."}
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Numéro du container (ex: MSCU1234567)"
+        placeholder={language ==="English" ? "Container number (ex: MSCU1234567)" : "Numéro du conteneur (ex: MSCU1234567)"}
         value={containerNumber}
         onChangeText={setContainerNumber}
         autoCapitalize="characters"
       />
       <TouchableOpacity onPress={onSubmit} style={styles.button}>
-        <Text style={styles.buttonText}>Suivre</Text>
+        <Text style={styles.buttonText}>{language === "English" ? "Track now" :"Suivre"}</Text>
       </TouchableOpacity>
     </View>
   );

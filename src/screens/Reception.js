@@ -7,10 +7,10 @@ import { useFetchFunctions } from '../infrastructures/functions'
 import Notification from '../components/Notification'
 
 
-const GET_NOTIFS_URL = "https://grouping.glitch.me/api/notification/getnotifications"
+const GET_NOTIFS_URL = "https://grouping-node-raar.onrender.com/api/notification/getnotifications"
 //const GET_NOTIFS_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/getnotifications"
 
-const DELETE_NOTIF_URL = "https://grouping.glitch.me/api/notification/deletenotif"
+const DELETE_NOTIF_URL = "https://grouping-node-raar.onrender.com/api/notification/deletenotif"
 //const DELETE_NOTIF_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/deletenotif"
 
 export default function Reception({navigation}) {
@@ -331,20 +331,7 @@ export default function Reception({navigation}) {
                             />
             
                         </View>
-            
-                        <View style={{
-                            paddingLeft: 15
-                        }}>
-                            <Image source={require("../assets/images/xxx.png")}
-            
-                                style={{
-                                    height: Platform.OS === "android" ? SIZES.h2 : SIZES.h3, 
-                                    width: Platform.OS === "android" ? SIZES.h2 : SIZES.h3, 
-                                    resizeMode: "cover"
-                                }}
-            
-                            />
-                        </View>
+
                        
                     </View>
                     { notifications.length > 0 ? <View style={{

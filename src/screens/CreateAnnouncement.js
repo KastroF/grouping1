@@ -8,7 +8,7 @@ import Button1 from '../components/Button1';
 
 export default function CreateAnnouncement({navigation}) {
 
-    const {isTabBarVisible, token} = useContext(AuthContext);
+    const {isTabBarVisible, token, language} = useContext(AuthContext);
 
     useEffect(() => {
 
@@ -114,7 +114,7 @@ export default function CreateAnnouncement({navigation}) {
                     color: "#fff", 
                     textAlign: "center"
                 }}>
-                    Que souhaitez-vous annoncer?
+                   {language === "English" ? "What would you like to post?" : "Que souhaitez-vous annoncer?" }
                 </Text>
 
                 <Text style={{
@@ -125,8 +125,8 @@ export default function CreateAnnouncement({navigation}) {
                     fontSize: SIZES.h4, 
                     lineHeight: SIZES.h4
                 }}>
-                    Vous pouvez partager votre espace de conteneur ou vos 
-                    bagages en publiant une annonce !
+                    {language === "English" ? "You can share your container space or your luggage by posting an ad!" : "Vous pouvez partager votre espace de conteneur ou vos"+ 
+                    "bagages en publiant une annonce !"}
                 </Text>
 
                 <View style={{
@@ -138,7 +138,7 @@ export default function CreateAnnouncement({navigation}) {
                     
                     borderRadius={12} 
 
-                    label="Partagez vos kilos" 
+                    label={language === "English" ? "Share your kilos" : "Partagez vos kilos"} 
                     backgroundColor="#fff"
                     textColor={COLORS.primary}
                     fontFamily={FONTS.regular}
@@ -151,7 +151,7 @@ export default function CreateAnnouncement({navigation}) {
 
                 <Button1 borderRadius={12} 
 
-                    label="Partagez un conteneur" 
+                    label={language === "English" ? "Share a container" : "Partagez un conteneur"}
                     backgroundColor="#fff"
                     textColor={COLORS.primary}
                     fontFamily={FONTS.regular}

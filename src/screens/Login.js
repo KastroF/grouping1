@@ -20,13 +20,13 @@ GoogleSignin.configure({
 });
 
 
-const ADD_USER_URL = "https://grouping.glitch.me/api/user/register"; 
+const ADD_USER_URL = "https://grouping-node-raar.onrender.com/api/user/register"; 
 //const ADD_USER_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/register"; 
 
-const ADD_WITH_GOOGLE = "https://grouping.glitch.me/api/user/signinwithgoogle";
+const ADD_WITH_GOOGLE = "https://grouping-node-raar.onrender.com/api/user/signinwithgoogle";
 //const ADD_WITH_GOOGLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/signinwithgoogle";
 
-const CONNECT_WITH_APPLE = "https://grouping.glitch.me/api/user/connectwithapple"
+const CONNECT_WITH_APPLE = "https://grouping-node-raar.onrender.com/api/user/connectwithapple"
 //const CONNECT_WITH_APPLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/connectwithapple"
 
 //https://grouping-82aac4e3da78.herokuapp.com/
@@ -49,7 +49,7 @@ export default function Login({navigation, route}) {
   //const {annoucement} = route.params;
 
   const [indicatif, setIndicatif] = useState(""); 
-  const {setIsTabBarVisible, setUser, setAccount, setIdd, setToken} = useContext(AuthContext);
+  const {setIsTabBarVisible, setUser, setAccount, setIdd, setToken, language} = useContext(AuthContext);
   const [name, setName] = useState(""); 
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
@@ -554,7 +554,7 @@ const googleSignIn = async () => {
           fontSize: SIZES.h2, 
           color: COLORS.primary
         }}>
-            Créer votre compte
+            {language === "English" ? "Create an account" : "Créer votre compte"}
         </Text>
 
         <Text style={{
@@ -564,7 +564,8 @@ const googleSignIn = async () => {
           color: COLORS.primary, 
           textAlign: "center"
         }}>
-          Afin de vous proposer des offres correspondant à vos recherches, veuillez renseigner vos informations.
+          {language !== "English" ? "Afin de vous proposer des offres correspondant à vos recherches, veuillez renseigner vos informations." 
+          : "To offer you deals that match your search, please provide your information."}
         </Text>
 
       </View>
@@ -581,7 +582,7 @@ const googleSignIn = async () => {
           fontFamily: FONTS.ligth, 
           fontSize: SIZES.h6, 
           color: COLORS.primary
-        }}>Créer un compte avec...</Text>
+        }}>{language === "English" ? "Create an account with..." : "Créer un compte avec..."}</Text>
       </View>
 
       <View style={{
@@ -618,7 +619,7 @@ const googleSignIn = async () => {
           paddingHorizontal: 35, 
           marginTop: 20
         }}>
-          <FormInput  label="Nom complet"  value={name} onChangeText={setName} iconName="account-outline" 
+          <FormInput  label={language === "English" ? "Full name" : "Nom complet"}  value={name} onChangeText={setName} iconName="account-outline" 
           imagePath={require("../assets/images/user.png")} />
         </View>
 
@@ -628,7 +629,7 @@ const googleSignIn = async () => {
           paddingHorizontal: 35, 
           marginTop: 15
         }}>
-          <FormInput value={email} onChangeText={setEmail} label="Adresse mail" iconName="mail" 
+          <FormInput value={email} onChangeText={setEmail} label={language === "English" ? "Email address" :"Adresse mail"} iconName="mail" 
           imagePath={require("../assets/images/mailIcon.png")}  />
         </View>
 
@@ -636,7 +637,7 @@ const googleSignIn = async () => {
           paddingHorizontal: 35, 
           marginTop: 15
         }}>
-          <FormInput password={true} value={password} onChangeText={setPassword}  label="Mot de passe" placeholder="Créez un mot de passe" iconName="eye" />
+          <FormInput password={true} value={password} onChangeText={setPassword}  label={language === "English" ? "Password" :"Mot de passe"} placeholder={language === "English" ? "Create a password": "Créez un mot de passe"} iconName="eye" />
         </View>
 
         <View style={{
@@ -645,7 +646,7 @@ const googleSignIn = async () => {
         }}>
 
           <Button1 
-              label="Créer un compte"
+              label={language === "English" ? "Create an account" : "Créer un compte"}
               backgroundColor= {COLORS.primary}
               textColor="#fff"
               borderRadius={12}
@@ -666,7 +667,7 @@ const googleSignIn = async () => {
             fontSize: SIZES.h6, 
             textAlign: "center"
           }}>
-          Votre mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial (@, !, , etc.)
+          {language === "English" ? "Your password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@, !, etc.)." : "Votre mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial (@, !, , etc.)"}
           </Text>
         </View>
 
@@ -684,7 +685,7 @@ const googleSignIn = async () => {
             fontSize: 13, 
             color: COLORS.primary, 
             textAlign: "center"
-          }}>Avez-vous déjà un compte ?</Text>
+          }}>{language === "English" ? "Already have an account?" : "Avez-vous déjà un compte ?"}</Text>
           <TouchableOpacity onPress={() => goToSignIn()}>
             <Text style={{
               fontFamily: FONTS.bold, 
@@ -692,7 +693,7 @@ const googleSignIn = async () => {
               color: COLORS.other_blue3, 
               marginTop: 10, 
               textDecorationLine: "underline"
-            }}>Connectez-vous ici!</Text>
+            }}>{language === "English" ? "Sign in here !" : "Connectez-vous ici!"}</Text>
           </TouchableOpacity>
         </View>
 

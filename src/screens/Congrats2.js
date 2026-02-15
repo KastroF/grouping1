@@ -57,7 +57,8 @@ export default function Congrats2({navigation}) {
                     marginTop: 5
                 }}>
                 Votre annonce a été ajoutée avec succès, vous pouvez la consulter en cliquant sur le bouton ci-dessous.
-                Si c'est une annonce pour conteneur, vous devriez attendre une validation avant publication.
+                Si c'est une annonce pour conteneur, la validation sera
+                faite après verification du BL.
             </Text>
          </View>
 

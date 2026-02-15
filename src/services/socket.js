@@ -1,39 +1,16 @@
-// services/socket.js
-import { io } from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { io } from "socket.io-client";
 
-let socket = null;
+const SOCKET_URL = "https://grouping-node1-1.onrender.com"; // ✅ ton Render URL (sans /)
 
-export const connectSocket = async () => {
-  const token = await AsyncStorage.getItem('token'); // ou ton auth context
-  socket = io('http://<TON_BACKEND>:3000', {
-    transports: ['websocket'],
+export const createChatSocket = (token) => {
+  return io(SOCKET_URL, {
+    transports: ["websocket"],     // ✅ important sur téléphone
+    auth: { token },              // ✅ obligatoire pour ton io.use(jwt)
+    autoConnect: false,           // ✅ on connecte dans la page chat
+    timeout: 20000,
     reconnection: true,
-    reconnectionAttempts: 10,
-    reconnectionDelay: 3000,
-    auth: { token },
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
   });
-
-  socket.on('connect', () => {
-    console.log('✅ Socket connecté :', socket.id);
-  });
-
-  socket.on('disconnect', (reason) => {
-    console.log('⚠️ Socket déconnecté :', reason);
-  });
-
-  socket.on('connect_error', (err) => {
-    console.log('❌ Erreur de connexion socket :', err.message);
-  });
-
-  return socket;
-};
-
-export const getSocket = () => socket;
-
-export const disconnectSocket = () => {
-  if (socket) {
-    socket.disconnect();
-    socket = null;
-  }
 };

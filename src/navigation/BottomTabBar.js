@@ -18,7 +18,7 @@ import { useNotifications } from '../notifications/useNotifications';
 const Tab = createBottomTabNavigator(); 
 
 
-const VIEW_NOTIFS_URL = "https://grouping.glitch.me/api/notification/viewnotifs";
+const VIEW_NOTIFS_URL = "https://grouping-node-raar.onrender.com/api/notification/viewnotifs";
 //const VIEW_NOTIFS_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/viewnotifs";
 
 

@@ -10,11 +10,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios'
 
-const CHANGE_USER_NAME_URL = "https://grouping.glitch.me/api/user/changename"; 
+const CHANGE_USER_NAME_URL = "https://grouping-node-raar.onrender.com/api/user/changename"; 
 //const CHANGE_USER_NAME_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/changename";
 
 
-const CHANGE_PHOTO_URL = "https://grouping.glitch.me/api/user/changephoto"; 
+const CHANGE_PHOTO_URL = "https://grouping-node-raar.onrender.com/api/user/changephoto"; 
 //const CHANGE_PHOTO_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/changephoto"; 
 
 //https://grouping-82aac4e3da78.herokuapp.com/
@@ -45,19 +45,26 @@ export default function Modify({navigation}) {
             } else {
               const uri = response.assets[0].uri; // URI de l'image sélectionnée
               console.log(response.assets[0]);
+              const asset = response.assets[0];
 
-              const resizedImag  = response.assets[0];
+              const correctedUri =
+              Platform.OS === 'android' && !uri.startsWith('file://')
+                ? 'file://' + uri
+                : uri;
+
+              const resizedImag  = correctedUri;
               setImageUri(uri); // Mettre à jour l'état avec l'URI de l'image
 
               const formData = new FormData(); 
 
               formData.append("test", "2");
 
-              formData.append("images", {
-                uri: resizedImag.uri, 
-                type: resizedImag.uri.split('.').pop(),
-                name: resizedImag.fileName
+              formData.append("image", {
+                uri: resizedImag, 
+                type: asset.type || 'image/jpeg',
+                name: asset.fileName || `photo_${Date.now()}.jpg`,
             }) 
+
 
               console.log(formData);
 
@@ -91,6 +98,8 @@ export default function Modify({navigation}) {
         setLoadingg(false);
 
       }
+
+
 
     const onRequest = () => {
 

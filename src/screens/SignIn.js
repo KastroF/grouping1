@@ -21,16 +21,16 @@ GoogleSignin.configure({
 });
 
 
-const CONNECT_USER_URL = "https://grouping.glitch.me/api/user/signin"; 
+const CONNECT_USER_URL = "https://grouping-node1-1.onrender.com/api/user/signin"; 
 //const CONNECT_USER_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/signin"; 
 
-const ADD_WITH_GOOGLE = "https://grouping.glitch.me/api/user/signinwithgoogle";
+const ADD_WITH_GOOGLE = "https://grouping-node1-1.onrender.com/api/user/signinwithgoogle";
 //const ADD_WITH_GOOGLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/signinwithgoogle";
 
-const CONNECT_WITH_APPLE = "https://grouping.glitch.me/api/user/connectwithapple"
+const CONNECT_WITH_APPLE = "https://grouping-node1-1.onrender.com/api/user/connectwithapple"
 //const CONNECT_WITH_APPLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/connectwithapple"
 
-const GO_TO_EMAIL_URL = "https://grouping.glitch.me/api/user/gotoemail"
+const GO_TO_EMAIL_URL = "https://grouping-node1-1.onrender.com/api/user/gotoemail"
 //const GO_TO_EMAIL_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/gotoemail"
 
 //https://grouping-82aac4e3da78.herokuapp.com/
@@ -39,7 +39,7 @@ export default function SignIn({navigation, route}) {
 
 
     const {from, _id, idg}  = route.params; 
-    const {setIsTabBarVisible, setUser, setToken, setIdd, setAccount} = useContext(AuthContext);
+    const {setIsTabBarVisible, setUser, setToken, setIdd, setAccount, language} = useContext(AuthContext);
     const [email, setEmail] = useState(""); 
     const [password, setPassword] = useState(""); 
     const [errorMessage, setErrorMessage] = useState(""); 
@@ -523,7 +523,7 @@ export default function SignIn({navigation, route}) {
                     fontSize: SIZES.h4, 
                     color: COLORS.primary, 
                     textAlign: "center"
-                  }}>Mot de passe oublié ?</Text>
+                  }}>{language === "English" ? "Forgot password?" : "Mot de passe oublié ?"}</Text>
 
                   <Text style={{
                     fontFamily: FONTS.regular, 
@@ -531,7 +531,7 @@ export default function SignIn({navigation, route}) {
                     color: "#000", 
                     textAlign: "center"
                   }}>
-                  Pas d'inquiétude ! Saisis ton adresse e-mail ci-dessous et nous t'enverrons un lien pour réinitialiser ton mot de passe.
+                  {language ==="English" ? "Don’t worry! Enter your email address below and we’ll send you a link to reset your password." : "Pas d'inquiétude ! Saisis ton adresse e-mail ci-dessous et nous t'enverrons un lien pour réinitialiser ton mot de passe."}
                   </Text>
                 </View>
 
@@ -539,7 +539,7 @@ export default function SignIn({navigation, route}) {
                   marginTop: 10, 
                   width: "100%"
                 }}>
-                  <FormInput placeholder="Entrez votre email ici" label="Email" value={mail} 
+                  <FormInput label={language ==="English" ? "Email address" : "Email"} value={mail} 
                   onChangeText={setMail}  iconName="mail"  
                   imagePath={require("../assets/images/mailIcon.png")} />
                 </View>
@@ -548,7 +548,7 @@ export default function SignIn({navigation, route}) {
                   marginTop: 10, 
                   width: "100%"
                 }}>
-                  <Button1 label="Envoyer" textColor="#fff" fontFamily={FONTS.regular}  borderRadius={8}
+                  <Button1 label={language === "English" ? "Send" : "Envoyer"} textColor="#fff" fontFamily={FONTS.regular}  borderRadius={8}
                   fontSize={SIZES.h6} backgroundColor={COLORS.primary} onPress={sendEmail} />
                 </View>
             </View>
@@ -602,7 +602,7 @@ export default function SignIn({navigation, route}) {
                         fontSize: SIZES.h1, 
                         color: COLORS.primary
                     }}>
-                        Connectez-vous
+                       {language === "English" ? "Sign in" : "Connectez-vous"} 
                     </Text>
 
                     <Text style={{
@@ -612,7 +612,7 @@ export default function SignIn({navigation, route}) {
                         marginTop: Platform.OS === "ios" ? 10 : 5,
                         color: COLORS.primary
                     }}>
-                        Entrez vos informations de connexion...
+                        {language === 'English' ? "Enter your login details..." : "Entrez vos informations de connexion..."}
                     </Text>
 
                    
@@ -664,7 +664,7 @@ export default function SignIn({navigation, route}) {
            
                
                 }}>
-                    <FormInput onChangeText={setEmail} value={email}  label="Adresse mail"   iconName="mail"  
+                    <FormInput onChangeText={setEmail} value={email}  label={language === 'English' ? "Email address" : "Adresse mail"}   iconName="mail"  
                     imagePath={require("../assets/images/mailIcon.png")} />
             </View>
 
@@ -672,7 +672,7 @@ export default function SignIn({navigation, route}) {
                 paddingHorizontal: 25, 
                 marginTop: 15
                 }}>
-                    <FormInput onChangeText={setPassword} value={password} password={true}  label="Mot de passe" iconName="lock" 
+                    <FormInput onChangeText={setPassword} value={password} password={true}  label={language === 'English' ? "Password" : "Mot de passe"} iconName="lock" 
                         imagePath={require("../assets/images/lock.png")}
                         />
             </View>
@@ -708,7 +708,7 @@ export default function SignIn({navigation, route}) {
                     color: COLORS.primary, 
                     fontSize: SIZES.h6, 
                     textDecorationLine: "underline"
-                  }}>Mot de passe oublié ?</Text>
+                  }}>{language === "English" ? "Forgot password?" : "Mot de passe oublié ?"}</Text>
                 </TouchableOpacity>
             </View>
 
