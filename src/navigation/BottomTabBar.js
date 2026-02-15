@@ -13,13 +13,11 @@ import DeviceInfo from 'react-native-device-info';
 import notifee from '@notifee/react-native';
 import { useFetchFunctions } from '../infrastructures/functions';
 import { useNotifications } from '../notifications/useNotifications';
+import { API } from '../config/api';
 
+const Tab = createBottomTabNavigator();
 
-const Tab = createBottomTabNavigator(); 
-
-
-const VIEW_NOTIFS_URL = "https://grouping-node-raar.onrender.com/api/notification/viewnotifs";
-//const VIEW_NOTIFS_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/viewnotifs";
+const VIEW_NOTIFS_URL = API.NOTIF_VIEW;
 
 
 export default function BottomTabBar() {

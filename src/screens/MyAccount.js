@@ -11,13 +11,9 @@ import Ionicons from "react-native-vector-icons/Ionicons"
 import { useFocusEffect } from '@react-navigation/native';
 import { useFetchFunctions } from '../infrastructures/functions';
 import { SocketContext } from '../navigation/SocketProv';
+import { API } from '../config/api';
 
-
-const  NOT_READ_URL = "https://grouping-node-raar.onrender.com/api/notification/notread"; 
-//const  NOT_READ_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/notread"; 
-
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const NOT_READ_URL = API.NOTIF_NOT_READ;
 
 export default function MyAccount({navigation, route}) {
 

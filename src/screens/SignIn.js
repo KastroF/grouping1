@@ -15,25 +15,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import AntDesign from "react-native-vector-icons/AntDesign"
+import { API } from '../config/api';
 
 GoogleSignin.configure({
   webClientId: "135035020483-4d808jdm0454rvol6vd51sstdvhhrqml.apps.googleusercontent.com"
 });
 
 
-const CONNECT_USER_URL = "https://grouping-node1-1.onrender.com/api/user/signin"; 
-//const CONNECT_USER_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/signin"; 
-
-const ADD_WITH_GOOGLE = "https://grouping-node1-1.onrender.com/api/user/signinwithgoogle";
-//const ADD_WITH_GOOGLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/signinwithgoogle";
-
-const CONNECT_WITH_APPLE = "https://grouping-node1-1.onrender.com/api/user/connectwithapple"
-//const CONNECT_WITH_APPLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/connectwithapple"
-
-const GO_TO_EMAIL_URL = "https://grouping-node1-1.onrender.com/api/user/gotoemail"
-//const GO_TO_EMAIL_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/gotoemail"
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const CONNECT_USER_URL = API.USER_SIGNIN;
+const ADD_WITH_GOOGLE = API.USER_SIGNIN_GOOGLE;
+const CONNECT_WITH_APPLE = API.USER_CONNECT_APPLE;
+const GO_TO_EMAIL_URL = API.USER_GO_TO_EMAIL;
 
 export default function SignIn({navigation, route}) {
 

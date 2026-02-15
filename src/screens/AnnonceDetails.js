@@ -9,10 +9,9 @@ import Loading from '../components/Loading';
 import DeviceInfo from 'react-native-device-info';
 import Entypo from "react-native-vector-icons/Entypo"
 import Octicons from "react-native-vector-icons/Octicons"
+import { API } from '../config/api';
 
-
-const MON_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/getannoncee"; //
-//const MON_ANNONCE_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/getannoncee";
+const MON_ANNONCE_URL = API.ANNONCE_GET_ONE;
 
 export default function AnnonceDetails({navigation, route}) {
 

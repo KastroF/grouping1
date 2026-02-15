@@ -1,6 +1,5 @@
 import { io } from "socket.io-client";
-
-const SOCKET_URL = "https://grouping-node1-1.onrender.com"; // ✅ ton Render URL (sans /)
+import { SOCKET_URL } from "../config/api";
 
 export const createChatSocket = (token) => {
   return io(SOCKET_URL, {

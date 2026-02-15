@@ -8,11 +8,9 @@ import { AuthContext } from '../navigation/AuthProvider'
 import { useFetchFunctions } from '../infrastructures/functions'
 import ErrorMessage from '../components/ErrorMessage'
 import Loading from '../components/Loading'
+import { API } from '../config/api';
 
-const CHANGE_PASSWORD_URL = "https://grouping-node-raar.onrender.com/api/user/changepassword"
-//const CHANGE_PASSWORD_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/changepassword"
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const CHANGE_PASSWORD_URL = API.USER_CHANGE_PASSWORD;
 export default function Connexion({navigation}) {
 
 

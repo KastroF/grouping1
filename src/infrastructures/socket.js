@@ -2,14 +2,9 @@ import React, { useContext } from "react";
 
 import { io } from "socket.io-client";
 import { AuthContext } from "../navigation/AuthProvider";
-
-// URL de votre serveur Socket.IO
-
-
+import { SOCKET_URL } from "../config/api";
 
 const {token} = useContext(AuthContext)
-
-const SOCKET_URL = "https://grouping-node-raar.onrender.com"; // Remplacez par votre URL réelle
 
 // Créer l'instance Socket.IO
 

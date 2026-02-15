@@ -11,12 +11,10 @@ import uuid from 'react-native-uuid';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios';
 import { createChatSocket } from "../services/socket";
+import { API } from '../config/api';
 
-const GET_MESSAGES_URL = "https://grouping-node-raar.onrender.com/api/message/getmessages"
-//const GET_MESSAGES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/message/getmessages"
-
-//https://grouping-82aac4e3da78.herokuapp.com/
-const ADD_MESSAGE_URL = "https://grouping-node-raar.onrender.com/api/message/addmessagewithimage"
+const GET_MESSAGES_URL = API.MESSAGE_GET;
+const ADD_MESSAGE_URL = API.MESSAGE_ADD_IMAGE;
 
 export default function Messenger({navigation, route}) {
 
@@ -301,6 +299,7 @@ const renderLoader = () => {
    launchImageLibrary(
      {
        mediaType: 'photo',
+       
        quality: 0.3,
      },
      response => {

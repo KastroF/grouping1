@@ -7,11 +7,9 @@ import { AuthContext } from '../navigation/AuthProvider';
 import Loading from '../components/Loading';
 import DetourStack from '../navigation/DetourStack';
 import Button1 from '../components/Button1';
+import { API } from '../config/api';
 
-const SEARCH_URL = "https://grouping-node-raar.onrender.com/api/annonce/search"
-//const SEARCH_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/search"
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const SEARCH_URL = API.ANNONCE_SEARCH;
 
 export default function Search({route, navigation}) {
 

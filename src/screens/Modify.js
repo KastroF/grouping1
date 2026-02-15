@@ -9,15 +9,10 @@ import { useFetchFunctions } from '../infrastructures/functions'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import axios from 'axios'
+import { API } from '../config/api';
 
-const CHANGE_USER_NAME_URL = "https://grouping-node-raar.onrender.com/api/user/changename"; 
-//const CHANGE_USER_NAME_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/changename";
-
-
-const CHANGE_PHOTO_URL = "https://grouping-node-raar.onrender.com/api/user/changephoto"; 
-//const CHANGE_PHOTO_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/changephoto"; 
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const CHANGE_USER_NAME_URL = API.USER_CHANGE_NAME;
+const CHANGE_PHOTO_URL = API.USER_CHANGE_PHOTO;
 export default function Modify({navigation}) {
 
     const {user, token, setUser} = useContext(AuthContext);

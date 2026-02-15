@@ -20,22 +20,12 @@ import { navigationRef } from '../navigation/Routes';
 import NotificationBanner from '../components/NotificationBanner';
 import { translate } from '../i18n/locales/translate';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API } from '../config/api';
 
-
-const MES_ANNONCES_URL = "https://grouping-node-raar.onrender.com/api/annonce/announces"; 
-//const MES_ANNONCES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/announces"; 
-
-//https://grouping-82aac4e3da78.herokuapp.com/
-
-
-
-//const currentMonth = new Date().getMonth() + 1;
-
-const ADD_CITY_URL = "https://grouping.glitch.me/api/city/addcity"; 
-const ADD_COUNTRY_URL = "https://grouping.glitch.me/api/country/addcountry"; 
-const GET_CITIES_URL = "https://grouping-node-raar.onrender.com/api/city/getcitiesbycountryid"; 
-const GET_COUNTRIES_URL = "https://grouping-node-raar.onrender.com/api/country/getcountries"; 
-const GET_ANNONCES_URLL = "https://grouping-node-raar.onrender.com/api/annonce/avoirlesannonces"
+const MES_ANNONCES_URL = API.ANNONCE_LIST;
+const GET_CITIES_URL = API.CITY_LIST_BY_COUNTRY;
+const GET_COUNTRIES_URL = API.COUNTRY_LIST;
+const GET_ANNONCES_URLL = API.ANNONCE_GET_ALL;
 
 export default function Home({navigation}) {
   

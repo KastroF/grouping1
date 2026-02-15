@@ -7,17 +7,10 @@ import Loading from '../components/Loading';
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import { useFetchFunctions } from '../infrastructures/functions';
 import { AuthContext } from '../navigation/AuthProvider';
+import { API } from '../config/api';
 
-
-//getannouncementbyid
-const MES_ANNONCES_URL = "https://grouping-node-raar.onrender.com/api/annonce/getannouncementbyid"; 
-//const MES_ANNONCES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/getannouncementbyid"; 
-
-
-const PLUS_ANNONCES_URL = "https://grouping-node-raar.onrender.com/api/annonce/moreannounces"; 
-//const PLUS_ANNONCES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/moreannounces"; 
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const MES_ANNONCES_URL = API.ANNONCE_GET_BY_USER;
+const PLUS_ANNONCES_URL = API.ANNONCE_MORE;
 
 export default function MyAnnouncements({route, navigation}) {
 

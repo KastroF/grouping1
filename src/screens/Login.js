@@ -13,6 +13,7 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6"
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
+import { API } from '../config/api';
 
 
 GoogleSignin.configure({
@@ -20,16 +21,9 @@ GoogleSignin.configure({
 });
 
 
-const ADD_USER_URL = "https://grouping-node-raar.onrender.com/api/user/register"; 
-//const ADD_USER_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/register"; 
-
-const ADD_WITH_GOOGLE = "https://grouping-node-raar.onrender.com/api/user/signinwithgoogle";
-//const ADD_WITH_GOOGLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/signinwithgoogle";
-
-const CONNECT_WITH_APPLE = "https://grouping-node-raar.onrender.com/api/user/connectwithapple"
-//const CONNECT_WITH_APPLE = "https://grouping-82aac4e3da78.herokuapp.com/api/user/connectwithapple"
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const ADD_USER_URL = API.USER_REGISTER;
+const ADD_WITH_GOOGLE = API.USER_SIGNIN_GOOGLE;
+const CONNECT_WITH_APPLE = API.USER_CONNECT_APPLE;
 
 export default function Login({navigation, route}) {
 

@@ -9,10 +9,9 @@ import FormInput from '../components/FormInput'
 import Button1 from '../components/Button1'
 import { useFetchFunctions } from '../infrastructures/functions'
 import Loading from '../components/Loading'
+import { API } from '../config/api';
 
-
-
-const CONTACT_US_URL = "https://grouping-node-raar.onrender.com/api/user/contactus"
+const CONTACT_US_URL = API.USER_CONTACT_US;
 
 
 export default function Contacts({navigation}) {

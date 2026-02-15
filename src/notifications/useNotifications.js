@@ -4,11 +4,9 @@ import messaging from "@react-native-firebase/messaging"
 import DeviceInfo from 'react-native-device-info';
 import { AuthContext } from '../navigation/AuthProvider';
 import { useFetchFunctions } from '../infrastructures/functions';
+import { API } from '../config/api';
 
-
-const ADD_FCM_TOKEN_URL = "https://mavoiex.glitch.me/api/user/addfcmtoken"; 
-const SAVE_FCMTOKEN_URL = "https://grouping-node-raar.onrender.com/api/user/updatefcmToken";
-//const SAVE_FCMTOKEN_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/user/updatefcmToken";
+const SAVE_FCMTOKEN_URL = API.USER_UPDATE_FCM;
 
 const requestUserPermissions = async () => {
 

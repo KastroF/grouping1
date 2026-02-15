@@ -27,6 +27,7 @@ import { WebView } from 'react-native-webview';
 import RNFS from 'react-native-fs';
 import uuid from 'react-native-uuid';
 import DeviceInfo from 'react-native-device-info';
+import { API } from '../config/api';
 
 
 LocaleConfig.locales['fr'] = {
@@ -132,29 +133,16 @@ LocaleConfig.locales['fr'] = {
   LocaleConfig.defaultLocale = 'fr';
 
 
-const GET_CITIES_URL = "https://grouping-node-raar.onrender.com/api/city/getcitiesbycountryid"; 
-//const GET_CITIES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/city/getcitiesbycountryid"; 
-
-const GET_COUNTRIES_URL = "https://grouping-node-raar.onrender.com/api/country/getcountries"; 
-//const GET_COUNTRIES_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/country/getcountries";
-
-const AJOUTER_UNE_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/addannouncement"; 
-const MODIFIER_UNE_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/modifierkilo"; 
-//const AJOUTER_UNE_ANNONCE_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/addannouncement"; 
-
-const AJOUTER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping-node-raar.onrender.com/api/annonce/addAnnouncementWithPdf"; 
-//const AJOUTER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/addAnnouncementWithPdf"; 
-
-//const AJOUTER_UNE_ANNONCE_AVEC_IMAGE_URL = "https://grouping.glitch.me/api/annonce/addAnnouncementWithImages"; 
-const AJOUTER_UNE_ANNONCE_AVEC_IMAGE_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/annonce/addAnnouncementWithImages"; 
-
-const AJOUTER_UN_CONTENEUR_URL = "https://grouping-node-raar.onrender.com/api/annonce/ajouterunconteneur"; 
-const MODIFIER_UN_CONTENEUR_URL = "https://grouping-node-raar.onrender.com/api/annonce/modifierannonceimg"; 
-const MODIFIER_UNE_ANNONCE_AVEC_PDF_URL = "https://grouping-node-raar.onrender.com/api/annonce/modifierannoncepdf";
-//modifierannonceimg
-const MON_ANNONCE_URL = "https://grouping-node-raar.onrender.com/api/annonce/getannoncee"; //
-
-//https://grouping-82aac4e3da78.herokuapp.com/
+const GET_CITIES_URL = API.CITY_LIST_BY_COUNTRY;
+const GET_COUNTRIES_URL = API.COUNTRY_LIST;
+const AJOUTER_UNE_ANNONCE_URL = API.ANNONCE_ADD;
+const MODIFIER_UNE_ANNONCE_URL = API.ANNONCE_MODIFY_KILO;
+const AJOUTER_UNE_ANNONCE_AVEC_PDF_URL = API.ANNONCE_ADD_PDF;
+const AJOUTER_UNE_ANNONCE_AVEC_IMAGE_URL = API.ANNONCE_ADD_IMAGES;
+const AJOUTER_UN_CONTENEUR_URL = API.ANNONCE_ADD_CONTAINER;
+const MODIFIER_UN_CONTENEUR_URL = API.ANNONCE_MODIFY_IMG;
+const MODIFIER_UNE_ANNONCE_AVEC_PDF_URL = API.ANNONCE_MODIFY_PDF;
+const MON_ANNONCE_URL = API.ANNONCE_GET_ONE;
 export default function AnnouncementForm({route, navigation}) {
 
 

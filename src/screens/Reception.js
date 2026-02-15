@@ -5,13 +5,10 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6"
 import { AuthContext } from '../navigation/AuthProvider'
 import { useFetchFunctions } from '../infrastructures/functions'
 import Notification from '../components/Notification'
+import { API } from '../config/api';
 
-
-const GET_NOTIFS_URL = "https://grouping-node-raar.onrender.com/api/notification/getnotifications"
-//const GET_NOTIFS_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/getnotifications"
-
-const DELETE_NOTIF_URL = "https://grouping-node-raar.onrender.com/api/notification/deletenotif"
-//const DELETE_NOTIF_URL = "https://grouping-82aac4e3da78.herokuapp.com/api/notification/deletenotif"
+const GET_NOTIFS_URL = API.NOTIF_GET;
+const DELETE_NOTIF_URL = API.NOTIF_DELETE;
 
 export default function Reception({navigation}) {
 
