@@ -678,7 +678,7 @@ function calculateContainerVolume(feet) {
                             fontFamily: FONTS.bold, 
                             color: COLORS.primary, 
                             fontSize: SIZES.h5
-                        }}> {language === "English" ? (annonce.status === "container" ? "Container sharer" : "Kilos sharer") : ("Partageur " + (annonce.status === "container" ? "du conteneur" : "de kilos"))} </Text>
+                        }}> {language === "English" ? (annonce.status === "container" ? (annonce.transitaire ? "Freight forwarder" : "Container sharer") : "Kilos sharer") : (annonce.status === "container" ? (annonce.transitaire ? "Transitaire" : "Partageur du conteneur") : "Partageur de kilos")} </Text>
                     </View>
 
                 </View>
@@ -723,7 +723,7 @@ function calculateContainerVolume(feet) {
                                 fontFamily: FONTS.bold, 
                                 color: "#000", 
                                 fontSize: SIZES.h5
-                            }}>{userr && userr.name}</Text>
+                            }}>{annonce.status === "container" && annonce.transitaire ? annonce.transitaire : userr && userr.name}</Text>
                              <Text style={{
                                 fontFamily: FONTS.bold, 
                                 marginTop: Platform.OS === "android" ? -5 : 2,
