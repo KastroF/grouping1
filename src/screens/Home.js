@@ -17,7 +17,6 @@ import ErrorMessage from '../components/ErrorMessage';
 import messaging from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
 import { navigationRef } from '../navigation/Routes';
-import NotificationBanner from '../components/NotificationBanner';
 import { translate } from '../i18n/locales/translate';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../config/api';
@@ -85,11 +84,6 @@ export default function Home({navigation}) {
     const [total, setTotal] = useState(null)
     const [isLoading, setIsLoading] = useState(false);
     const [activee, setActivee] = useState(false)
-    const [isVisible, setIsVisible] = useState(false); 
-    const [title, setTitle] = useState(""); 
-    const [body, setBody] = useState("");
-    const [leStatut, setLeStatut] = useState(null);
-    const [senderId, setSenderId] = useState("");
 
     const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -157,75 +151,6 @@ export default function Home({navigation}) {
                 }
             }
         });
-
-        messaging().onNotificationOpenedApp(async (message) => {
-
-            await notifee.setBadgeCount(0);
-    
-            if(message.data?.status && parseInt(message.data?.status) === 0){
-    
-                navigation.navigate("My Announcements")
-                
-            }
-
-
-            if(message.data?.status && parseInt(message.data?.status) === 1){
-    
-
-                const _id = message.data?.annonceId; 
-
-                navigation.navigate("Details", {_id});
-                
-            }
-
-
-            if(message.data?.status && parseInt(message.data?.status) === 5){
-    
-
-                const _id = message.data?.senderId; 
-
-                navigation.navigate("Messenger", {_id});
-                
-            }
-    
-    
-    
-    
-          })
-
-
-      messaging().onMessage(async (message) => {
-  
-        const badge = message.data?.badge || 0; 
-
-
-        await notifee.setBadgeCount(parseInt((badge)));
-
-       
-        setTitle(message.notification.title); 
-        setBody(message.notification.body); 
-        setBadgee(badge);
-
-
-        setIsVisible(true);
-
-        const status = message.data?.status || null; 
-
-        if(status){
-
-          //  setLerefresh(!lerefresh)
-          setLeStatut(status); 
-          if(parseInt(status) === 5){
-            setSenderId(message.data?.senderId)
-          }
- 
-        }
-
-
-        
-    }) 
-
-
 
     }, [])
 
@@ -730,7 +655,7 @@ export default function Home({navigation}) {
 
                     }else{
 
-                            alert("Veuillez sélectionner une ville");
+                            alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                     } */
 
                     
@@ -749,7 +674,7 @@ export default function Home({navigation}) {
 
                     }else{
 
-                            alert("Veuillez sélectionner une ville");
+                            alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                     } */
               
                 }
@@ -766,7 +691,7 @@ export default function Home({navigation}) {
 
                     }else{
 
-                            alert("Veillez sélectionner une ville");
+                            alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                     }
               
                 }
@@ -781,7 +706,7 @@ export default function Home({navigation}) {
 
                     }else{
 
-                            alert("Veillez sélectionner une ville");
+                            alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                     }
               
                 }
@@ -803,11 +728,11 @@ export default function Home({navigation}) {
 
             if(activee === "kilos" && searchKilosStartCity && searchKilosStartCity === searchKilosEndCity){
 
-                setErrorMessage("La ville de départ ne peut être la même que celle d'arrivée")
+                setErrorMessage(language === "English" ? "The departure city cannot be the same as the arrival city" : "La ville de départ ne peut être la même que celle d'arrivée")
     
             }else if(activee === "container" && cDCountry2 && cDCountry2 === cACountry2) {
     
-                setErrorMessage("Le pays de départ ne peut être la même que celui d'arrivée")
+                setErrorMessage(language === "English" ? "The departure country cannot be the same as the arrival country" : "Le pays de départ ne peut être la même que celui d'arrivée")
     
             }else{
     
@@ -842,11 +767,11 @@ export default function Home({navigation}) {
 
             if(active === "kilos" && searchKilosStartCity && searchKilosStartCity === searchKilosEndCity){
 
-                setErrorMessage("La ville de départ ne peut être la même que celle d'arrivée")
+                setErrorMessage(language === "English" ? "The departure city cannot be the same as the arrival city" : "La ville de départ ne peut être la même que celle d'arrivée")
     
             }else if(active === "container" && cDCountry2 && cDCountry2 === cACountry2) {
     
-                setErrorMessage("Le pays de départ ne peut être la même que celui d'arrivée");
+                setErrorMessage(language === "English" ? "The departure country cannot be the same as the arrival country" : "Le pays de départ ne peut être la même que celui d'arrivée");
     
             }else{
     
@@ -960,36 +885,7 @@ export default function Home({navigation}) {
     return (
 <View style={[styles.container, {backgroundColor: COLORS.gray}]}>
 
-<NotificationBanner
-  isVisible={isVisible}
-  onClose={() => {setIsVisible(false); 
-
-    //alert(leStatut);
-
-   
-    
-
-  }}
-  onPress={() => {
-    setTimeout(() => {
-        if(parseInt(leStatut) === 5){
-
-            navigation.navigate("Messenger", { _id: senderId });
-        }
-
-        if(parseInt(leStatut) === 0){
-        navigation.navigate("My Announcements");
-
-        }
-        setIsVisible(false);
-    }, 500);
-  }}
-  title={title}
-  body={body}
-
-  />
-  
-<Modal 
+<Modal
     visible={modalVisible6}
     onRequestClose={() => {
 
@@ -1112,7 +1008,7 @@ transparent={true}
 
                             backgroundColor={COLORS.primary}
                             borderRadius={12}
-                            label="Rechercher"
+                            label={language === "English" ? "Search" : "Rechercher"}
                             textColor="#fff"
                             fontFamily="AristotelicaProTx-Rg"
                             fontSize={SIZES.height * 0.03}
@@ -1139,491 +1035,6 @@ transparent={true}
         animationType="slide"
         transparent={true}
     >
-
-<Modal 
-    visible={modalVisible6}
-    onRequestClose={() => {
-
-        setModalVisible6(false);
-}}
-animationType="slide"
-transparent={true}
-
->
-
-<Modal
-        visible={modalVisible2}
-        onRequestClose={() => {
-
-                setModalVisible2(false);
-        }}
-        animationType="slide"
-        transparent={true}
-    >
-        <View style={{
-            flex: 1, 
-            backgroundColor: "rgba(0,0,0,0.2)", 
-            alignItems: "center", 
-            justifyContent: "center"
-        }}>
-
- 
-
-            <View style={{
-                backgroundColor: COLORS.other_blue2, 
-                height: SIZES.height - 100, 
-                width: SIZES.width, 
-                marginTop: 100, 
-                borderTopLeftRadius: 20, 
-                borderTopRightRadius: 20
-               
-            }}  {...styles.shadow}>
-
-
-
-                <View style={{
-                    paddingHorizontal: 20, 
-                    paddingVertical: 20
-                }}>
-
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-                        paddingBottom: 80, 
-                        
-                    }}>
-
-
-
-                    <View style={{
-                        
-                        paddingBottom: 15
-
-                    }} >
-                        <TouchableOpacity style={{
-                            height: 60, 
-                            width: 60, 
-                            borderRadius: 30, 
-                            borderColor: "#bbb", 
-                            borderWidth: 1, 
-                            alignItems: "center", 
-                            justifyContent: "center"
-                        }} onPress={() => setModalVisible2(false)}>
-                            <FontAwesome name='angle-left' color="rgba(0,0,0,0.6)" size={30} />
-                        </TouchableOpacity>
-
-                    
-                        
-                    </View>
-
-                    <View style={{
-                      
-                        marginTop: Platform.OS === "iso" ? 10 : 5, 
-                        alignItems: "center", 
-                        paddingHorizontal: 45
-                  
-                    }}>
-
-                        <Text style={{
-                            fontFamily: FONTS.bold, 
-                            color: COLORS.primary, 
-                            fontSize: 20, 
-                            textAlign: "center"
-                        }}>Choisir {activee === "kilos" ? "la ville" : "le pays"}  {type === "d" ? "de départ" : "d'arrivée"}</Text>
-
-                        <Text style={{
-                            fontFamily: FONTS.ligth, 
-                            color: "rgba(0,0,0,0.7)", 
-                            fontSize: 13,
-                            marginTop: 5,
-                            marginBottom: 20, 
-                            textAlign: "center"
-                          
-                        }}>{active === "kilos" ? "Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville" : "Veuillez sélectionner le pays dans la liste ci-dessous"}</Text>
-
-
-                    </View>
-
-                    <View style={{
-                        
-                    }}>
-                        <Dropdown
-                            label="Pays"
-                            placeholder='Sélectionnez le pays'
-                            options={countries.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
-                                value: country.value,
-                            }))}
-                            selectedValue={openFor === "container" ? type === "a" ? cACountry : cDCountry : type=== "a" ? kACountry : kDCountry}
-                            
-                            onValueChange={(value) => onChangeCountry(value)}
-                            primaryColor={COLORS.primary}
-
-                            dropdownStyle={{
-                            borderColor: COLORS.middle_blue, 
-                            backgroundColor: COLORS.gray
-                            }}
-                            labelStyle={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: 15, 
-                                color: COLORS.primary
-                            }}
-                            
-                            placeholderStyle={{
-                                color: "rgba(0,0,0,0.7)", 
-                                fontFamily: FONTS.ligth
-                            }}
-                            isSearchable={true}
-                            selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: "red", 
-                                fontSize: 15
-                            }}
-                            
-                            
-                        />                
-
-                             
-
-                    </View>
-
-                        <View style={{
-                            marginTop: 20, 
-                            alignItems: "center"
-                    }}>
-                       { load ? <ActivityIndicator size="large" />  : <Dropdown
-                            label="Ville"
-                            placeholder='Sélectionnez la ville'
-
-
-                            options={openFor === "container" ? type === "a" ? 
-                            cACities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
-                                value: country.value,
-                            })) :  cDCities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
-                                value: country.value,
-                            })) : 
-                            type=== "a" ? 
-                            kACities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
-                                value: country.value,
-                            })) :  kDCities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
-                                value: country.value,
-                            }))}
-
-
-                            selectedValue={openFor === "container" ? type === "a" ? cArrival : cDeparture : type=== "a" ? kArrival : kDeparture}
-                            
-                            onValueChange={(value) => {openFor === "container" ? type === "a" ?  setCArrival(value) : setCDeparture(value) : type=== "a" ? setKArrival(value) : setKDeparture(value)}}
-                            primaryColor={COLORS.primary}
-                            dropdownStyle={{
-                            borderColor: COLORS.middle_blue, 
-                            backgroundColor: COLORS.gray
-                            }}
-                            labelStyle={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: 15, 
-                                color: COLORS.primary
-                            }}
-                            placeholderStyle={{
-                                color: "rgba(0,0,0,0.7)", 
-                                fontFamily: FONTS.ligth
-                            }}
-                            isSearchable={true}
-                            selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: "#000", 
-                                fontSize: 15
-                            }}
-                            disabled={openFor === "container" ? type === "a" ? (!cACountry && !load) :  !cDCountry : type=== "a" ? !kACountry : !kDCountry}
-                            
-                            
-                        />   }             
-                             
-
-                    </View>
-
-                    <View style={{
-                           
-                    }}>
-
-                        <Button1 onPress={() => toValidCity()} label="Valider" textColor="#fff" backgroundColor={COLORS.primary} 
-                        borderRadius={12} fontFamily={FONTS.bold} fontSize={15} />
-
-                    </View>
-
-
-                    </ScrollView>
-            </View>
-
-            
-            
-            </View>
-
-          
-
-        </View>
-
-    </Modal>
-
-<Modal
-        visible={modalVisible}
-        onRequestClose={() => {
-
-                setModalVisible(false);
-        }}
-        animationType="slide"
-        transparent={true}
-    >
-        <View style={{
-            flex: 1, 
-            backgroundColor: "rgba(0,0,0,0.2)", 
-            alignItems: "center", 
-            justifyContent: "center"
-        }}>
-
-            <View style={{
-                backgroundColor: COLORS.other_blue2, 
-                height: SIZES.height - 100, 
-                width: SIZES.width, 
-                marginTop: 100, 
-                borderTopLeftRadius: 20, 
-                borderTopRightRadius: 20
-               
-            }}  {...styles.shadow}>
-
-                <View style={{
-                    paddingHorizontal: 20, 
-                    paddingVertical: 20
-                }}>
-                    <View style={{
-                        
-                        paddingBottom: 15
-
-                    }} >
-                        <TouchableOpacity style={{
-                            height: 60, 
-                            width: 60, 
-                            borderRadius: 30, 
-                            borderColor: "#bbb", 
-                            borderWidth: 1, 
-                            alignItems: "center", 
-                            justifyContent: "center"
-                        }} onPress={() => setModalVisible(false)}>
-                            <FontAwesome name='angle-left' color="rgba(0,0,0,0.6)" size={30} />
-                        </TouchableOpacity>
-
-                    
-                        
-                    </View>
-                    <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    bounces={false}
-                    contentContainerStyle={{
-                            paddingVertical: 30, 
-                            paddingBottom: 70, 
-                            
-                           
-                        }}>
-
-                            <View style={{
-                                flexDirection: "row", 
-                                alignItems: "center", 
-                                justifyContent: "space-between"
-                            }}>
-                                <Text style={{
-                                           fontFamily: FONTS.bold, 
-                                           color: COLORS.primary, 
-                                           fontSize: 20, 
-                          
-                                }}>
-                                 {language !== "English" ? "Année" : ""} {openFor === "container" ? cYear : kYear}
-                                </Text>
-                                <View style={{
-                                    flexDirection: "row", 
-                                    alignItems: "center"
-                                }}>
-                                    <TouchableOpacity disabled={(openFor === "container" && cYear === new Date().getFullYear() ) || (openFor === "kilos" && kYear === new Date().getFullYear())  }
-                                    onPress={() => {openFor === "container" ? setCYear(prevYear => (parseInt(prevYear) - 1)) : setKYear(prevYear => (parseInt(prevYear) - 1)) }}
-                                    style={{
-                                        
-                                       
-                                    }}>
-                                        <FontAwesome name='angle-left' color={openFor === "container" ? cYear === new Date().getFullYear() ? "#ccc" : "#000" : kYear === new Date().getFullYear() ? "#ccc" : "#000" } size={28} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => openFor === "container" ? setCYear(prevYear => (parseInt(prevYear) + 1)) : setKYear(prevYear => (parseInt(prevYear) + 1)) } style={{
-                                    
-                                        marginLeft: 20
-                                    }}>
-                                        <FontAwesome name='angle-right' color={"#000"} size={28} />
-                                    </TouchableOpacity>
-                                </View>
-                               
-                            </View>
-
-                            <View style={{
-                                marginTop: 20, 
-                                alignItems: "center"
-                            }}>
-
-                                {
-                                   months &&  months.map((item, index) => {
-
-                                            return (
-                                                <TouchableOpacity disabled={ openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? true :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? true : false  } onPress={() => dismissModal(index)} style={{
-                                                    paddingVertical: 15, 
-                                                    alignItems: "center", 
-                                                    flexDirection: "row", 
-                                                    justifyContent: "space-between", 
-                                                    borderBottomWidth: 1, 
-                                                    borderBottomColor: "#ccc", 
-                                                    width: "100%",
-                                                    alignItems: "center"
-                                                }} key={index}>
-                                                    <Text style={{
-                                                        fontFamily: FONTS.ligth, 
-                                                        color: openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" : "#000",
-                                                        fontSize: 15
-                                                    }}>
-                                                        {item.label}
-                                                    </Text>
-                                                    <FontAwesome name='angle-right' size={25} color={openFor  === "container" && (cYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" :  openFor  === "kilos" && (kYear === new Date().getFullYear() && index < new Date().getMonth()) ? "gray" : "#000"} />
-                                                </TouchableOpacity>
-                                            )
-
-                                    })
-                                }
-
-                            </View>
-
-                    </ScrollView>
-                </View>
-
-            </View>
-
-
-        </View>
-
-    </Modal>
-
-    <View style={{
-        width: SIZES.width, 
-        height: SIZES.height, 
-        backgroundColor: "rgba(0,0,0,0.6)", 
-        alignItems: "center", 
-        justifyContent: "center"
-    }} >
-        <View style={{
-            backgroundColor: "#fff", 
-            width: SIZES.width - 60, 
-            borderRadius: 12, 
-            paddingHorizontal: 15,
-            paddingVertical: 15
-        }} {...styles.shadow}>
-        
-        <View style={{
-            flexDirection: "row", 
-            paddingBottom: 20, 
-            alignItems: "center"
-        }}>
-            <TouchableOpacity onPress={() => setModalVisible6(false)} style={{
-                flexDirection: "row"
-            }}>
-            
-                    <AntDesign name='left' size={25} color={COLORS.primary}  />
-        
-            </TouchableOpacity> 
-        </View>
-       
-
-
-{
-                    active === "container" && <View>
-
-                        <SelectItem1 
-                            label1="Sélectionnez un mois de départ"
-                            label2={`${months.filter(item => item.value === cMonth)[0].label} ${cYear}`}
-                            onPress={() => { setCurrentSelect("c"); open("container")}}
-                        />
-
-                        <SelectItem1 
-                            label1="Pays de départ"
-                            label2={cDCountry2}
-                            onPress={() => {setOpenFor("container"); setType("d"); setModalVisible2(true)}}
-                            marginTop={10}
-                        />  
-
-                         <SelectItem1 
-                            label1="Pays d'arrivée"
-                            label2={cACountry2}
-                            onPress={() => {setOpenFor("container"); setType("a"); setModalVisible2(true)}}
-                            marginTop={10}
-                        />    
-
-                        <Button1 
-
-                            backgroundColor={COLORS.primary}
-                            borderRadius={8}
-                            label="Rechercher"
-                            textColor="#fff"
-                            fontFamily="AristotelicaProTx-Rg"
-                            fontSize={SIZES.height * 0.03}
-                            imagePath= {require("../assets/images/search.png")}
-                            iconColor="#fff"
-                            iconSize={SIZES.height * 0.035}
-                            onPress = {onSearch}
-                        
-                        />
-
-
-
-                    </View>
-                }
-
-                {
-                    active === "kilos" && <View>
-
-                        <SelectItem1 
-                            label1="Sélectionnez un mois de départ"
-                            label2={`${months.filter(item => item.value === kMonth)[0].label} ${kYear}`}
-                            onPress={() => { open("kilos")}}
-                        />
-
-                        <SelectItem1 
-                            label1="Ville de départ"
-                            label2={searchKilosStartCity}
-                            onPress={() => {setOpenFor("kilos"); setType("d"); setModalVisible2(true)}}
-                            marginTop={10}
-                        />  
-
-                         <SelectItem1 
-                            label1="Ville d'arrivée"
-                            label2={searchKilosEndCity}
-                            onPress={() => {setOpenFor("kilos"); setType("a"); setModalVisible2(true)}}
-                            marginTop={10}
-                        />    
-
-                         <Button1 
-
-                            backgroundColor={COLORS.primary}
-                            borderRadius={12}
-                            label="Rechercher"
-                            textColor="#fff"
-                            fontFamily="AristotelicaProTx-Rg"
-                            fontSize={SIZES.height * 0.03}
-                            imagePath= {require("../assets/images/search.png")}
-                            iconColor="#fff"
-                            iconSize={SIZES.height * 0.035}
-                            onPress = {onSearch}
-                        
-                        />
-
-                        </View>
-                }
-
-        </View>
-    </View>
-</Modal>
 
 
         <View style={{
@@ -1691,7 +1102,7 @@ transparent={true}
                                 fontSize: SIZES.h5, 
                                 color: COLORS.orange, 
                                 marginTop: Platform.OS === "ios" ? 3 : 0
-                            }}> {total} Disponibilitées en kilos...</Text>}
+                            }}> {total} {language === "English" ? "Available kilos..." : "Disponibilitées en kilos..."}</Text>}
                             </View>
                         </View>
 
@@ -1716,12 +1127,12 @@ transparent={true}
             }}
             ListFooterComponent={renderLoader}
             onEndReached={loadMoreItem}
-            renderItem={({item}) => {
+            renderItem={({item, index}) => {
 
                 if(flatLoading) return <View />
 
                 return (
-                    <AnnounceBlock key={item._id} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
+                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
                     date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code} />
                 )
             }}
@@ -2597,7 +2008,7 @@ transparent={true}
                             color: COLORS.primary , 
                             fontSize: 11, 
                             marginTop: 5
-                        }}>Déménageurs</Text>
+                        }}>{language === "English" ? "Movers" : "Déménageurs"}</Text>
                     </View>
                 </TouchableOpacity> */}
             </View>
@@ -2611,20 +2022,20 @@ transparent={true}
                     active === "container" && <View>
 
                        {/* <SelectItem1 
-                            label1="Sélectionnez un mois de départ"
+                            label1={language === "English" ? "Select a departure month" : "Sélectionnez un mois de départ"}
                             label2={`${months.filter(item => item.value === cMonth)[0].label} ${cYear}`}
                             onPress={() => { setCurrentSelect("c"); open("container")}}
                         />
 
                         <SelectItem1 
-                            label1="Ville de départ"
+                            label1={language === "English" ? "Departure city" : "Ville de départ"}
                             label2={searchContainerStartCity}
                             onPress={() => {setOpenFor("container"); setType("d"); setModalVisible2(true)}}
                             marginTop={10}
                         />  
 
                          <SelectItem1 
-                            label1="Ville d'arrivée"
+                            label1={language === "English" ? "Arrival city" : "Ville d'arrivée"}
                             label2={searchContainerEndCity}
                             onPress={() => {setOpenFor("container"); setType("a"); setModalVisible2(true)}}
                             marginTop={10}
@@ -2695,20 +2106,20 @@ transparent={true}
                     active === "kilos" && <View>
 
                      {/*}   <SelectItem1 
-                            label1="Sélectionnez un mois de départ"
+                            label1={language === "English" ? "Select a departure month" : "Sélectionnez un mois de départ"}
                             label2={`${months.filter(item => item.value === kMonth)[0].label} ${kYear}`}
                             onPress={() => { open("kilos")}}
                         />
 
                         <SelectItem1 
-                            label1="Ville de départ"
+                            label1={language === "English" ? "Departure city" : "Ville de départ"}
                             label2={searchKilosStartCity}
                             onPress={() => {setOpenFor("kilos"); setType("d"); setModalVisible2(true)}}
                             marginTop={10}
                         />  
 
                          <SelectItem1 
-                            label1="Ville d'arrivée"
+                            label1={language === "English" ? "Arrival city" : "Ville d'arrivée"}
                             label2={searchKilosEndCity}
                             onPress={() => {setOpenFor("kilos"); setType("a"); setModalVisible2(true)}}
                             marginTop={10}
@@ -2778,13 +2189,13 @@ transparent={true}
 
                             <SelectItem1 
 
-                                label1="Pays"
+                                label1={language === "English" ? "Country" : "Pays"}
                                 label2={transitaireCountry}
                              />
 
                              <SelectItem1 
 
-                                label1="Ville d'arrivée"
+                                label1={language === "English" ? "Arrival city" : "Ville d'arrivée"}
                                 label2={transitaireCity}
                                 marginTop={10}
                              />
@@ -2793,7 +2204,7 @@ transparent={true}
 
                                 backgroundColor={COLORS.primary}
                                 borderRadius={12}
-                                label="Rechercher"
+                                label={language === "English" ? "Search" : "Rechercher"}
                                 textColor="#fff"
                                 fontFamily="AristotelicaProTx-Bld"
                                 fontSize={16}
@@ -2811,13 +2222,13 @@ transparent={true}
 
                             <SelectItem1 
 
-                                label1="Pays"
+                                label1={language === "English" ? "Country" : "Pays"}
                                 label2={demenageurCountry}
                              />
 
                              <SelectItem1 
 
-                                label1="Ville"
+                                label1={language === "English" ? "City" : "Ville"}
                                 label2={demenageurCity}
                                 marginTop={10}
                              />
@@ -2826,7 +2237,7 @@ transparent={true}
 
                                 backgroundColor={COLORS.primary}
                                 borderRadius={12}
-                                label="Rechercher"
+                                label={language === "English" ? "Search" : "Rechercher"}
                                 textColor="#fff"
                                 fontFamily="AristotelicaProTx-Bld"
                                 fontSize={16}
@@ -2921,11 +2332,11 @@ transparent={true}
         }}>
 
         {
-            containers.map((item) => {
+            containers.map((item, idx) => {
 
                     return (
-                        <AnnounceBlock key={item._id} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                        date={item.dateOfDeparture} name={item.user && item.user.name} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} 
+                        <AnnounceBlock key={item._id} index={idx} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => navigation.navigate("Details", {_id: item._id})}
+                        date={item.dateOfDeparture} name={item.user && item.user.name} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})} />
                     )
             })
@@ -3002,10 +2413,10 @@ transparent={true}
         }}>
 
         {
-            kilos.map((item) => {
+            kilos.map((item, idx) => {
 
                     return (
-                        <AnnounceBlock key={item._id} userId={item.userId} status="kilos" city1={item.startCity} city2={item.endCity}
+                        <AnnounceBlock key={item._id} index={idx} userId={item.userId} status="kilos" city1={item.startCity} city2={item.endCity}
                         date={item.dateOfDeparture}  datee={item.date} onPress= {() => navigation.navigate("Details", {_id: item._id})}
                         company={item.company} views={item.views} startCity={ item.startCity2 && item.startCity2.code} endCity={item.endCity2 &&  item.endCity2.code}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})}  />

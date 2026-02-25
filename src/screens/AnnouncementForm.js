@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ActivityIndicator, Image, ImageBackground, Modal, PermissionsAndroid, Platform, Linking, Alert, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
 import { COLORS, conteneurs, FONTS, kilos, SIZES } from '../constants/theme';
 import Feather from "react-native-vector-icons/Feather"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
@@ -66,7 +67,7 @@ LocaleConfig.locales['fr'] = {
   };
 
 
-  const devises = [
+  const getDevises = (language) => [
     {
       "code": "XAF",
       "label": "Franc CFA (BEAC)",
@@ -81,7 +82,7 @@ LocaleConfig.locales['fr'] = {
     },
     {
       "code": "USD",
-      "label": "Dollar américain",
+      "label": language === "English" ? "US Dollar" : "Dollar américain",
       "value": "$",
       "countries": ["États-Unis", "Équateur", "El Salvador", "Zimbabwe"]
     },
@@ -93,37 +94,37 @@ LocaleConfig.locales['fr'] = {
     },
     {
       "code": "GBP",
-      "label": "Livre sterling",
+      "label": language === "English" ? "British Pound" : "Livre sterling",
       "value": "£",
       "countries": ["Royaume-Uni"]
     },
     {
       "code": "NGN",
-      "label": "Naira nigérian",
+      "label": language === "English" ? "Nigerian Naira" : "Naira nigérian",
       "value": "₦",
       "countries": ["Nigeria"]
     },
     {
       "code": "KES",
-      "label": "Shilling kényan",
+      "label": language === "English" ? "Kenyan Shilling" : "Shilling kényan",
       "value": "KSh",
       "countries": ["Kenya"]
     },
     {
       "code": "ZAR",
-      "label": "Rand sud-africain",
+      "label": language === "English" ? "South African Rand" : "Rand sud-africain",
       "value": "R",
       "countries": ["Afrique du Sud", "Namibie", "Lesotho", "Eswatini"]
     },
     {
       "code": "GHS",
-      "label": "Cedi ghanéen",
+      "label": language === "English" ? "Ghanaian Cedi" : "Cedi ghanéen",
       "value": "₵",
       "countries": ["Ghana"]
     },
     {
       "code": "CDF",
-      "label": "Franc congolais",
+      "label": language === "English" ? "Congolese Franc" : "Franc congolais",
       "value": "FC",
       "countries": ["République démocratique du Congo"]
     }
@@ -167,7 +168,7 @@ export default function AnnouncementForm({route, navigation}) {
     const [kDCities, setKDCities] = useState([]); 
     const [load, setLoad] = useState(false);
     const {value, _id} = route.params; 
-    const {laFonctionGet, postFunction, postAvecFichier, postWithFile} = useFetchFunctions()
+    const {laFonctionGet, postFunction, isTabBarVisible, postAvecFichier, postWithFile} = useFetchFunctions()
     const [announcementKiloStartCity, setAnnouncementKiloStartCity] = useState(""); 
     const [announcementKiloEndCity, setAnnouncementKiloEndCity] = useState(""); 
     const [announcementContainerStartCity, setAnnouncementContainerStartCity] = useState(""); 
@@ -187,7 +188,7 @@ export default function AnnouncementForm({route, navigation}) {
     const [containerDescription, setContainerDescription] = useState(""); 
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false); 
-    const {setIsTabBarVisible, isTabBarVisible, token, setRefresh, setRefreshModify, refreshModify} = useContext(AuthContext); 
+    const {token, setRefresh, setRefreshModify, refreshModify, language} = useContext(AuthContext);
     const [medias, setMedias] = useState([]);
     const [pdf, setPdf] = useState(null);
     const [good, setGood] = useState(false);
@@ -215,12 +216,6 @@ export default function AnnouncementForm({route, navigation}) {
     };
     
 
-    const handleFocusChange = (focused) => {
-        
-        setIsTabBarVisible(focused);
-        console.log(focused);
-
-  };
 
 
   useEffect(() => {
@@ -424,10 +419,10 @@ useEffect(() => {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         {
-          title: 'Permission d\'accès à la galerie photo',
-          message: 'Cette application a besoin d\'accéder à votre galerie photo.',
-          buttonNeutral: 'Plus tard',
-          buttonNegative: 'Annuler',
+          title: language === "English" ? 'Photo gallery access permission' : 'Permission d\'accès à la galerie photo',
+          message: language === "English" ? 'This app needs access to your photo gallery.' : 'Cette application a besoin d\'accéder à votre galerie photo.',
+          buttonNeutral: language === "English" ? 'Ask Me Later' : 'Plus tard',
+          buttonNegative: language === "English" ? 'Cancel' : 'Annuler',
           buttonPositive: 'OK',
         },
       ); 
@@ -547,11 +542,11 @@ useEffect(() => {
       
             if (values.includes(PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN)) {
               Alert.alert(
-                "Permission bloquée",
-                "Certaines permissions sont bloquées. Veuillez les activer manuellement dans les paramètres.",
+                language === "English" ? "Permission blocked" : "Permission bloquée",
+                language === "English" ? "Some permissions are blocked. Please enable them manually in settings." : "Certaines permissions sont bloquées. Veuillez les activer manuellement dans les paramètres.",
                 [
-                  { text: "Annuler", style: "cancel" },
-                  { text: "Ouvrir les paramètres", onPress: () => Linking.openSettings() }
+                  { text: language === "English" ? "Cancel" : "Annuler", style: "cancel" },
+                  { text: language === "English" ? "Open settings" : "Ouvrir les paramètres", onPress: () => Linking.openSettings() }
                 ]
               );
               return;
@@ -588,7 +583,7 @@ useEffect(() => {
 
                 }else{
 
-                        alert("Veillez sélectionner une ville");
+                        alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                 }
           
             }
@@ -604,7 +599,7 @@ useEffect(() => {
 
                 }else{
 
-                        alert("Veillez sélectionner une ville");
+                        alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                 }
           
             }
@@ -622,7 +617,7 @@ useEffect(() => {
 
                 }else{
 
-                        alert("Veillez sélectionner une ville");
+                        alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                 }
           
             }
@@ -638,7 +633,7 @@ useEffect(() => {
 
                 }else{
 
-                        alert("Veillez sélectionner une ville");
+                        alert(language === "English" ? "Please select a city" : "Veuillez sélectionner une ville");
                 }
           
             }
@@ -905,7 +900,7 @@ const onValidDate = () => {
 
     }else{
 
-        alert("Veuillez au moins sélectionner une date");
+        alert(language === "English" ? "Please select a date" : "Veuillez au moins sélectionner une date");
     }
 }
 
@@ -933,7 +928,7 @@ const onRegister = async () => {
 
                     if(!finalDate){
 
-                        setDateError("Veuillez choisir la date de départ du vol"); 
+                        setDateError(language === "English" ? "Please select the flight departure date" : "Veuillez choisir la date de départ du vol");
                         setLoading(false)
                         setTimeout(() => {
                             setErrorMessage("");
@@ -1051,7 +1046,7 @@ const onRegister = async () => {
 
                                         if(data && data.status === 0){
 
-                                            setText("Votre annonce a été modifié avec succès!");
+                                            setText(language === "English" ? "Your listing has been updated successfully!" : "Votre annonce a été modifiée avec succès!");
                                             setVisible(true); 
                                             setRefreshModify(!refreshModify);
                                                 
@@ -1132,7 +1127,7 @@ const onRegister = async () => {
 
         if(!finalDate){
 
-            setErrorMessage("Veuillez choisir la date de départ du vol"); 
+            setErrorMessage(language === "English" ? "Please select the flight departure date" : "Veuillez choisir la date de départ du vol");
             setLoading(false)
             setTimeout(() => {
                 setErrorMessage("");
@@ -1207,7 +1202,7 @@ const onRegister = async () => {
                          if(annonce.draft[0] === urri){
  
                                  setLoading(false);
-                                 setErrorMessage("Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
+                                 setErrorMessage(language === "English" ? "Due to your changes, please upload a new Draft/BL" : "Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
                                  setTimeout(() => {
                                     setErrorMessage("")
                                  }, 6000);
@@ -1225,7 +1220,7 @@ const onRegister = async () => {
                      if(annonce.draft[0] === urri){
  
                              setLoading(false);
-                             setErrorMessage("Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
+                             setErrorMessage(language === "English" ? "Due to your changes, please upload a new Draft/BL" : "Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
                              setTimeout(() => {
                                 setErrorMessage("")
                              }, 6000);
@@ -1243,7 +1238,7 @@ const onRegister = async () => {
                      if(annonce.draft[0] === urri){
  
                              setLoading(false);
-                             setErrorMessage("Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
+                             setErrorMessage(language === "English" ? "Due to your changes, please upload a new Draft/BL" : "Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
                              setTimeout(() => {
                                 setErrorMessage("")
                              }, 6000);
@@ -1263,7 +1258,7 @@ const onRegister = async () => {
              if(annonce.draft[0] === urri){
  
                      setLoading(false);
-                     setErrorMessage("Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
+                     setErrorMessage(language === "English" ? "Due to your changes, please upload a new Draft/BL" : "Suite à vos modifications, veuillez téléverser un nouveau Draft/Bl"); 
                      setTimeout(() => {
                         setErrorMessage("")
                      }, 6000);
@@ -1339,7 +1334,7 @@ const onRegister = async () => {
 
               if(response.data && response.data.status === 0){
        
-                setText("Votre annonce a été modifié avec succès!, elle réapparaîtra dans les publications après validation.");
+                setText(language === "English" ? "Your listing has been updated successfully! It will reappear in publications after validation." : "Votre annonce a été modifiée avec succès!, elle réapparaîtra dans les publications après validation.");
                 setVisible(true); 
                 setLoading(false);
                 setRefreshModify(!refreshModify);
@@ -1439,7 +1434,7 @@ const onRegister = async () => {
 
               if(response.data && response.data.status === 0){
        
-                setText("Votre annonce a été modifié avec succès!, elle réapparaîtra dans les publications après validation.");
+                setText(language === "English" ? "Your listing has been updated successfully! It will reappear in publications after validation." : "Votre annonce a été modifiée avec succès!, elle réapparaîtra dans les publications après validation.");
                 setVisible(true); 
                 setLoading(false);
                 setRefreshModify(!refreshModify);
@@ -1705,7 +1700,7 @@ if (good) {
                     fontFamily: FONTS.regular, 
                     color: "#aaa", 
                     fontSize: SIZES.h6
-                  }}>Caméra</Text>
+                  }}>{language === "English" ? "Camera" : "Caméra"}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={pickMedia} style={{
@@ -1765,7 +1760,7 @@ if (good) {
       >
         <View style={styles.overlay}>
           <View style={styles.infoBox}>
-            <Text style={styles.title}>Suucès</Text>
+            <Text style={styles.title}>{language === "English" ? "Success" : "Succès"}</Text>
             <Text style={styles.message}>
               {text}
             </Text>
@@ -1838,14 +1833,14 @@ if (good) {
                             fontSize: SIZES.h2, 
                             textAlign: "center",
                             color: COLORS.primary
-                        }}>Choisir la ville {type === "d" ? "de départ" : "d'arrivée"}</Text>
+                        }}>{language === "English" ? ("Select the " + (type === "d" ? "departure" : "arrival") + " city") : ("Choisir la ville " + (type === "d" ? "de départ" : "d'arrivée"))}</Text>
                         <Text style={{
                             fontFamily: FONTS.ligth, 
                             fontSize: SIZES.h6, 
                             color: COLORS.primary, 
                             marginTop: 8, 
                             textAlign: "center"
-                        }}>Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville</Text>
+                        }}>{language === "English" ? "Please select the country first, then choose the city" : "Veuillez d'abord sélectionner le pays, ensuite vous choisirez la ville"}</Text>
 
                     </View>
 
@@ -1855,7 +1850,7 @@ if (good) {
                     }}>
                         <Dropdown
                             label="Pays"
-                            placeholder='Sélectionnez le pays'
+                            placeholder={language === "English" ? "Select the country" : "Sélectionnez le pays"}
                             options={countries.map((country) => ({
                                 label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
                                 value: country.value,
@@ -1867,11 +1862,6 @@ if (good) {
                             dropdownStyle={{
                             borderColor: COLORS.middle_blue, 
                             backgroundColor: COLORS.gray
-                            }}
-                            itemStyle={{
-                                fontFamily: FONTS.regular,
-                                color: "blue", // Couleur de votre choix
-                                fontSize: SIZES.h5,
                             }}
                             labelStyle={{
                                 fontFamily: FONTS.bold, 
@@ -1904,7 +1894,7 @@ if (good) {
                     }}>
                        { load ? <ActivityIndicator size="large" />  : <Dropdown
                             label="Ville"
-                            placeholder='Sélectionnez la ville'
+                            placeholder={language === "English" ? "Select the city" : "Sélectionnez la ville"}
                             options={value === "container" ? type === "a" ? 
                             cACities.map((country) => ({
                                 label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
@@ -2055,7 +2045,7 @@ if (good) {
                             fontSize: 15, 
                             fontFamily: FONTS.bold
                         }}>
-                            Validez la date
+                            {language === "English" ? "Confirm date" : "Validez la date"}
                         </Text>
 
                        </TouchableOpacity>
@@ -2081,8 +2071,8 @@ if (good) {
                 borderBottomColor: COLORS.gray
             }} />
 
-            <View style={{
-                marginTop: 15, 
+            <Animated.View entering={FadeInDown.duration(400).springify().damping(18)} style={{
+                marginTop: 15,
                 paddingHorizontal: 10
             }}>
 
@@ -2090,32 +2080,32 @@ if (good) {
                     <Feather name='chevron-left' size={SIZES.width * 0.08} color="#fff" />
                 </TouchableOpacity>
 
-            </View>
+            </Animated.View>
 
-            <View style={{
-                marginTop: 25, 
-                alignItems: "center", 
+            <Animated.View entering={FadeInDown.delay(120).duration(450).springify().damping(18)} style={{
+                marginTop: 25,
+                alignItems: "center",
                 paddingHorizontal: 25
             }}>
 
                 <View >
                     <Text style={{
-                        fontFamily: FONTS.bold, 
-                        color: "#fff", 
-                        fontSize: SIZES.h2, 
+                        fontFamily: FONTS.bold,
+                        color: "#fff",
+                        fontSize: SIZES.h2,
                         textAlign: "center"
-                    }}>Créez votre annonce</Text>
+                    }}>{language === "English" ? "Create your listing" : "Créez votre annonce"}</Text>
                      <Text style={{
-                        fontFamily: FONTS.regular, 
-                        color: "#fff", 
+                        fontFamily: FONTS.regular,
+                        color: "#fff",
                         fontSize: SIZES.h5,
-                        lineHeight: SIZES.h5, 
-                        textAlign: "center", 
+                        lineHeight: SIZES.h5,
+                        textAlign: "center",
                         marginTop: 5
-                    }}> {value === "container" ? " En quelques minutes entrez en contact avec des milliers d'expéditeurs prêts à utiliser votre espace." : "Partagez vos kilos disponibles avec des personnes dans votre ville."}</Text>
+                    }}> {language === "English" ? (value === "container" ? "In just a few minutes, connect with thousands of shippers ready to use your space." : "Share your available kilos with people in your city.") : (value === "container" ? " En quelques minutes entrez en contact avec des milliers d'expéditeurs prêts à utiliser votre espace." : "Partagez vos kilos disponibles avec des personnes dans votre ville.")}</Text>
                 </View>
 
-            </View>
+            </Animated.View>
 
             <View style={{
                 marginTop: Platform.OS === "ios" ? 40 : 30 , 
@@ -2127,18 +2117,18 @@ if (good) {
                 borderTopRightRadius: 40
             }}>
 
-                <View style={{
-                    flexDirection: "row", 
-                    
+                <Animated.View entering={FadeInUp.delay(200).duration(450).springify().damping(18)} style={{
+                    flexDirection: "row",
+
                 }}>
                     <Pressable onPress={() => {setType("d"); setModalVisible(true)}} style={{
-                        width: SIZES.width/2 - 20, 
-                        backgroundColor: COLORS.input_blue, 
-                        
-                        borderRadius: 10, 
-                        borderWidth: 1, 
-                        borderColor: COLORS.other_blue, 
-                        paddingVertical:  Platform.OS === "ios" ? 10 : 8, 
+                        width: SIZES.width/2 - 20,
+                        backgroundColor: COLORS.input_blue,
+
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: COLORS.other_blue,
+                        paddingVertical:  Platform.OS === "ios" ? 10 : 8,
                         paddingHorizontal: 10
                     }}>
                         <Text style={{
@@ -2146,7 +2136,7 @@ if (good) {
                                 fontSize: SIZES.h7, 
                                 lineHeight: SIZES.h7,
                                 color: COLORS.textInput
-                            }}>Pays de départ</Text>
+                            }}>{language === "English" ? "Departure country" : "Pays de départ"}</Text>
 
                     {value === "container" ?  <Text style={{
                             marginTop: Platform.OS === "ios" ? 10 : 4, 
@@ -2194,7 +2184,7 @@ if (good) {
                                 lineHeight: SIZES.h7, 
                                 color: COLORS.textInput, 
                                 
-                            }}>Ville de départ</Text>
+                            }}>{language === "English" ? "Departure city" : "Ville de départ"}</Text>
                            <Text style={{
                             marginTop: Platform.OS === "ios" ? 10 : 4, 
                             fontFamily: FONTS.ligth, 
@@ -2214,12 +2204,12 @@ if (good) {
                         </TouchableOpacity>
 
                     </Pressable>
-                    
-                </View>
 
-                <View style={{
-                    flexDirection: "row", 
-             
+                </Animated.View>
+
+                <Animated.View entering={FadeInUp.delay(300).duration(450).springify().damping(18)} style={{
+                    flexDirection: "row",
+
                     marginTop: 10
                 }}>
                     <Pressable onPress={() => {setType("a"); setModalVisible(true)}} style={{
@@ -2237,7 +2227,7 @@ if (good) {
                                 fontSize: SIZES.h7, 
                                 lineHeight: SIZES.h7,
                                 color: COLORS.textInput
-                            }}>Pays de destination </Text>
+                            }}>{language === "English" ? "Destination country" : "Pays de destination"} </Text>
 
                         {value === "container" ?  <Text style={{
                             marginTop: Platform.OS === "ios" ? 10 : 3, 
@@ -2285,7 +2275,7 @@ if (good) {
                                 fontSize:  SIZES.h7,
                                 lineHeight: SIZES.h7, 
                                 color: COLORS.textInput
-                            }}>Ville de destination </Text>
+                            }}>{language === "English" ? "Destination city" : "Ville de destination"} </Text>
                         <Text style={{
                             marginTop: Platform.OS === "ios"  ? 10 : 4, 
                             fontFamily: FONTS.ligth, 
@@ -2304,40 +2294,41 @@ if (good) {
                         </TouchableOpacity>
 
                     </Pressable>
-                    
-                </View>
+
+                </Animated.View>
 
                 {
                     citiesError && <ErrorMessage left={true}  errorMessage={citiesError}  />
                 }
 
-                <View style={{
-                    marginTop: 25, 
+                <Animated.View entering={FadeInUp.delay(400).duration(450).springify().damping(18)} style={{
+                    marginTop: 25,
                     paddingRight: 65
                 }}>
                     <Text style={{
-                        fontFamily: FONTS.bold, 
-                        color: COLORS.primary, 
-                        fontSize: SIZES.h5, 
+                        fontFamily: FONTS.bold,
+                        color: COLORS.primary,
+                        fontSize: SIZES.h5,
                         lineHeight: SIZES.h5
-                    }}>{value === "container" ? "Sélectionnez la date de départ de votre container" : "Sélectionez votre date de départ"} 
+                    }}>{language === "English" ? (value === "container" ? "Select your container departure date" : "Select your departure date") : (value === "container" ? "Sélectionnez la date de départ de votre container" : "Sélectionez votre date de départ")}
                      <Text style={{color: "red", fontSize: 14, fontFamily: FONTS.ligth, marginLeft: 5}}> * </Text> </Text>
-                </View>
+                </Animated.View>
 
                 {
                     dateError && <ErrorMessage errorMessage={dateError} left={true} />
                 }
 
+                <Animated.View entering={FadeInUp.delay(480).duration(450).springify().damping(18)}>
                 <TouchableOpacity onPress={() => setOpen(true)} style={{
-                    marginTop: 10, 
-                    width: "100%", 
-                    backgroundColor: COLORS.input_blue, 
-                   
-                    borderRadius: 10, 
-                    borderWidth: 1, 
-                    borderColor: dateError ? "red" : COLORS.other_blue,  
-                    flexDirection: "row", 
-                    
+                    marginTop: 10,
+                    width: "100%",
+                    backgroundColor: COLORS.input_blue,
+
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: dateError ? "red" : COLORS.other_blue,
+                    flexDirection: "row",
+
                 }}> 
 
                 <View style={{
@@ -2349,7 +2340,7 @@ if (good) {
                             fontFamily: FONTS.ligth, 
                             fontSize: SIZES.height * 0.015, 
                             color: COLORS.other_blue
-                    }}>Cliquez sur l'icône calendrier</Text>
+                    }}>{language === "English" ? "Click the calendar icon" : "Cliquez sur l'icône calendrier"}</Text>
 
                     <Text style={{
                          fontFamily: FONTS.regular, 
@@ -2373,6 +2364,7 @@ if (good) {
                 
 
                 </TouchableOpacity>
+                </Animated.View>
 
                 <View >
                 <DatePicker
@@ -2392,43 +2384,46 @@ if (good) {
                 />
                 </View>
 
-                <View style={{
+                <Animated.View entering={FadeInUp.delay(560).duration(450).springify().damping(18)} style={{
                     marginTop: 15
-                }}> 
+                }}>
 
 
                       { value === "container" &&  <Dropdown
-                            label={ "Sélectionnez une taille *"}
-                            placeholder='Faites un choix'
-                            options={conteneurs}
+                            label={language === "English" ? "Select a size *" : "Sélectionnez une taille *"}
+                            placeholder={language === "English" ? "Make a choice" : "Faites un choix"}
+                            options={conteneurs.map(item => ({
+                                ...item,
+                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{item.label}</Text>,
+                            }))}
                             selectedValue={pieds}
-                            
+
                             onValueChange={(value) => setPieds(value)}
                             primaryColor={COLORS.primary}
                             dropdownStyle={{
-                            borderColor: COLORS.other_blue, 
-                            backgroundColor: "#fff", 
+                            borderColor: COLORS.other_blue,
+                            backgroundColor: "#fff",
                             paddingHorizontal: 10
                             }}
                             labelStyle={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: SIZES.height * 0.015, 
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.height * 0.015,
                                 lineHeight: SIZES.height * 0.015,
                                 color: COLORS.primary
                             }}
                             placeholderStyle={{
-                                color: "rgba(0,0,0,0.7)", 
+                                color: "rgba(0,0,0,0.7)",
                                 fontFamily: FONTS.ligth
                             }}
                             isSearchable={true}
-                      
+
                             selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: COLORS.primary, 
+                                fontFamily: FONTS.regular,
+                                color: COLORS.primary,
                                 fontSize: 17
                             }}
-                            
-                            
+
+
                         />  }
 
 { value === "kilos" &&  
@@ -2458,11 +2453,9 @@ if (good) {
                     fontFamily: FONTS.ligth, 
                     color: COLORS.other_blue, 
                     fontSize: SIZES.height * 0.015, 
-                   }}>Saisissez le nombre de Kilos disponibles</Text>
-                   <TextInput 
+                   }}>{language === "English" ? "Enter available kilos" : "Saisissez le nombre de Kilos disponibles"}</Text>
+                   <TextInput
                         keyboardType="numeric"
-                        onFocus={() => handleFocusChange(true)}
-                        onBlur={() => handleFocusChange(false)}
                         value={kiloss}
                         onChangeText={setKiloss}
                         style={{
@@ -2500,42 +2493,45 @@ if (good) {
 
 
 }
-                </View>
+                </Animated.View>
 
             {
-                value === "kilos" && 
-                <View >
+                value === "kilos" &&
+                <Animated.View entering={FadeInUp.delay(640).duration(450).springify().damping(18)}>
 
                 <View style={{
                     marginTop: 10
                 }}> 
-                    <Dropdown 
-                        options={devises}
-                        label={ "Sélectionnez une devise"}
-                        placeholder='Faites un choix'
+                    <Dropdown
+                        options={getDevises(language).map(item => ({
+                            ...item,
+                            label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{item.label}</Text>,
+                        }))}
+                        label={language === "English" ? "Select a currency" : "Sélectionnez une devise"}
+                        placeholder={language === "English" ? "Make a choice" : "Faites un choix"}
                         selectedValue={devise}
-                        
+
                         onValueChange={(value) => setDevise(value)}
                         primaryColor={COLORS.primary}
                         dropdownStyle={{
-                        borderColor: COLORS.other_blue, 
-                        backgroundColor: "#fff", 
+                        borderColor: COLORS.other_blue,
+                        backgroundColor: "#fff",
                         paddingHorizontal: 10
                         }}
                         labelStyle={{
-                            fontFamily: FONTS.bold, 
-                            fontSize: SIZES.height * 0.015, 
+                            fontFamily: FONTS.bold,
+                            fontSize: SIZES.height * 0.015,
                             lineHeight: SIZES.height * 0.015,
                             color: COLORS.primary
                         }}
                         placeholderStyle={{
-                            color: "rgba(0,0,0,0.7)", 
+                            color: "rgba(0,0,0,0.7)",
                             fontFamily: FONTS.ligth
                         }}
-                  
+
                         selectedItemStyle={{
-                            fontFamily: FONTS.regular, 
-                            color: COLORS.primary, 
+                            fontFamily: FONTS.regular,
+                            color: COLORS.primary,
                             fontSize: 17
                         }}
                     />  
@@ -2545,7 +2541,7 @@ if (good) {
                     
                 }}>
                     <FormInput 
-                        label="Prix du Kilo"
+                        label={language === "English" ? "Price per kilo" : "Prix du Kilo"}
                         iconName="dollar"
                         isNumeric={true}
                         backgroundColor="#fff"
@@ -2561,7 +2557,7 @@ if (good) {
                     marginTop: 15
                 }}>
                     <FormInput 
-                        label="Compagnie aérienne"
+                        label={language === "English" ? "Airline" : "Compagnie aérienne"}
                         imagePath={require("../assets/images/avion1.png")}
                         backgroundColor="#fff"
                         value={company}
@@ -2574,7 +2570,7 @@ if (good) {
                     marginTop: 15
                 }}>
                     <FormInput 
-                        label="Plus de détail sur votre annonce"
+                        label={language === "English" ? "More details about your listing" : "Plus de détail sur votre annonce"}
                         iconName="edit"
                         value={kiloDescription}
                         onChangeText={setKiloDescription}
@@ -2583,17 +2579,17 @@ if (good) {
                         fontSize={SIZES.h6}
                     />
                 </View>
-                </View>
+                </Animated.View>
             }
 
             {
-                value === "container" && 
-                <View >
+                value === "container" &&
+                <Animated.View entering={FadeInUp.delay(640).duration(450).springify().damping(18)}>
                     <View style={{
                         marginTop: 15
                     }}>
                         <FormInput 
-                        label="Plus de détail sur votre annonce"
+                        label={language === "English" ? "More details about your listing" : "Plus de détail sur votre annonce"}
                         iconName="edit"
                         value={containerDescription}
                         onChangeText={setContainerDescription}
@@ -2613,7 +2609,7 @@ if (good) {
                               lineHeight: 17, 
                               width: SIZES.width - 100
                         }}>
-                            {medias.length > 0 ? "Cliquez sur l'icone pour modifier le draft / BL" : "Veuillez insérez votre draft / BL"}
+                            {medias.length > 0 ? (language === "English" ? "Click the icon to edit the draft / BL" : "Cliquez sur l'icone pour modifier le draft / BL") : (language === "English" ? "Please upload your draft / BL" : "Veuillez insérez votre draft / BL")}
                         </Text>
                         <View style={{
                             marginTop: 10, 
@@ -2664,28 +2660,46 @@ if (good) {
                             pdff && <View >
 
                                     <View style={{
-                                        marginBottom: 15, 
+                                        marginBottom: 15,
                                         marginTop: 6
                                     }}>
                                         <Text style={{
-                                              fontFamily: FONTS.regular, 
-                                              color: COLORS.primary, 
-                                              fontSize: SIZES.h5, 
+                                              fontFamily: FONTS.regular,
+                                              color: COLORS.primary,
+                                              fontSize: SIZES.h5,
                                               textAlign: "center"
-                                        }}>Votre fichier PDF <Text style={{
-                                            fontFamily: FONTS.bold, 
-                                            color: COLORS.primary, 
-                                            fontSize: SIZES.h5, 
-                                      }}> {photoNames[0]} </Text> a bien été sélectionné.</Text>
+                                        }}>{language === "English" ? "Your PDF file" : "Votre fichier PDF"} <Text style={{
+                                            fontFamily: FONTS.bold,
+                                            color: COLORS.primary,
+                                            fontSize: SIZES.h5,
+                                      }}> {photoNames[0]} </Text> {language === "English" ? "has been selected." : "a bien été sélectionné."}</Text>
                                     </View>
-                                    
-                                    <Image 
-                                        source={{uri: pdff.uri}}
-                                        style={{
-                                            width: "100%", 
-                                            height: 500
-                                        }}
-                                      />    
+
+                                    <View style={{position: "relative"}}>
+                                        <TouchableOpacity
+                                            onPress={() => {setPdff(null); setName(""); setPhotoNames([]);}}
+                                            style={{
+                                                position: "absolute",
+                                                top: 8,
+                                                right: 8,
+                                                zIndex: 10,
+                                                backgroundColor: "rgba(0,0,0,0.5)",
+                                                borderRadius: 15,
+                                                width: 30,
+                                                height: 30,
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}>
+                                            <AntDesign name="close" size={18} color="#fff" />
+                                        </TouchableOpacity>
+                                        <Image
+                                            source={{uri: pdff.uri}}
+                                            style={{
+                                                width: "100%",
+                                                height: 500
+                                            }}
+                                        />
+                                    </View>
 
                                 </View>
                         }
@@ -2694,43 +2708,59 @@ if (good) {
                             image && <View >
 
                                     <View style={{
-                                        marginBottom: 15, 
+                                        marginBottom: 15,
                                         marginTop: 6
                                     }}>
                                         <Text style={{
-                                              fontFamily: FONTS.regular, 
-                                              color: COLORS.primary, 
-                                              fontSize: SIZES.h5, 
-                                        }}>Votre Image  :</Text>
+                                              fontFamily: FONTS.regular,
+                                              color: COLORS.primary,
+                                              fontSize: SIZES.h5,
+                                        }}>{language === "English" ? "Your Image:" : "Votre Image :"}</Text>
                                     </View>
-                                    
 
-                                        <Image 
-
+                                    <View style={{position: "relative"}}>
+                                        <TouchableOpacity
+                                            onPress={() => {setImage(null); setName(""); setPhotoNames([]);}}
+                                            style={{
+                                                position: "absolute",
+                                                top: 8,
+                                                right: 8,
+                                                zIndex: 10,
+                                                backgroundColor: "rgba(0,0,0,0.5)",
+                                                borderRadius: 15,
+                                                width: 30,
+                                                height: 30,
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}>
+                                            <AntDesign name="close" size={18} color="#fff" />
+                                        </TouchableOpacity>
+                                        <Image
                                             source={{uri: image.uri}}
                                             style={{
-                                                width: "100%", 
-                                                height: SIZES.height/1.4, 
+                                                width: "100%",
+                                                height: SIZES.height/1.4,
                                                 resizeMode: "cover"
                                             }}
-                                            />
+                                        />
+                                    </View>
                                 </View>
                         }
 
                     </View>
 
-                </View>
+                </Animated.View>
             }
 
-            <View style={{
+            <Animated.View entering={FadeInUp.delay(720).duration(450).springify().damping(18)} style={{
                 marginTop: 25
             }}>
-                 <Button1 label="Soumettre mon annonce"   backgroundColor={COLORS.primary} 
+                 <Button1 label={language === "English" ? "Submit my listing" : "Soumettre mon annonce"}   backgroundColor={COLORS.primary} 
                     textColor="#fff" fontFamily={FONTS.regular} fontSize={23} 
                     borderRadius={12}
                     onPress={onRegister}
                  />
-            </View>
+            </Animated.View>
 
             {
                 errorMessage && <ErrorMessage errorMessage={errorMessage} />
