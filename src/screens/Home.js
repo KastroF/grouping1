@@ -1022,130 +1022,6 @@ transparent={true}
                         </View>
                 }
 
-        </View>
-    </View>
-</Modal>
-
-<Modal
-        visible={modalVisible5}
-        onRequestClose={() => {
-
-                setModalVisible5(false);
-        }}
-        animationType="slide"
-        transparent={true}
-    >
-
-
-        <View style={{
-            flex: 1, 
-            backgroundColor: COLORS.light_blue
-        }}>
-
-                    <View style={{
-                            flexDirection: "row", 
-                            alignItems: "center", 
-                            paddingVertical: 20, 
-                            paddingHorizontal: 15, 
-                            paddingTop: Platform.OS === "ios" ? 55 : 20, 
-                            shadowColor: '#000', // Couleur de l'ombre
-                            shadowOffset: { width: 0, height: 4 }, // Décalage de l'ombre
-                            shadowOpacity: 0.1, // Opacité de l'ombre (0 à 1)
-                            shadowRadius: 6, // Rayon de flou de l'ombre
-                            // Ombres pour Android
-                            elevation: 6, // Nécessaire pour Android, 
-                            backgroundColor: COLORS.middle_blue
-                        }}>
-                            <TouchableOpacity onPress={() => setModalVisible5(false)}>
-                                <AntDesign name='leftcircleo' color={COLORS.primary} size={SIZES.h1} />
-                            </TouchableOpacity>
-                            
-                        </View>
-
-        <FlatList
-
-            ListHeaderComponent={() => {
-
-                    return(
-                        <View style={{
-                            flexDirection: "row", 
-                            alignItems: "center", 
-                            paddingVertical: 20, 
-                            paddingHorizontal: 15, 
-                            justifyContent: "space-between"
-                        }}>
-                        <View style={{
-                            flexDirection: "row", 
-                            alignItems: "center", 
-                      
-                        }}>
-                            <View style={{
-                                flexDirection: "row", 
-                                alignItems: "center"
-                            }}>
-                            {
-                                currentType === "c" ? <Image source={require("../assets/images/container1.png")} style={{
-                                    height: 15, 
-                                    width: 30
-                                }} /> : <Image source={require("../assets/images/avion1.png")} style={{
-                                    height: 15, 
-                                    width: 30
-                                }} />
-                            }
-                           {currentType === "c" ? <Text style={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: SIZES.h5, 
-                                color: COLORS.primary, 
-                                marginTop: Platform.OS === "ios" ? 3 : 0
-                            }}> {total} Annonces conteneurs...</Text> :  <Text style={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: SIZES.h5, 
-                                color: COLORS.orange, 
-                                marginTop: Platform.OS === "ios" ? 3 : 0
-                            }}> {total} {language === "English" ? "Available kilos..." : "Disponibilitées en kilos..."}</Text>}
-                            </View>
-                        </View>
-
-                        <TouchableOpacity onPress={() => setModalVisible6(true) }>
-                            <Image 
-                                source={require("../assets/images/xxx.png")}
-                                style={{
-                                    height: 20, 
-                                    width: 30, 
-                                    resizeMode: "contain"
-                                }}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    )
-            }}
-            keyExtractor={item => item._id}
-            data={lesAnnonces}
-            contentContainerStyle={{
-                paddingHorizontal: 10, 
-                paddingBottom: 25
-            }}
-            ListFooterComponent={renderLoader}
-            onEndReached={loadMoreItem}
-            renderItem={({item, index}) => {
-
-                if(flatLoading) return <View />
-
-                return (
-                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
-                    date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code} />
-                )
-            }}
-        
-        />
-
-
-
-        </View>
-
-</Modal>
-
-
 <Modal
         visible={modalVisible2}
         onRequestClose={() => {
@@ -1503,7 +1379,128 @@ transparent={true}
         </View>
 
     </Modal>
+        </View>
+    </View>
+</Modal>
 
+<Modal
+        visible={modalVisible5}
+        onRequestClose={() => {
+
+                setModalVisible5(false);
+        }}
+        animationType="slide"
+        transparent={true}
+    >
+
+
+        <View style={{
+            flex: 1, 
+            backgroundColor: COLORS.light_blue
+        }}>
+
+                    <View style={{
+                            flexDirection: "row", 
+                            alignItems: "center", 
+                            paddingVertical: 20, 
+                            paddingHorizontal: 15, 
+                            paddingTop: Platform.OS === "ios" ? 55 : 20, 
+                            shadowColor: '#000', // Couleur de l'ombre
+                            shadowOffset: { width: 0, height: 4 }, // Décalage de l'ombre
+                            shadowOpacity: 0.1, // Opacité de l'ombre (0 à 1)
+                            shadowRadius: 6, // Rayon de flou de l'ombre
+                            // Ombres pour Android
+                            elevation: 6, // Nécessaire pour Android, 
+                            backgroundColor: COLORS.middle_blue
+                        }}>
+                            <TouchableOpacity onPress={() => setModalVisible5(false)}>
+                                <AntDesign name='leftcircleo' color={COLORS.primary} size={SIZES.h1} />
+                            </TouchableOpacity>
+                            
+                        </View>
+
+        <FlatList
+
+            ListHeaderComponent={() => {
+
+                    return(
+                        <View style={{
+                            flexDirection: "row", 
+                            alignItems: "center", 
+                            paddingVertical: 20, 
+                            paddingHorizontal: 15, 
+                            justifyContent: "space-between"
+                        }}>
+                        <View style={{
+                            flexDirection: "row", 
+                            alignItems: "center", 
+                      
+                        }}>
+                            <View style={{
+                                flexDirection: "row", 
+                                alignItems: "center"
+                            }}>
+                            {
+                                currentType === "c" ? <Image source={require("../assets/images/container1.png")} style={{
+                                    height: 15, 
+                                    width: 30
+                                }} /> : <Image source={require("../assets/images/avion1.png")} style={{
+                                    height: 15, 
+                                    width: 30
+                                }} />
+                            }
+                           {currentType === "c" ? <Text style={{
+                                fontFamily: FONTS.bold, 
+                                fontSize: SIZES.h5, 
+                                color: COLORS.primary, 
+                                marginTop: Platform.OS === "ios" ? 3 : 0
+                            }}> {total} Annonces conteneurs...</Text> :  <Text style={{
+                                fontFamily: FONTS.bold, 
+                                fontSize: SIZES.h5, 
+                                color: COLORS.orange, 
+                                marginTop: Platform.OS === "ios" ? 3 : 0
+                            }}> {total} {language === "English" ? "Available kilos..." : "Disponibilitées en kilos..."}</Text>}
+                            </View>
+                        </View>
+
+                        <TouchableOpacity onPress={() => setModalVisible6(true) }>
+                            <Image 
+                                source={require("../assets/images/xxx.png")}
+                                style={{
+                                    height: 20, 
+                                    width: 30, 
+                                    resizeMode: "contain"
+                                }}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    )
+            }}
+            keyExtractor={item => item._id}
+            data={lesAnnonces}
+            contentContainerStyle={{
+                paddingHorizontal: 10, 
+                paddingBottom: 25
+            }}
+            ListFooterComponent={renderLoader}
+            onEndReached={loadMoreItem}
+            renderItem={({item, index}) => {
+
+                if(flatLoading) return <View />
+
+                return (
+                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
+                    date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code} />
+                )
+            }}
+        
+        />
+
+
+
+        </View>
+
+</Modal>
     <Modal 
         visible={modalVisible3}
         onRequestClose={() => {
