@@ -1,43 +1,14 @@
-import { View, Text, StyleSheet, Image, Platform } from 'react-native'
-import React, { useRef } from 'react'
+import { View, Text, StyleSheet, Image, Platform, TouchableOpacity } from 'react-native'
+import React from 'react'
 import { FONTS, SIZES } from '../constants/theme'
 import { useFetchFunctions } from '../infrastructures/functions'
-import Animated, {
-  FadeInRight,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  runOnJS,
-} from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
-const AnimatedPressable = Animated.createAnimatedComponent(View);
-
-export default function Notification({message, notif, onClick, onClose, index = 0}) {
+export default function Notification({message, notif, onClick, onClose}) {
 
     const {timeAgo} = useFetchFunctions();
-    const pressScale = useSharedValue(1);
-    const hasAnimated = useRef(false);
-
-    const tapGesture = Gesture.Tap()
-      .onBegin(() => {
-        pressScale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
-      })
-      .onFinalize(() => {
-        pressScale.value = withSpring(1, { damping: 12, stiffness: 200 });
-      })
-      .onEnd(() => {
-        if (onClick) runOnJS(onClick)();
-      });
-
-    const pressStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: pressScale.value }],
-    }));
 
     return (
-    <Animated.View entering={!hasAnimated.current ? FadeInRight.delay(index * 80).duration(400).springify().damping(18) : undefined} onLayout={() => { hasAnimated.current = true; }}>
-    <GestureDetector gesture={tapGesture}>
-    <AnimatedPressable style={[styles.viewBlock, pressStyle]}>
+    <TouchableOpacity activeOpacity={0.7} onPress={onClick} style={styles.viewBlock}>
         <View style={styles.flexBoxx}>
         <View>
             <Image
@@ -74,14 +45,10 @@ export default function Notification({message, notif, onClick, onClose, index = 
                     { notif ?  message.body : message.firstMessage.text}
                 </Text>
         </View>
-       {notif ? <View style={{
-            marginLeft: 15
+       {notif ? <TouchableOpacity onPress={onClose} style={{
+            marginLeft: 5,
+            padding: 5,
         }}>
-            <GestureDetector gesture={Gesture.Tap().onEnd(() => { if (onClose) runOnJS(onClose)(); })}>
-            <Animated.View style={{
-                marginLeft: -10,
-                padding: 5,
-            }}>
                 <Image
                         source={require("../assets/images/close.png")}
                         style={{
@@ -90,9 +57,7 @@ export default function Notification({message, notif, onClick, onClose, index = 
                             resizeMode: "cover"
                         }}
                     />
-            </Animated.View>
-            </GestureDetector>
-        </View> : null}
+        </TouchableOpacity> : null}
 
         </View>
         <View style={{
@@ -107,9 +72,7 @@ export default function Notification({message, notif, onClick, onClose, index = 
 
            }}> { notif ? timeAgo(new Date(message.date)) : timeAgo(new Date(message.firstMessage.date)) } </Text>
         </View>
-    </AnimatedPressable>
-    </GestureDetector>
-    </Animated.View>
+    </TouchableOpacity>
 
   )
 }

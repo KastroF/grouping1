@@ -1,19 +1,11 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, FlatList, Image, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, Alert, FlatList, Image, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6"
 import { AuthContext } from '../navigation/AuthProvider'
 import { useFetchFunctions } from '../infrastructures/functions'
 import Notification from '../components/Notification'
 import { API } from '../config/api';
-import Animated, {
-  FadeInDown,
-  FadeInUp,
-  FadeIn,
-  FadeOut,
-  ZoomIn,
-  ZoomOut,
-} from 'react-native-reanimated';
 
 const GET_NOTIFS_URL = API.NOTIF_GET;
 const DELETE_NOTIF_URL = API.NOTIF_DELETE;
@@ -26,14 +18,11 @@ export default function Reception({navigation}) {
     const [messages, setMessages] = useState([]);
     const [startAt, setStart] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [currentId, setCurrentId] = useState("");
     const [loading, setLoading] = useState(false);
-    const hasAnimated = useRef(false);
+    const deleteIdRef = useRef(null);
 
     useEffect(() => {
 
-        // Reset badge et marquer les notifs comme lues
         setBadgee(0);
         if(token){
             laFonctionGet(API.NOTIF_VIEW, token);
@@ -46,7 +35,6 @@ export default function Reception({navigation}) {
                 setNotifications(data.notifs);
                 setMessages(data.messages);
                 setStart(data.startAt);
-                setTimeout(() => { hasAnimated.current = true; }, 800);
             }
 
         }, (err) => {
@@ -101,30 +89,31 @@ export default function Reception({navigation}) {
 
      }
 
-     const onRequest = () => {
+     const onDelete = (_id) => {
+        deleteIdRef.current = _id;
+        Alert.alert(
+            language === "English" ? "Confirmation" : "Confirmation",
+            language === "English" ? "By clicking confirm, you agree to remove this notification." : "En cliquant sur le bouton valider, vous confirmez le retrait de cette notification de l'interface.",
+            [
+                {
+                    text: language === "English" ? "Cancel" : "Annuler",
+                    style: "cancel"
+                },
+                {
+                    text: language === "English" ? "Confirm" : "Valider",
+                    onPress: () => {
+                        const idToDelete = deleteIdRef.current;
+                        setNotifications(prev => prev.filter(item => item._id !== idToDelete));
 
-            setLoading(true);
-
-            postFunction(DELETE_NOTIF_URL, {_id: currentId}, token).then((data) => {
-
-                console.log("deleteNotif response:", JSON.stringify(data));
-
-                setNotifications(prev => prev.filter(item => item._id !== currentId));
-                setModalVisible(false);
-                setLoading(false);
-
-            }, (err) => {
-
-                console.log("deleteNotif error:", err);
-                setModalVisible(false);
-                setLoading(false);
-
-            })
-     }
-
-     const onClose = (_id) => {
-        setCurrentId(_id);
-        setModalVisible(true);
+                        postFunction(DELETE_NOTIF_URL, {_id: idToDelete}, token).then((data) => {
+                            console.log("deleteNotif response:", JSON.stringify(data));
+                        }, (err) => {
+                            console.log("deleteNotif error:", err);
+                        })
+                    }
+                }
+            ]
+        );
      }
 
      const onGoing = (item) => {
@@ -144,97 +133,7 @@ export default function Reception({navigation}) {
         backgroundColor: COLORS.light_blue
     }}>
 
-    {/* Modal de confirmation anime */}
-    {modalVisible && (
-      <View style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          zIndex: 999,
-          elevation: 999,
-      }}>
-        <Animated.View
-          entering={FadeIn.duration(200)}
-          exiting={FadeOut.duration(150)}
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.4)",
-            paddingHorizontal: 35,
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <Animated.View
-            entering={ZoomIn.duration(300).springify().damping(15)}
-            exiting={ZoomOut.duration(200)}
-            style={{
-              backgroundColor: "#fff",
-              width: "100%",
-              borderRadius: 12,
-              overflow: 'hidden',
-            }}
-          >
-                <View style={{
-                    alignItems: "center",
-                    paddingVertical: 15
-                }}>
-                    <Text style={{
-                        fontFamily: FONTS.bold,
-                        color: COLORS.primary,
-                        fontSize: SIZES.h3
-                    }}>{language === "English" ? "Confirmation" : "Confirmation"}</Text>
-                </View>
-                <View style={{
-                    paddingHorizontal: 15,
-                    marginBottom: 15
-                }}>
-                    <Text style={{
-                        fontFamily: FONTS.regular,
-                        color: "rgba(0,0,0,0.8)",
-                        fontSize: SIZES.h5,
-                        lineHeight: SIZES.h3,
-                        textAlign: "center"
-                    }}>{language === "English" ? "By clicking confirm, you agree to remove this notification." : "En cliquant sur le bouton valider, vous confirmez le retrait de cette notification de l'interface."}</Text>
-                </View>
-                <View style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderTopColor: "#eee",
-                    borderTopWidth: 1
-                }}>
-                    <TouchableOpacity onPress={() => setModalVisible(false) } style={{
-                        paddingVertical: 15,
-                        alignItems: "center",
-                        width: "50%",
-                        borderRightColor: "#eee",
-                        borderRightWidth: 1
-                    }}>
-                        <Text style={{
-                            fontFamily: FONTS.bold,
-                            fontSize: SIZES.h5,
-                            color: "#FF3B30"
-                        }}>{language === "English" ? "Cancel" : "Annuler"}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity disabled={loading} onPress={() => onRequest() } style={{
-                        paddingVertical: 15,
-                        alignItems: "center",
-                        width: "50%",
-                    }}>
-                        {
-                            loading ? <ActivityIndicator /> :
-                        <Text  style={{
-                            fontFamily: FONTS.bold,
-                            fontSize: SIZES.h5,
-                            color: "#34C759"
-                        }}>{language === "English" ? "Confirm" : "Valider"}</Text>}
-                    </TouchableOpacity>
-                </View>
-          </Animated.View>
-        </Animated.View>
-      </View>
-    )}
-
-<Animated.View entering={!hasAnimated.current ? FadeInDown.duration(400) : undefined} style={{
+        <View style={{
             paddingTop: Platform.OS === "ios" ? 65 : 25,
             paddingBottom: 10,
             backgroundColor: "#fff",
@@ -278,7 +177,7 @@ export default function Reception({navigation}) {
 
             </View>
 
-        </Animated.View>
+        </View>
 
         <FlatList
 
@@ -294,14 +193,13 @@ export default function Reception({navigation}) {
                     return <Notification
                       message={item}
                       onClick={() => onClick(item.user._id)}
-                      index={index + (notifications.length > 0 ? notifications.length + 2 : 1)}
                     />
             }}
             ListHeaderComponent={() => {
 
                 return(
                     <View>
-                    <Animated.View entering={!hasAnimated.current ? FadeInUp.delay(200).duration(400) : undefined} style={{
+                    <View style={{
                         marginTop: 20,
                         flexDirection: "row",
                         alignItems: "center",
@@ -328,9 +226,9 @@ export default function Reception({navigation}) {
                                 placeholderTextColor={COLORS.middle_blue}
                             />
                         </View>
-                    </Animated.View>
+                    </View>
 
-                    { notifications.length > 0 ? <Animated.View entering={!hasAnimated.current ? FadeInUp.delay(300).duration(400) : undefined} style={{
+                    { notifications.length > 0 ? <View style={{
                         marginTop: 30
                     }}>
                         <View style={{
@@ -363,20 +261,19 @@ export default function Reception({navigation}) {
 
                                         return(
                                             <Notification
-                                              onClose={() => onClose(item._id)}
+                                              onClose={() => onDelete(item._id)}
                                               onClick={() => onGoing(item)}
                                               notif={true}
                                               message={item}
                                               key={item._id}
-                                              index={idx}
                                             />
                                         )
                                 })
                             }
                         </View>
-                    </Animated.View> : null}
+                    </View> : null}
 
-                   { messages.length > 0 ? <Animated.View entering={!hasAnimated.current ? FadeInUp.delay(400).duration(400) : undefined} style={{
+                   { messages.length > 0 ? <View style={{
                         marginTop: 30,
                         marginBottom: 10
                     }}>
@@ -401,13 +298,11 @@ export default function Reception({navigation}) {
                                 }}>Conversations</Text>
                             </View>
                         </View>
-                    </Animated.View> : null }
+                    </View> : null }
                 </View>
                 )
             }}
         />
-
-
 
     </View>
   )
