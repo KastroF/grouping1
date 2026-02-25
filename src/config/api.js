@@ -42,6 +42,11 @@ const API = {
   NOTIF_DELETE: `${BASE_URL}/api/notification/deletenotif`,
   NOTIF_NOT_READ: `${BASE_URL}/api/notification/notread`,
   NOTIF_VIEW: `${BASE_URL}/api/notification/viewnotifs`,
+
+  // Tracking
+  TRACKING_SUBSCRIBE: `${BASE_URL}/api/tracking/subscribe`,
+  TRACKING_POSITION: `${BASE_URL}/api/tracking/position`,
+  TRACKING_HISTORY: `${BASE_URL}/api/tracking/history`,
 };
 
 export { BASE_URL, SOCKET_URL, API };

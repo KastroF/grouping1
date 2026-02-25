@@ -185,7 +185,8 @@ export default function AnnouncementForm({route, navigation}) {
     const [kiloPrice, setKiloPrice] = useState(null); 
     const [company, setCompany] = useState(null);
     const [kiloDescription, setKiloDescription] = useState(""); 
-    const [containerDescription, setContainerDescription] = useState(""); 
+    const [containerDescription, setContainerDescription] = useState("");
+    const [bookingReference, setBookingReference] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false); 
     const {token, setRefresh, setRefreshModify, refreshModify, language} = useContext(AuthContext);
@@ -250,19 +251,20 @@ export default function AnnouncementForm({route, navigation}) {
                             setCAFinalCountry(anouncementt.endCity2.country)
                             setCDFinalCountry(anouncementt.startCity2.country)
                             setAnnouncementContainerEndCity(anouncementt.endCity2.name)
-                            setAnnouncementContainerStartCity(anouncementt.startCity2.name); 
+                            setAnnouncementContainerStartCity(anouncementt.startCity2.name);
                             setPieds(parseInt(anouncementt.pieds));
-                            setContainerDescription(anouncementt.description); 
+                            setContainerDescription(anouncementt.description);
+                            if(anouncementt.bookingReference) setBookingReference(anouncementt.bookingReference);
                             setPhotoNames([anouncementt.fileName])
-                            
+
                             if(anouncementt.fileType === "application/pdf"){
 
-                                    setName("pdf"); 
+                                    setName("pdf");
                                     setPdff({
-                                        uri: anouncementt.draft[0], 
-                                            name: anouncementt.fileName, 
+                                        uri: anouncementt.draft[0],
+                                            name: anouncementt.fileName,
                                             type: anouncementt.fileType
-                                    }); 
+                                    });
                                     setImage(null);
 
                                     }else{
@@ -1286,8 +1288,9 @@ const onRegister = async () => {
             formData.append("endCity", announcementContainerEndCity); 
             formData.append("dateOfDeparture", finalDate.toISOString()); 
             formData.append("description", containerDescription); 
-            formData.append("status", "container"); 
+            formData.append("status", "container");
             formData.append("pieds", pieds);
+            if(bookingReference.trim()) formData.append("bookingReference", bookingReference.trim());
  
             formData.append("fileName", image ? image.fileName : pdff.name.replace(/\s/g, '_')); 
             formData.append("fileType", image ? image.type : pdff.type )
@@ -2600,13 +2603,26 @@ if (good) {
                     </View>
 
                     <View style={{
+                        marginTop: 15
+                    }}>
+                        <FormInput
+                        label={language === "English" ? "Hapag-Lloyd booking reference (optional)" : "Référence de réservation Hapag-Lloyd (optionnel)"}
+                        iconName="tag"
+                        value={bookingReference}
+                        onChangeText={setBookingReference}
+                        fontSize={SIZES.h6}
+                        placeholder={language === "English" ? "Ex: 12345678" : "Ex: 12345678"}
+                    />
+                    </View>
+
+                    <View style={{
                         marginTop: 25
                     }}>
                         <Text style={{
-                              fontFamily: FONTS.bold, 
-                              color: COLORS.primary, 
-                              fontSize: 17, 
-                              lineHeight: 17, 
+                              fontFamily: FONTS.bold,
+                              color: COLORS.primary,
+                              fontSize: 17,
+                              lineHeight: 17,
                               width: SIZES.width - 100
                         }}>
                             {medias.length > 0 ? (language === "English" ? "Click the icon to edit the draft / BL" : "Cliquez sur l'icone pour modifier le draft / BL") : (language === "English" ? "Please upload your draft / BL" : "Veuillez insérez votre draft / BL")}

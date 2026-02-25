@@ -4,7 +4,7 @@ import MyAnnouncements from '../screens/MyAnnouncements'
 import CreateAnnouncement from '../screens/CreateAnnouncement'
 import AnnouncementForm from '../screens/AnnouncementForm'
 import AnnonceDetails from '../screens/AnnonceDetails'
-
+import ContainerMap from '../screens/ContainerMap'
 
 const Stack = createStackNavigator()
 
@@ -22,6 +22,9 @@ export default function MyAnnouncementStack() {
             headerShown: false
         }} />
         <Stack.Screen name='Details' component={AnnonceDetails} options={{
+            headerShown: false
+        }} />
+        <Stack.Screen name='ContainerMap' component={ContainerMap} options={{
             headerShown: false
         }} />
     </Stack.Navigator>

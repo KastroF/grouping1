@@ -18,6 +18,8 @@ import Reception from '../screens/Reception'
 import Modify from '../screens/Modify'
 import Connexion from '../screens/Connexion'
 import Contacts from '../screens/Contacts'
+import ChatBot from '../screens/ChatBot'
+import ContainerMap from '../screens/ContainerMap'
 
 const Stack = createStackNavigator()
 
@@ -77,6 +79,12 @@ export default function HomeStack() {
             headerShown: false
         }} />
            <Stack.Screen name='Contacts' component={Contacts} options={{
+            headerShown: false
+        }} />
+           <Stack.Screen name='ChatBot' component={ChatBot} options={{
+            headerShown: false
+        }} />
+           <Stack.Screen name='ContainerMap' component={ContainerMap} options={{
             headerShown: false
         }} />
     </Stack.Navigator>

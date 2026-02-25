@@ -95,7 +95,7 @@ function calculateContainerVolume(feet) {
       width = 2.35;
       height = 2.69;
     } else {
-      return 'Taille de conteneur non supportée';
+      return language === "English" ? 'Unsupported container size' : 'Taille de conteneur non supportée';
     }
   
     const volume = length * width * height;
@@ -421,10 +421,10 @@ function calculateContainerVolume(feet) {
             }} >
                 <View>
                      <Text style={{
-                        fontFamily: FONTS.regular, 
-                        fontSize: SIZES.h7, 
+                        fontFamily: FONTS.regular,
+                        fontSize: SIZES.h7,
                         color: "#fff"
-                    }}>Publiée {timeAgo(new Date(annonce.date))} </Text>
+                    }}>{language === "English" ? "Posted" : "Publiée"} {timeAgo(new Date(annonce.date))} </Text>
                 </View>
                 { annonce.views && <View style={{
                          display: "flex", 
@@ -438,7 +438,7 @@ function calculateContainerVolume(feet) {
                                  fontSize: SIZES.h7, 
                                  color: "#fff", 
                                
-                            }}>{annonce.views} {annonce.views === 1 ? "vue" : "vues"} </Text>
+                            }}>{annonce.views} {annonce.views === 1 ? (language === "English" ? "view" : "vue") : (language === "English" ? "views" : "vues")} </Text>
                         </View>
                         <Octicons name='eye' size={SIZES.h8} color="#fff" />
                     </View>}
@@ -508,7 +508,7 @@ function calculateContainerVolume(feet) {
                         fontSize: SIZES.h4, 
                         marginTop: Platform.OS === "android" ?  -3 : 2
                     }}>
-                        Caractéristiques
+                        {language === "English" ? "Features" : "Caractéristiques"}
                     </Text>
                 </View>
 
@@ -525,12 +525,12 @@ function calculateContainerVolume(feet) {
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h5
-                            }}>Taille : </Text>
+                            }}>{language === "English" ? "Size:" : "Taille :"} </Text>
                             <Text style={{
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h5
-                            }}> {annonce.pieds && annonce.pieds === 401 ? "40 pieds Hight" : `${annonce.pieds} pieds`} </Text>
+                            }}> {annonce.pieds && annonce.pieds === 401 ? (language === "English" ? "40 feet High" : "40 pieds Hight") : (language === "English" ? `${annonce.pieds} feet` : `${annonce.pieds} pieds`)} </Text>
                         </View> 
 
                         <View style={{
@@ -543,16 +543,60 @@ function calculateContainerVolume(feet) {
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h5
-                            }}>Volume : </Text>
+                            }}>{language === "English" ? "Volume:" : "Volume :"} </Text>
                             <Text style={{
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h5
                             }}> {`${calculateContainerVolume(annonce.pieds)}`} </Text>
-                        </View> 
+                        </View>
+
+                        {annonce.bookingReference ? <View>
+                            <View style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                marginTop: Platform.OS === "android" ? 15 : 25
+                            }}>
+                                <Text style={{
+                                    color: "#000",
+                                    fontFamily: FONTS.bold,
+                                    fontSize: SIZES.h5
+                                }}>{language === "English" ? "Booking ref:" : "Réf. réservation :"}</Text>
+                                <Text style={{
+                                    color: "#000",
+                                    fontFamily: FONTS.bold,
+                                    fontSize: SIZES.h5
+                                }}>{annonce.bookingReference}</Text>
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("ContainerMap", {
+                                    carrierBookingReference: annonce.bookingReference,
+                                    events: [],
+                                    subscriptionStatus: "pending",
+                                })}
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    backgroundColor: COLORS.primary,
+                                    paddingVertical: 12,
+                                    borderRadius: 10,
+                                    marginTop: 20
+                                }}>
+                                <Ionicons name="navigate-outline" size={18} color="#fff" />
+                                <Text style={{
+                                    color: "#fff",
+                                    fontFamily: FONTS.bold,
+                                    fontSize: SIZES.h6,
+                                    marginLeft: 8
+                                }}>{language === "English" ? "Track this container" : "Suivre ce conteneur"}</Text>
+                            </TouchableOpacity>
+                        </View> : null}
 
                     </View>
-                        : 
+                        :
 
                     <View >
                         <View style={{
@@ -565,7 +609,7 @@ function calculateContainerVolume(feet) {
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h5
-                            }}>Kilos disponibles : </Text>
+                            }}>{language === "English" ? "Available kilos:" : "Kilos disponibles :"} </Text>
                             <Text style={{
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
@@ -583,7 +627,7 @@ function calculateContainerVolume(feet) {
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h5
-                            }}>Prix du kilo : </Text>
+                            }}>{language === "English" ? "Price per kilo:" : "Prix du kilo :"} </Text>
                             <Text style={{
                                 color: "#000", 
                                 fontFamily: FONTS.bold, 
@@ -600,7 +644,7 @@ function calculateContainerVolume(feet) {
                         fontFamily: FONTS.bold, 
                         fontSize: SIZES.h5, 
                         color: "#000"
-                    }}>Informations complémentaires :</Text>
+                    }}>{language === "English" ? "Additional information:" : "Informations complémentaires :"}</Text>
 
                     <Text style={{
                         fontFamily: FONTS.regular, 
@@ -634,7 +678,7 @@ function calculateContainerVolume(feet) {
                             fontFamily: FONTS.bold, 
                             color: COLORS.primary, 
                             fontSize: SIZES.h5
-                        }}> Partageur {annonce.status === "container" ? "du conteneur" : "de kilos"} </Text>
+                        }}> {language === "English" ? (annonce.status === "container" ? "Container sharer" : "Kilos sharer") : ("Partageur " + (annonce.status === "container" ? "du conteneur" : "de kilos"))} </Text>
                     </View>
 
                 </View>
@@ -691,13 +735,13 @@ function calculateContainerVolume(feet) {
                                 marginTop: Platform.OS === "android" ? -5 : 10,
                                 color: COLORS.orange, 
                                 fontSize: SIZES.h6
-                            }}>{sum} annonce(s) partagée(s)</Text>
+                            }}>{language === "English" ? `${sum} shared listing(s)` : `${sum} annonce(s) partagée(s)`}</Text>
                             {user && user._id === userr._id ? <Text style={{
                                 fontSize: SIZES.h8, 
                                 color: "#bbb", 
                                 fontFamily: FONTS.regular, 
                                 marginTop: Platform.OS === "android" ? -5 : 10,
-                            }}>(vous-même)</Text>: null}
+                            }}>{language === "English" ? "(yourself)" : "(vous-même)"}</Text>: null}
                         </View>
                     </View>
 
@@ -712,7 +756,7 @@ function calculateContainerVolume(feet) {
                         marginTop: 15, 
                         marginBottom: 30
                     }}>
-                        <Button1 label="Lancer la discussion" backgroundColor={COLORS.primary} imagePath={require("../assets/images/mail.png")}
+                        <Button1 label={language === "English" ? "Start a conversation" : "Lancer la discussion"} backgroundColor={COLORS.primary} imagePath={require("../assets/images/mail.png")}
                         textColor="#fff" fontFamily={FONTS.regular} borderRadius={12} onPress={goToMessenger} disabled={user && userr._id === user._id} />
                     </View>
                 </View> }

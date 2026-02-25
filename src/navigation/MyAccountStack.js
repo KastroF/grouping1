@@ -12,6 +12,8 @@ import Reception from '../screens/Reception';
 import Messenger from '../screens/Messenger';
 import Modify from '../screens/Modify';
 import Connexion from '../screens/Connexion';
+import ChatBot from '../screens/ChatBot';
+import ContainerMap from '../screens/ContainerMap';
 
 const Stack = createStackNavigator()
 
@@ -51,6 +53,12 @@ export default function MyAccountStack() {
             headerShown: false
         }} />
          <Stack.Screen name='Connexion' component={Connexion} options={{
+            headerShown: false
+        }} />
+         <Stack.Screen name='ChatBot' component={ChatBot} options={{
+            headerShown: false
+        }} />
+         <Stack.Screen name='ContainerMap' component={ContainerMap} options={{
             headerShown: false
         }} />
     </Stack.Navigator>
