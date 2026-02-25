@@ -72,7 +72,6 @@ export default function Reception({navigation}) {
 
                 if(data && data.status === 0){
 
-                    setNotifications(data.notifs);
                     setMessages([...messages, ...data.messages]);
                     setStart(data.startAt);
                     setIsLoading(false);
