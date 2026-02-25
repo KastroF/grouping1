@@ -107,18 +107,16 @@ export default function Reception({navigation}) {
 
             postFunction(DELETE_NOTIF_URL, {_id: currentId}, token).then((data) => {
 
-                if(data && data.status === 0){
+                console.log("deleteNotif response:", JSON.stringify(data));
 
-                    setNotifications(notifications.filter(item => item._id !== currentId));
-                    setModalVisible(false);
-
-                }
-
+                setNotifications(prev => prev.filter(item => item._id !== currentId));
+                setModalVisible(false);
                 setLoading(false);
 
             }, (err) => {
 
-                console.log(err);
+                console.log("deleteNotif error:", err);
+                setModalVisible(false);
                 setLoading(false);
 
             })
