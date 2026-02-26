@@ -8,163 +8,73 @@ import { API } from '../config/api';
 
 const SAVE_FCMTOKEN_URL = API.USER_UPDATE_FCM;
 
-const requestUserPermissions = async () => {
+const saveFcmToken = async (postFunction, authToken) => {
+    try {
+        const fcmToken = await messaging().getToken();
+        const deviceId = await DeviceInfo.getUniqueId();
+        console.log("FCM Token:", fcmToken);
 
-        
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-
-        if(granted === PermissionsAndroid.RESULTS.GRANTED){
-
-            console.log("Nous avons la permission pour les notifs"); 
-
-
-        }else{
-
-            console.log("C'est chaud pour les notifs les gars");
-
+        if (authToken && fcmToken) {
+            await postFunction(SAVE_FCMTOKEN_URL, { deviceId, fcmToken }, authToken);
+            console.log("FCM Token enregistré avec succès");
         }
+    } catch (err) {
+        console.log("Erreur récupération FCM Token:", err);
     }
-
-
-
+};
 
 export const useNotifications = () => {
-    
-    const {token} = useContext(AuthContext); 
-    const {postFunction} = useFetchFunctions()
 
+    const {token} = useContext(AuthContext);
+    const {postFunction} = useFetchFunctions();
 
-
-    const getToken = async () => {
-
-        try{
-
-            messaging().requestPermission();
-            const tokenn = await messaging().getToken(); 
-            const uniqueId = await  DeviceInfo.getUniqueId();
-            console.log("Le token", token);
-            console.log("FCM Token", tokenn);
-
-            if(token){
-
-
-                postFunction(SAVE_FCMTOKEN_URL, {deviceId: uniqueId, fcmToken: tokenn}, token).then(() => {
-
-                    
-                })
+    const requestAndGetToken = async () => {
+        try {
+            // Demander la permission (Android + iOS)
+            if (Platform.OS === "android") {
+                await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+                );
             }
 
+            // Attendre la permission Firebase (important pour iOS)
+            const authStatus = await messaging().requestPermission();
+            const enabled =
+                authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+                authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-        }catch(err){
-
-                console.log(err)
+            if (enabled) {
+                console.log("Permission notifications accordée:", authStatus);
+                await saveFcmToken(postFunction, token);
+            } else {
+                console.log("Permission notifications refusée");
+            }
+        } catch (err) {
+            console.log("Erreur permissions:", err);
         }
-    }
-
+    };
 
     useEffect(() => {
-
-        if(Platform.OS === "android"){
-            requestUserPermissions();
+        if (token) {
+            requestAndGetToken();
         }
-       
-       getToken();
+    }, [token]);
 
-    },[token])
-}
-
-/*
-
-import { View, Text, PermissionsAndroid, Platform } from 'react-native'
-import React, { useContext, useEffect } from 'react'
-import messaging from "@react-native-firebase/messaging"
-import { useFetchFunctions } from '../utils/functions';
-import { AuthContext } from '../navigation/AuthProvider';
-
-const ADD_FCM_TOKEN_URL_ANDROID = "https://kredix.onrender.com/api/token/addtoken";
-
-const ADD_FCM_TOKEN_URL_IOS = "https://kredix.onrender.com/api/token/addtoken";
-
-
-const requestUserPermission = async () => {
-
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS); 
-
-        if(granted === PermissionsAndroid.RESULTS.GRANTED){
-
-            console.log("Notification permission granted")
-        
-        }else{
-
-            console.log("Notification permission denied")
-        }
-
-    }
-
-
-
-export default function useNotification() {
-
-    const {postData} = useFetchFunctions(); 
-    const {token} = useContext(AuthContext); 
-
-
-    const getToken = async () => {
-
-        try{
-
-            messaging().requestPermission();
-            const tokenn = await messaging().getToken(); 
-            console.log("FCM Token", tokenn); 
-
-            postData(Platform.OS === "android" ? ADD_FCM_TOKEN_URL_ANDROID : 
-                ADD_FCM_TOKEN_URL_IOS, {token: tokenn, platform: Platform.OS === "android" ? "android" : "ios"}, token
-            ).then((data) => {
-
-                if(data){
-
-                    console.log("Yes", data)
+    // Écouter le rafraîchissement du token FCM
+    useEffect(() => {
+        const unsubscribe = messaging().onTokenRefresh(async (newFcmToken) => {
+            console.log("FCM Token rafraîchi:", newFcmToken);
+            try {
+                const deviceId = await DeviceInfo.getUniqueId();
+                if (token) {
+                    await postFunction(SAVE_FCMTOKEN_URL, { deviceId, fcmToken: newFcmToken }, token);
+                    console.log("Nouveau FCM Token enregistré");
                 }
+            } catch (err) {
+                console.log("Erreur mise à jour FCM Token:", err);
+            }
+        });
 
-            }, (err) => {
-
-                    console.log(err);
-            })
-          
-
-
-        }catch(err){
-
-            console.log("Failed to get Fcm Token", err); 
-        }
+        return unsubscribe;
+    }, [token]);
 }
-
- useEffect(() => {
-    
-    requestUserPermission();
-    getToken();
-
- },[]); 
-
- /*useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('Message reçu en foreground !', remoteMessage);
-  
-      // Affichage local si besoin
-      notifee.displayNotification({
-        title: remoteMessage.notification?.title,
-        body: remoteMessage.notification?.body,
-        android: {
-          channelId: 'default',
-          smallIcon: 'ic_launcher', // Utilise ton nom d’icône
-        },
-      });
-    });
-  
-    return unsubscribe;
-  }, []); 
-
-
-
-}
-*/

@@ -14,9 +14,6 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { useFocusEffect } from '@react-navigation/native';
 import AnnounceBlock from '../components/AnnounceBlock';
 import ErrorMessage from '../components/ErrorMessage';
-import messaging from '@react-native-firebase/messaging';
-import notifee from '@notifee/react-native';
-import { navigationRef } from '../navigation/Routes';
 import { translate } from '../i18n/locales/translate';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../config/api';
@@ -123,36 +120,8 @@ export default function Home({navigation}) {
     ];
 
 
-    useEffect(() => {
-
-
-        messaging().setBackgroundMessageHandler(async (message) => {
-            console.log("Notification reçue en arrière-plan", message);
-        
-            await notifee.setBadgeCount(0);
-        
-            const status = message.data?.status;
-        
-            if (status && navigationRef.isReady()) {  // ✅ Vérifier si la navigation est prête
-                switch (parseInt(status)) {
-                    case 0:
-                        navigationRef.navigate("My Announcements");
-                        break;
-                    case 1:
-                        const annonceId = message.data?.annonceId;
-                        navigationRef.navigate("Details", { _id: annonceId });
-                        break;
-                    case 5:
-                        const senderId = message.data?.senderId;
-                        navigationRef.navigate("Messenger", { _id: senderId });
-                        break;
-                    default:
-                        console.log("Statut inconnu : ", status);
-                }
-            }
-        });
-
-    }, [])
+    // setBackgroundMessageHandler a été déplacé dans index.js (top-level)
+    // La navigation sur tap de notification est gérée par onNotificationOpenedApp dans BottomTabBar
 
 
     const avoirLesAnnonces = (status) => {
@@ -1490,7 +1459,8 @@ transparent={true}
 
                 return (
                     <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
-                    date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code} />
+                    date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
+                    startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country} />
                 )
             }}
         
@@ -2334,6 +2304,7 @@ transparent={true}
                     return (
                         <AnnounceBlock key={item._id} index={idx} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => navigation.navigate("Details", {_id: item._id})}
                         date={item.dateOfDeparture} name={item.user && item.user.name} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
+                        startCountry={item.startCity2.country} endCountry={item.endCity2.country}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})} />
                     )
             })
@@ -2416,6 +2387,7 @@ transparent={true}
                         <AnnounceBlock key={item._id} index={idx} userId={item.userId} status="kilos" city1={item.startCity} city2={item.endCity}
                         date={item.dateOfDeparture}  datee={item.date} onPress= {() => navigation.navigate("Details", {_id: item._id})}
                         company={item.company} views={item.views} startCity={ item.startCity2 && item.startCity2.code} endCity={item.endCity2 &&  item.endCity2.code}
+                        startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})}  />
                     )
             })

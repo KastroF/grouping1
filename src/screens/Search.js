@@ -14,7 +14,7 @@ const SEARCH_URL = API.ANNONCE_SEARCH;
 export default function Search({route, navigation}) {
 
     const {type, start, year, month, end} = route.params; 
-    const {token} = useContext(AuthContext);
+    const {token, language} = useContext(AuthContext);
     const {postFunction} = useFetchFunctions()
     const [startAt, setStartAt] = useState(0); 
     const [annonces, setAnnonces] = useState([]); 
@@ -149,7 +149,7 @@ export default function Search({route, navigation}) {
                 fontFamily: FONTS.bold, 
                 color: "#fff", 
                 fontSize: SIZES.h2
-            }}>Félicitations !</Text>
+            }}>{language === "English" ? "Congratulations!" : "Félicitations !"}</Text>
         </View>
 
         <View style={{
@@ -163,7 +163,7 @@ export default function Search({route, navigation}) {
                 fontSize: SIZES.h5, 
                 lineHeight: SIZES.h5
             }}>
-                Votre demande a été prise en compte. Un de nos annonceurs vous contactera sous 72h ouvrés. 
+                {language === "English" ? "Your request has been received. One of our advertisers will contact you within 72 business hours." : "Votre demande a été prise en compte. Un de nos annonceurs vous contactera sous 72h ouvrés."}
             </Text>
         </View>
 
@@ -192,7 +192,7 @@ export default function Search({route, navigation}) {
             marginTop: 25, 
              
             }}>
-                <Button1 label="Retour" backgroundColor="#fff" textColor={COLORS.primary} fontFamily={FONTS.regular} borderRadius={12} 
+                <Button1 label={language === "English" ? "Back" : "Retour"} backgroundColor="#fff" textColor={COLORS.primary} fontFamily={FONTS.regular} borderRadius={12} 
                 onPress={() => {navigation.goBack()}} />
             </View>
         </View>
@@ -250,7 +250,7 @@ export default function Search({route, navigation}) {
                             color: "#fff", 
                             textAlign: "center"
                         }}>
-                            Résultats pour ...
+                            {language === "English" ? "Results for ..." : "Résultats pour ..."}
                         </Text>
         
                     </View>
@@ -275,7 +275,7 @@ export default function Search({route, navigation}) {
                                 fontFamily: FONTS.regular, 
                                 color: COLORS.primary, 
                                 fontSize: SIZES.h7
-                            }}>Mois de départ</Text>
+                            }}>{language === "English" ? "Departure month" : "Mois de départ"}</Text>
                         </View>
                         <View style={{
                             marginTop: Platform.OS === "android" ? 0 : 9
@@ -302,7 +302,7 @@ export default function Search({route, navigation}) {
                                 fontFamily: FONTS.regular, 
                                 color: COLORS.primary, 
                                 fontSize: SIZES.h7
-                            }}>Ville de départ</Text>
+                            }}>{language === "English" ? "Departure city" : "Ville de départ"}</Text>
                         </View>
                         <View style={{
                             marginTop: Platform.OS === "android" ? 0 : 9
@@ -329,7 +329,7 @@ export default function Search({route, navigation}) {
                                 fontFamily: FONTS.regular, 
                                 color: COLORS.primary, 
                                 fontSize: SIZES.h7
-                            }}>Ville d'arrivée</Text>
+                            }}>{language === "English" ? "Arrival city" : "Ville d'arrivée"}</Text>
                         </View>
                         <View style={{
                             marginTop: Platform.OS === "android" ? 0 : 9
@@ -423,7 +423,7 @@ export default function Search({route, navigation}) {
                                 fontSize: SIZES.h5, 
                                 color: COLORS.primary, 
                                 marginTop: Platform.OS === "android" ? -5 : 0
-                            }}> {count} {type === "container" ? "conteneur(s)" : "voyageur(s)"} trouvé(s) </Text>
+                            }}> {count} {type === "container" ? (language === "English" ? "container(s)" : "conteneur(s)") : (language === "English" ? "traveler(s)" : "voyageur(s)")} {language === "English" ? "found" : "trouvé(s)"} </Text>
                         </View>
                     </View>
 
@@ -458,7 +458,8 @@ export default function Search({route, navigation}) {
                             paddingHorizontal: 10
                         }}>
                              <AnnounceBlock key={item._id} userId={item.userId}  status={type==="kilos" ? "kilos" : "container"} city1={item.startCity} city2={item.endCity} onPress= {() =>{ token ? navigation.navigate("Details", {_id: item._id}) : navigation.navigate("Ouhaaa", {userId: "1"})}}
-                                date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}  />
+                                date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
+                                startCountry={item.startCity2.country} endCountry={item.endCity2.country}  />
                         </View>
                        
                     )

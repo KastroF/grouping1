@@ -24,7 +24,7 @@ export default function MyAnnouncements({route, navigation}) {
     const [kilos, setKilos] = useState([]); 
     const [containers, setContainers] = useState([]);
     const {laFonctionGet, postFunction} = useFetchFunctions(); 
-    const {token} = useContext(AuthContext); 
+    const {token, language} = useContext(AuthContext);
     const [startAt, setStartAt] = useState(0); 
     const [startBt, setStartBt] = useState(0);
     const [loading, setLoading]  = useState(true)
@@ -200,7 +200,7 @@ const renderLoader = () => {
                                         fontFamily: FONTS.bold, 
                                         fontSize: SIZES.h3, 
                                         color: COLORS.primary
-                                    }}>{type === "kilos" ? "Mes annonces de kilos" : "Mes annonces de conteneur"}</Text>
+                                    }}>{type === "kilos" ? (language === "English" ? "My kilos ads" : "Mes annonces de kilos") : (language === "English" ? "My container ads" : "Mes annonces de conteneur")}</Text>
                                 </View>
                             </View>
                         )
@@ -217,7 +217,8 @@ const renderLoader = () => {
                     renderItem={({item}) => {
 
                         return <AnnounceBlock key={item._id} userId={item.userId}  status={type==="kilos" ? "kilos" : "container"} city1={item.startCity} city2={item.endCity} onPress= {() =>{ setModalVisible(false); navigation.navigate("Details", {_id: item._id})}}
-                        date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} />
+                        date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
+                        startCountry={item.startCity2.country} endCountry={item.endCity2.country} />
                     }}
                 />
 
@@ -268,7 +269,7 @@ const renderLoader = () => {
                     fontFamily: FONTS.bold, 
                     color: COLORS.primary, 
                     fontSize: SIZES.h3
-                }}>Mes annonces</Text>
+                }}>{language === "English" ? "My ads" : "Mes annonces"}</Text>
                 </View>
                 <View style={{
                     flexDirection: "row", 
@@ -352,7 +353,7 @@ const renderLoader = () => {
                         fontSize: SIZES.h5, 
                         color: COLORS.primary, 
                         textAlign: "center"
-                    }}>Vous n'avez publié aucune annonce pour le moment !</Text>
+                    }}>{language === "English" ? "You haven't posted any ads yet!" : "Vous n'avez publié aucune annonce pour le moment !"}</Text>
                 </View>
             }
 
@@ -369,7 +370,7 @@ const renderLoader = () => {
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h3, 
                                 color: COLORS.primary
-                            }}>Mes annonces de conteneur</Text>
+                            }}>{language === "English" ? "My container ads" : "Mes annonces de conteneur"}</Text>
 
                         </View>
 
@@ -390,7 +391,7 @@ const renderLoader = () => {
                                     fontFamily: FONTS.regular, 
                                     fontSize: SIZES.h6, 
                                     color: "#fff"
-                                }}>Tout voir ...</Text>
+                                }}>{language === "English" ? "See all ..." : "Tout voir ..."}</Text>
                             </TouchableOpacity>
                         </View> : null}
                         
@@ -404,7 +405,9 @@ const renderLoader = () => {
 
                                                 return (
                                                     <AnnounceBlock key={item._id} userId={item.userId}  status="container" city1={item.startCity} city2={item.endCity} onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                                                    date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} goToModify={(status) => navigation.navigate("AnnouncementForm", {_id:item._id, value: status})} />
+                                                    date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
+                                                    startCountry={item.startCity2.country} endCountry={item.endCity2.country}
+                                                    goToModify={(status) => navigation.navigate("AnnouncementForm", {_id:item._id, value: status})} />
                                                 )
                                         })
                                     }
@@ -431,7 +434,7 @@ const renderLoader = () => {
                                 fontFamily: FONTS.bold, 
                                 fontSize: SIZES.h3, 
                                 color: COLORS.primary
-                            }}>Mes annonces de kilos</Text>
+                            }}>{language === "English" ? "My kilos ads" : "Mes annonces de kilos"}</Text>
 
                         </View>
 
@@ -451,7 +454,7 @@ const renderLoader = () => {
                                     fontFamily: FONTS.regular, 
                                     fontSize: SIZES.h6, 
                                     color: "#fff"
-                                }}>Tout voir ...</Text>
+                                }}>{language === "English" ? "See all ..." : "Tout voir ..."}</Text>
                             </TouchableOpacity> : null}
                         </View>
                         
@@ -464,7 +467,8 @@ const renderLoader = () => {
 
                                                 return (
                                                     <AnnounceBlock key={item._id} userId={item.userId}  status="kilos" city1={item.startCity} city2={item.endCity} onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                                                    date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code} />
+                                                    date={item.dateOfDeparture} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
+                                                    startCountry={item.startCity2.country} endCountry={item.endCity2.country} />
                                                 )
                                         })
                                     }
