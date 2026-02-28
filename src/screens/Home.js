@@ -6,6 +6,7 @@ import AntDesign from "react-native-vector-icons/AntDesign"
 import Entypo from "react-native-vector-icons/Entypo"
 import Feather from "react-native-vector-icons/Feather"
 import FontAwesome from "react-native-vector-icons/FontAwesome"
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import SelectItem1 from '../components/SelectItem1';
 import Button1 from '../components/Button1';
 import { useFetchFunctions } from '../infrastructures/functions';
@@ -22,6 +23,7 @@ const MES_ANNONCES_URL = API.ANNONCE_LIST;
 const GET_CITIES_URL = API.CITY_LIST_BY_COUNTRY;
 const GET_COUNTRIES_URL = API.COUNTRY_LIST;
 const GET_ANNONCES_URLL = API.ANNONCE_GET_ALL;
+const GET_DEPARTS_URL = API.ANNONCE_DEPARTS;
 
 export default function Home({navigation}) {
   
@@ -81,6 +83,9 @@ export default function Home({navigation}) {
     const [total, setTotal] = useState(null)
     const [isLoading, setIsLoading] = useState(false);
     const [activee, setActivee] = useState(false)
+    const [departsImminents, setDepartsImminents] = useState([]);
+    const [modalDepartsVisible, setModalDepartsVisible] = useState(false);
+    const [departsLoading, setDepartsLoading] = useState(false)
 
     const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -178,6 +183,17 @@ export default function Home({navigation}) {
 
 
     
+    const chargerDepartsImminents = () => {
+        setDepartsLoading(true);
+        setModalDepartsVisible(true);
+        postFunction(GET_DEPARTS_URL, {}).then((data) => {
+            if (data && data.status === 0) {
+                setDepartsImminents(data.departs);
+            }
+            setDepartsLoading(false);
+        }).catch(() => setDepartsLoading(false));
+    }
+
     const navigateToAnnouncement = () => {
 
             navigation.navigate("Announcement");
@@ -1459,7 +1475,7 @@ transparent={true}
 
                 return (
                     <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
-                    date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
+                    date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} name={item.transitaire || (item.user && item.user.name)} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
                     startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country} />
                 )
             }}
@@ -1649,24 +1665,6 @@ transparent={true}
                     }}>{language === "English" ? "Translate to french": "Traduire en anglais"}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity  activeOpacity={0.9} style={{
-                    paddingVertical: 15, 
-                    paddingHorizontal: 20, 
-                    backgroundColor: "#fff", 
-                    flexDirection: "row", 
-                    alignItems: "center", 
-                    borderBottomWidth: 1, 
-                    borderBottomColor: COLORS.middle_blue
-                }}>
-                    <Feather name='cpu' color={COLORS.primary} size={SIZES.h5} />
-                    <Text style={{
-                        fontFamily: FONTS.regular, 
-                        color: COLORS.primary, 
-                        fontSize: SIZES.h6, 
-                        marginLeft: 15, 
-                        marginTop: 4
-                    }}>{language === "English" ? "Chatbot": "Assistant Grouping"}</Text>
-                </TouchableOpacity>
 
               { token && <TouchableOpacity 
                  onPress={() => {setModalVisible3(false);  navigation.navigate("Contacts")}}
@@ -2231,13 +2229,40 @@ transparent={true}
 
     </View>
 
+    <TouchableOpacity onPress={chargerDepartsImminents} style={{
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 25,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        marginHorizontal: 15,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        shadowColor: "rgba(0,0,0,0.15)",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 4
+    }}>
+        <FontAwesome name="plane" size={18} color={COLORS.orange} />
+        <Image source={require("../assets/images/container1.png")} style={{ height: 18, width: 28, resizeMode: "contain", marginLeft: 6, tintColor: COLORS.primary }} />
+        <Text style={{
+            fontFamily: FONTS.bold,
+            fontSize: SIZES.h6,
+            color: COLORS.primary,
+            marginLeft: 10,
+            flex: 1
+        }}>{language === "English" ? "Upcoming departures" : "Départs imminents"}</Text>
+        <AntDesign name="right" size={16} color={COLORS.primary} />
+    </TouchableOpacity>
+
     <View >
 
 
-    { 
+    {
     containers.length > 0 && <View style={{
-        marginTop: 35, 
-       
+        marginTop: 35,
+
     }}>
         { //premier texte à figer au haut de la page 
         <View style={{
@@ -2303,8 +2328,8 @@ transparent={true}
 
                     return (
                         <AnnounceBlock key={item._id} index={idx} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => navigation.navigate("Details", {_id: item._id})}
-                        date={item.dateOfDeparture} name={item.user && item.user.name} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2.code} endCity={item.endCity2.code}
-                        startCountry={item.startCity2.country} endCountry={item.endCity2.country}
+                        date={item.dateOfDeparture} name={item.transitaire || (item.user && item.user.name)} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
+                        startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})} />
                     )
             })
@@ -2403,6 +2428,169 @@ transparent={true}
     </View>
 
         </ScrollView>
+
+    <Modal
+        visible={modalDepartsVisible}
+        onRequestClose={() => setModalDepartsVisible(false)}
+        animationType="slide"
+        transparent={true}
+    >
+        <View style={{
+            width: SIZES.width,
+            height: SIZES.height,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            alignItems: "center",
+            justifyContent: "flex-end"
+        }}>
+            <View style={{
+                backgroundColor: "#fff",
+                width: SIZES.width,
+                height: SIZES.height * 0.8,
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                paddingHorizontal: 15,
+                paddingTop: 15
+            }}>
+                <View style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingBottom: 15,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#f0f0f0"
+                }}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Feather name="clock" size={20} color={COLORS.primary} />
+                        <Text style={{
+                            fontFamily: FONTS.bold,
+                            fontSize: SIZES.h5,
+                            color: COLORS.primary,
+                            marginLeft: 10
+                        }}>{language === "English" ? "Upcoming departures" : "Départs imminents"}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => setModalDepartsVisible(false)} style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 16,
+                        backgroundColor: "#f5f5f5",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
+                        <AntDesign name="close" size={16} color="#666" />
+                    </TouchableOpacity>
+                </View>
+
+                {departsLoading ? (
+                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                        <ActivityIndicator size="large" color={COLORS.primary} />
+                    </View>
+                ) : (
+                    <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 10 }}>
+                        {departsImminents.length === 0 ? (
+                            <Text style={{
+                                fontFamily: FONTS.regular,
+                                fontSize: SIZES.h6,
+                                color: "#999",
+                                textAlign: "center",
+                                marginTop: 40
+                            }}>{language === "English" ? "No upcoming departures" : "Aucun départ imminent"}</Text>
+                        ) : (
+                            departsImminents.map((item) => {
+                                const departDate = new Date(item.dateOfDeparture);
+                                const day = departDate.getDate();
+                                const month = MONTHS[departDate.getMonth()];
+                                const year = departDate.getFullYear();
+                                const isContainer = item.status === "container";
+                                const accentColor = isContainer ? COLORS.primary : COLORS.orange;
+                                const bgTint = isContainer ? "rgba(0,51,102,0.08)" : "rgba(255,140,0,0.08)";
+                                return (
+                                    <TouchableOpacity key={item._id} onPress={() => {
+                                        setModalDepartsVisible(false);
+                                        navigation.navigate("Details", { _id: item._id });
+                                    }} style={{
+                                        backgroundColor: "#fff",
+                                        borderRadius: 14,
+                                        padding: 14,
+                                        marginBottom: 12,
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        shadowColor: "#000",
+                                        shadowOffset: { width: 0, height: 2 },
+                                        shadowOpacity: 0.08,
+                                        shadowRadius: 8,
+                                        elevation: 3,
+                                        borderLeftWidth: 4,
+                                        borderLeftColor: accentColor,
+                                    }}>
+                                        <View style={{
+                                            width: 44,
+                                            height: 44,
+                                            borderRadius: 12,
+                                            backgroundColor: bgTint,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            marginRight: 12,
+                                        }}>
+                                            {isContainer ? (
+                                                <Image source={require("../assets/images/container1.png")} style={{ height: 22, width: 32, resizeMode: "contain", tintColor: accentColor }} />
+                                            ) : (
+                                                <FontAwesome name="plane" size={18} color={accentColor} />
+                                            )}
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{
+                                                fontFamily: FONTS.bold,
+                                                fontSize: SIZES.h6,
+                                                color: "#222",
+                                            }} numberOfLines={1}>{item.startCity}  →  {item.endCity}</Text>
+                                            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
+                                                <Feather name="calendar" size={12} color="#888" />
+                                                <Text style={{
+                                                    fontFamily: FONTS.regular,
+                                                    fontSize: SIZES.h7,
+                                                    color: "#666",
+                                                    marginLeft: 5,
+                                                }}>{day} {month} {year}</Text>
+                                                {item.company ? <Text style={{
+                                                    fontFamily: FONTS.regular,
+                                                    fontSize: SIZES.h7,
+                                                    color: "#999",
+                                                }}> • {item.company}</Text> : null}
+                                            </View>
+                                            {(item.user && item.user.name) ? (
+                                                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 3 }}>
+                                                    <Feather name="user" size={11} color="#aaa" />
+                                                    <Text style={{
+                                                        fontFamily: FONTS.regular,
+                                                        fontSize: SIZES.h8,
+                                                        color: "#999",
+                                                        marginLeft: 4,
+                                                    }}>{item.user.name}</Text>
+                                                </View>
+                                            ) : null}
+                                        </View>
+                                        <View style={{
+                                            paddingHorizontal: 10,
+                                            paddingVertical: 5,
+                                            backgroundColor: bgTint,
+                                            borderRadius: 8,
+                                        }}>
+                                            <Text style={{
+                                                fontFamily: FONTS.bold,
+                                                fontSize: SIZES.h8,
+                                                color: accentColor,
+                                            }}>{isContainer ? (language === "English" ? "Container" : "Conteneur") : "Kilos"}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            })
+                        )}
+                        <View style={{ height: 30 }} />
+                    </ScrollView>
+                )}
+            </View>
+        </View>
+    </Modal>
 
     </View>
   );
