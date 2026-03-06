@@ -72,7 +72,7 @@ export default function Home({navigation}) {
     const [load, setLoad] = useState(false);
     const [annoucements, setAnnoucements] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-    const {token, user, refresh, setBadgee, setLanguage, language, setRefresh} = useContext(AuthContext); 
+    const {token, user, refresh, setBadgee, setLanguage, language, setRefresh, pendingSearch, setPendingSearch} = useContext(AuthContext);
     const [containers, setContainers] = useState([]); 
     const [kilos, setKilos] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
@@ -153,6 +153,15 @@ export default function Home({navigation}) {
             })
     }
 
+    // Redirection automatique vers la recherche après inscription/connexion
+    useEffect(() => {
+        if (token && pendingSearch) {
+            const params = pendingSearch;
+            setPendingSearch(null);
+            navigation.navigate("Search", params);
+        }
+    }, [token, pendingSearch]);
+
     useFocusEffect(
         React.useCallback(() => {
 
@@ -165,13 +174,13 @@ export default function Home({navigation}) {
 
                     if(data && data.status === 0){
 
-                            setContainers(data.containers); 
+                            setContainers(data.containers);
                             setKilos(data.kilos);
                     }
 
-                 })   
-          
-      
+                 })
+
+
           return () => {
            // console.log('Je suis parti de cette page !');
           };

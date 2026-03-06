@@ -14,7 +14,7 @@ const SEARCH_URL = API.ANNONCE_SEARCH;
 export default function Search({route, navigation}) {
 
     const {type, start, year, month, end} = route.params; 
-    const {token, language} = useContext(AuthContext);
+    const {token, language, setPendingSearch} = useContext(AuthContext);
     const {postFunction} = useFetchFunctions()
     const [startAt, setStartAt] = useState(0); 
     const [annonces, setAnnonces] = useState([]); 
@@ -72,6 +72,7 @@ export default function Search({route, navigation}) {
 
     }else{
 
+        setPendingSearch({type, start, end, year, month});
         navigation.goBack();
         navigation.navigate("Ouhaaa");
         setLoading(false)

@@ -18,35 +18,38 @@ export default function AuthProvider({children}) {
   const [refreshh, setRefreshh] = useState(false);
   const [badgee, setBadgee] = useState(0);
   const [refreshModify, setRefreshModify] = useState(false);
+  const [pendingSearch, setPendingSearch] = useState(null);
 
 
   return (
     <AuthContext.Provider value={{
-      isTabBarVisible, 
-      setIsTabBarVisible, 
-      isTabBarVisible2, 
-      setIsTabBarVisible2, 
-      user, 
-      setUser, 
-      account, 
-      setAccount, 
-      token, 
-      setToken, 
-      language, 
-      setLanguage, 
-      refresh, 
-      setRefresh, 
-      idd, 
-      setIdd, 
-      userId, 
-      setUserId, 
-      refreshh, 
-      setRefreshh, 
-      badgee, 
-      setBadgee, 
-      refreshModify, 
-      setRefreshModify, 
-      
+      isTabBarVisible,
+      setIsTabBarVisible,
+      isTabBarVisible2,
+      setIsTabBarVisible2,
+      user,
+      setUser,
+      account,
+      setAccount,
+      token,
+      setToken,
+      language,
+      setLanguage,
+      refresh,
+      setRefresh,
+      idd,
+      setIdd,
+      userId,
+      setUserId,
+      refreshh,
+      setRefreshh,
+      badgee,
+      setBadgee,
+      refreshModify,
+      setRefreshModify,
+      pendingSearch,
+      setPendingSearch,
+
     }}>
         {children}
     </AuthContext.Provider>
