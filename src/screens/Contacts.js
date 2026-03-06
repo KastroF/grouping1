@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Platform, Image, TextInput } from 'react-native'
+import { View, Text, StyleSheet, Platform, Image, TextInput, Modal } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6"
@@ -16,19 +16,20 @@ const CONTACT_US_URL = API.USER_CONTACT_US;
 
 export default function Contacts({navigation}) {
 
-    const {user, token} = useContext(AuthContext); 
+    const {user, token, language} = useContext(AuthContext);
     const [object, setObject] = useState(""); 
     const [message, setMessage] = useState("");
     const {postFunction} = useFetchFunctions(); 
-    const [load, setLoad] = useState(false); 
+    const [load, setLoad] = useState(false);
+    const [successVisible, setSuccessVisible] = useState(false);
 
 
     const onSend = () => {
 
         if(!message && !object){
 
-            alert("Vous devez saisir un message et l'objet de votre message"); 
-        
+            alert(language === "English" ? "You must enter a message and subject" : "Vous devez saisir un message et l'objet de votre message");
+
         }else{
 
             setLoad(true);
@@ -37,19 +38,19 @@ export default function Contacts({navigation}) {
                 setLoad(false);
                 if(data?.status === 0){
 
-                    alert(data.message);
-                    setMessage(""); 
+                    setMessage("");
                     setObject("");
-               
+                    setSuccessVisible(true);
+
                 }else{
 
-                    alert("Une erreur s'est produite");
+                    alert(language === "English" ? "An error occurred" : "Une erreur s'est produite");
                 }
 
             }, (err) => {
 
                     setLoad(false);
-                    alert("Une erreur s'est produite");
+                    alert(language === "English" ? "An error occurred" : "Une erreur s'est produite");
                     console.log(err)
             })
         }
@@ -90,7 +91,7 @@ export default function Contacts({navigation}) {
                     fontFamily: FONTS.bold, 
                     color: COLORS.primary, 
                     fontSize: SIZES.h3
-                }}>Nous contacter</Text>
+                }}>{language === "English" ? "Contact Us" : "Nous contacter"}</Text>
                 </View>
                 {<View style={{
                             flexDirection: "row", 
@@ -132,7 +133,7 @@ export default function Contacts({navigation}) {
                         fontSize: SIZES.h5, 
                         color: "#000"
                     }}>
-                        Merci de nous laisser votre message ci-dessous :
+                        {language === "English" ? "Please leave your message below:" : "Merci de nous laisser votre message ci-dessous :"}
                     </Text>
                 </View>
 
@@ -145,7 +146,7 @@ export default function Contacts({navigation}) {
                         fontFamily: FONTS.bold, 
                         fontSize: SIZES.h5, 
                         color: "#000"
-                    }}>De :</Text>
+                    }}>{language === "English" ? "From:" : "De :"}</Text>
                     <View style={{
                         paddingHorizontal: 15, 
                         paddingVertical: 11, 
@@ -194,7 +195,7 @@ export default function Contacts({navigation}) {
                         marginTop: 15, 
                         width: "100%"
                     }}>
-                        <FormInput label="Objet" placeholder="Entrez l'objet de votre message" iconName="mail" 
+                        <FormInput label={language === "English" ? "Subject" : "Objet"} placeholder={language === "English" ? "Enter your message subject" : "Entrez l'objet de votre message"} iconName="mail"
           imagePath={require("../assets/images/mailIcon.png")}  value={object} onChangeText={setObject} />
                     </View> 
 
@@ -218,7 +219,7 @@ export default function Contacts({navigation}) {
                                 flex: 1
                             }}
                             placeholderTextColor="#bbb"
-                            placeholder='Tapez votre texte ici'
+                            placeholder={language === "English" ? "Type your text here" : "Tapez votre texte ici"}
                             value={message} 
                             onChangeText={setMessage} 
                         />
@@ -228,7 +229,7 @@ export default function Contacts({navigation}) {
                         marginTop: 15, 
                         width: "100%"
                     }}>
-                        <Button1 label="Envoyer" backgroundColor={COLORS.primary}
+                        <Button1 label={language === "English" ? "Send" : "Envoyer"} backgroundColor={COLORS.primary}
                          fontFamily={FONTS.bold} fontSize={SIZES.h3} textColor="#fff" borderRadius={9} 
                          onPress={onSend} />
                     </View>
@@ -236,6 +237,77 @@ export default function Contacts({navigation}) {
                 </View>
             </View>
         </KeyboardAwareScrollView>
+
+        <Modal
+            visible={successVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => {}}
+        >
+            <View style={{
+                flex: 1,
+                backgroundColor: "rgba(0,0,0,0.4)",
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
+                <View style={{
+                    width: SIZES.width - 100,
+                    paddingVertical: 30,
+                    paddingHorizontal: 25,
+                    backgroundColor: "#fff",
+                    borderRadius: 15,
+                    alignItems: "center"
+                }}>
+                    <View style={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                        backgroundColor: COLORS.primary,
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}>
+                        <Text style={{fontSize: 30, color: "#fff"}}>✓</Text>
+                    </View>
+
+                    <Text style={{
+                        marginTop: 15,
+                        textAlign: "center",
+                        color: COLORS.primary,
+                        fontFamily: FONTS.bold,
+                        fontSize: SIZES.h3
+                    }}>{language === "English" ? "Message sent!" : "Message envoyé !"}</Text>
+
+                    <Text style={{
+                        marginTop: 10,
+                        textAlign: "center",
+                        color: "#000",
+                        fontFamily: FONTS.regular,
+                        fontSize: SIZES.h5
+                    }}>{language === "English" ? "Your message has been sent successfully. We will get back to you shortly." : "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais."}</Text>
+
+                    <TouchableOpacity
+                        onPress={() => {
+                            setSuccessVisible(false);
+                            navigation.navigate("Home");
+                        }}
+                        style={{
+                            marginTop: 20,
+                            paddingVertical: 12,
+                            paddingHorizontal: 40,
+                            backgroundColor: COLORS.primary,
+                            borderRadius: 8,
+                            alignItems: "center"
+                        }}
+                    >
+                        <Text style={{
+                            fontSize: SIZES.h3,
+                            color: "#fff",
+                            fontFamily: FONTS.bold
+                        }}>OK</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
 
     </View>
   )
