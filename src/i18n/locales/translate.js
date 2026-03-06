@@ -1,11 +1,11 @@
 export const translate = {
     slides: {
       text1: {
-        fr: "Gagnez de l'argent en partageant votre conteneur dès aujourd'hui !",
+        fr: "Gagnez de l'argent en remplissant votre conteneur dès aujourd'hui",
         en: "Earn money by sharing your available space in shipping containers."
       },
       text2: {
-        fr: "Partagez vos kilos ou recherchez des kilos disponibles dans votre ville.",
+        fr: "Partagez Ou Recherchez les kilos disponibles dans votre ville.",
         en: "Share or find available kilos for air cargo in your city."
       }
     }, 
@@ -80,8 +80,23 @@ export const translate = {
     listingItem: {
 
         dateDepart: {
-            fr: "Date de départ", 
+            fr: "Date de départ",
             en: "Departure date"
+        }
+    },
+
+    chatbot: {
+        title: {
+            fr: "Assistant Grouping",
+            en: "Grouping Assistant"
+        },
+        welcome: {
+            fr: "Bonjour ! Je suis l'assistant Grouping. Comment puis-je vous aider ?",
+            en: "Hello! I'm the Grouping assistant. How can I help you?"
+        },
+        placeholder: {
+            fr: "Écrivez votre message...",
+            en: "Write your message..."
         }
     }
   }
