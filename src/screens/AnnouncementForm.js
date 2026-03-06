@@ -2105,7 +2105,7 @@ if (good) {
                         color: "#fff",
                         fontSize: SIZES.h2,
                         textAlign: "center"
-                    }}>{language === "English" ? "Create your listing" : "Créez votre annonce"}</Text>
+                    }}>{language === "English" ? (_id ? "Edit your listing" : "Create your listing") : (_id ? "Modifier votre annonce" : "Créez votre annonce")}</Text>
                      <Text style={{
                         fontFamily: FONTS.regular,
                         color: "#fff",
@@ -2113,7 +2113,7 @@ if (good) {
                         lineHeight: SIZES.h5,
                         textAlign: "center",
                         marginTop: 5
-                    }}> {language === "English" ? (value === "container" ? "In just a few minutes, connect with thousands of shippers ready to use your space." : "Share your available kilos with people in your city.") : (value === "container" ? " En quelques minutes entrez en contact avec des milliers d'expéditeurs prêts à utiliser votre espace." : "Partagez vos kilos disponibles avec des personnes dans votre ville.")}</Text>
+                    }}> {language === "English" ? (_id ? "Update your listing details below." : (value === "container" ? "In just a few minutes, connect with thousands of shippers ready to use your space." : "Share your available kilos with people in your city.")) : (_id ? "Modifiez les détails de votre annonce ci-dessous." : (value === "container" ? " En quelques minutes entrez en contact avec des milliers d'expéditeurs prêts à utiliser votre espace." : "Partagez vos kilos disponibles avec des personnes dans votre ville."))}</Text>
                 </View>
 
             </Animated.View>

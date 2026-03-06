@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { COLORS, FONTS, MONTHS, SIZES } from '../constants/theme'
-import { StyleSheet, View, Text, ImageBackground, Dimensions, Image, TouchableOpacity, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ImageBackground, Dimensions, Image, TouchableOpacity, Platform, ScrollView, Modal, Alert } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { useFetchFunctions } from '../infrastructures/functions';
 import { AuthContext } from '../navigation/AuthProvider';
@@ -12,6 +12,7 @@ import Octicons from "react-native-vector-icons/Octicons"
 import { API } from '../config/api';
 
 const MON_ANNONCE_URL = API.ANNONCE_GET_ONE;
+const DEACTIVATE_URL = API.ANNONCE_DEACTIVATE;
 
 export default function AnnonceDetails({navigation, route}) {
 
@@ -19,12 +20,13 @@ export default function AnnonceDetails({navigation, route}) {
 
     const {_id} = route.params;
 
-    const {token, user, refreshModify, language} = useContext(AuthContext); 
+    const {token, user, refreshModify, language} = useContext(AuthContext);
     const {postFunction, timeAgo} = useFetchFunctions()
-    const [annonce, setAnnonce] = useState({}); 
-    const [userr, setUserr] = useState({}); 
+    const [annonce, setAnnonce] = useState({});
+    const [userr, setUserr] = useState({});
     const [sum, setSum] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
   
 
    // alert(_id)
@@ -191,10 +193,10 @@ function calculateContainerVolume(feet) {
                             }}>{language === "English" ? "Details" : "Détails"}</Text>
                         </View>
 
-                     {user && annonce.userId === user._id ? <TouchableOpacity disabled={user && annonce.userId !==  user._id} onPress={() => navigation.navigate("AnnouncementForm", {_id, value: annonce.status})} >
+                     {user && annonce.userId === user._id ? <TouchableOpacity onPress={() => setModalVisible(true)} >
                             <Text style={{
-                                fontFamily: FONTS.bold, 
-                                color: "#fff", 
+                                fontFamily: FONTS.bold,
+                                color: "#fff",
                                 fontSize: SIZES.h2,
                                 marginTop: Platform.OS === "android" ? -15 : -15
                             }}>...</Text>
@@ -409,7 +411,7 @@ function calculateContainerVolume(feet) {
                     fontFamily: FONTS.regular, 
                     fontSize: SIZES.h7, 
                     color: '#fff'
-                }}>{annonce.company}</Text>
+                }}>{annonce.company} {annonce.status === "container" && annonce.transitaire}</Text>
             </View>
 
             </View>
@@ -678,7 +680,7 @@ function calculateContainerVolume(feet) {
                             fontFamily: FONTS.bold, 
                             color: COLORS.primary, 
                             fontSize: SIZES.h5
-                        }}> {language === "English" ? (annonce.status === "container" ? (annonce.transitaire ? "Freight forwarder" : "Container sharer") : "Kilos sharer") : (annonce.status === "container" ? (annonce.transitaire ? "Transitaire" : "Partageur du conteneur") : "Partageur de kilos")} </Text>
+                        }}> {language === "English" ? (annonce.status === "container" ? (annonce.transitairee ? "Freight forwarder" : "Container sharer") : "Kilos sharer") : (annonce.status === "container" ? (annonce.transitairee ? "Transitaire" : "Partageur du conteneur") : "Partageur de kilos")} </Text>
                     </View>
 
                 </View>
@@ -723,7 +725,7 @@ function calculateContainerVolume(feet) {
                                 fontFamily: FONTS.bold, 
                                 color: "#000", 
                                 fontSize: SIZES.h5
-                            }}>{annonce.status === "container" && annonce.transitaire ? annonce.transitaire : userr && userr.name}</Text>
+                            }}>{userr && userr.name}</Text>
                              <Text style={{
                                 fontFamily: FONTS.bold, 
                                 marginTop: Platform.OS === "android" ? -5 : 2,
@@ -766,6 +768,101 @@ function calculateContainerVolume(feet) {
             </View>
 
             </ScrollView>
+
+            <Modal
+                visible={modalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <TouchableOpacity
+                    style={{
+                        flex: 1,
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        justifyContent: "flex-end"
+                    }}
+                    activeOpacity={1}
+                    onPress={() => setModalVisible(false)}
+                >
+                    <View style={{
+                        backgroundColor: "#fff",
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        paddingHorizontal: 20,
+                        paddingTop: 25,
+                        paddingBottom: Platform.OS === "ios" ? 40 : 25
+                    }}>
+                        <View style={{
+                            width: 40,
+                            height: 4,
+                            backgroundColor: "#ccc",
+                            borderRadius: 2,
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} />
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                setModalVisible(false);
+                                navigation.navigate("AnnouncementForm", {_id, value: annonce.status});
+                            }}
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                paddingVertical: 15,
+                                borderBottomWidth: 1,
+                                borderBottomColor: "#f0f0f0"
+                            }}
+                        >
+                            <Ionicons name="create-outline" size={22} color={COLORS.primary} />
+                            <Text style={{
+                                marginLeft: 12,
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h5,
+                                color: "#000"
+                            }}>{language === "English" ? "Edit" : "Modifier"}</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                setModalVisible(false);
+                                Alert.alert(
+                                    language === "English" ? "Delete listing" : "Supprimer l'annonce",
+                                    language === "English" ? "Are you sure you want to delete this listing?" : "Êtes-vous sûr de vouloir supprimer cette annonce ?",
+                                    [
+                                        {
+                                            text: language === "English" ? "Cancel" : "Annuler",
+                                            style: "cancel"
+                                        },
+                                        {
+                                            text: language === "English" ? "Delete" : "Supprimer",
+                                            style: "destructive",
+                                            onPress: () => {
+                                                postFunction(DEACTIVATE_URL, {id: _id}, token).then(() => {
+                                                    navigation.goBack();
+                                                });
+                                            }
+                                        }
+                                    ]
+                                );
+                            }}
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                paddingVertical: 15
+                            }}
+                        >
+                            <Ionicons name="trash-outline" size={22} color="red" />
+                            <Text style={{
+                                marginLeft: 12,
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h5,
+                                color: "red"
+                            }}>{language === "English" ? "Delete" : "Supprimer"}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
 
          </View>
          )

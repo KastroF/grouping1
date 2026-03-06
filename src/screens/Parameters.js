@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native'
 import { COLORS, FONTS, SIZES } from '../constants/theme'
+import { AuthContext } from '../navigation/AuthProvider'
 
 export default function Parameters({navigation}) {
 
+    const {language} = useContext(AuthContext);
 
     const miniMenu = (text, text2) => {
 
@@ -58,14 +60,14 @@ export default function Parameters({navigation}) {
 
                     marginLeft: -10
                 }}>
-                    Paramètres
+                    {language === "English" ? "Settings" : "Paramètres"}
                 </Text>
             </View>
 
         </View>
 
-        {miniMenu("Modifier le profil", "Modify")}
-        {miniMenu("Information de connexion", "Connexion")}
+        {miniMenu(language === "English" ? "Edit profile" : "Modifier le profil", "Modify")}
+        {miniMenu(language === "English" ? "Change password" : "Modifier le mot de passe", "Connexion")}
         {//miniMenu("Paramètres de facturation")}
 }
         

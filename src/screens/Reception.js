@@ -187,6 +187,38 @@ export default function Reception({navigation}) {
             onEndReached={loadMoreItem}
             keyExtractor={(item) => item.firstMessage._id}
             data={messages}
+            ListEmptyComponent={() => {
+                if(notifications.length > 0) return null;
+                return(
+                    <View style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginTop: 80,
+                        paddingHorizontal: 30
+                    }}>
+                        <Image source={require("../assets/images/message.png")} style={{
+                            height: 50,
+                            width: 50,
+                            resizeMode: "contain",
+                            opacity: 0.3
+                        }} />
+                        <Text style={{
+                            fontFamily: FONTS.bold,
+                            color: COLORS.middle_blue,
+                            fontSize: SIZES.h4,
+                            marginTop: 15,
+                            textAlign: "center"
+                        }}>{language === "English" ? "No messages received" : "Aucun message reçu"}</Text>
+                        <Text style={{
+                            fontFamily: FONTS.regular,
+                            color: COLORS.middle_blue,
+                            fontSize: SIZES.h6,
+                            marginTop: 5,
+                            textAlign: "center"
+                        }}>{language === "English" ? "Your conversations will appear here." : "Vos conversations apparaîtront ici."}</Text>
+                    </View>
+                )
+            }}
             renderItem={({item, index}) => {
 
                     return <Notification

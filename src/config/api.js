@@ -28,6 +28,8 @@ const API = {
   ANNONCE_MODIFY_KILO: `${BASE_URL}/api/annonce/modifierkilo`,
   ANNONCE_MODIFY_IMG: `${BASE_URL}/api/annonce/modifierannonceimg`,
   ANNONCE_MODIFY_PDF: `${BASE_URL}/api/annonce/modifierannoncepdf`,
+  ANNONCE_DEPARTS: `${BASE_URL}/api/annonce/departsimminents`,
+  ANNONCE_DEACTIVATE: `${BASE_URL}/api/annonce/updateactivecontainer`,
 
   // Localisation
   COUNTRY_LIST: `${BASE_URL}/api/country/getcountries`,

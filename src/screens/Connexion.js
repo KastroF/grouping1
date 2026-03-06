@@ -16,7 +16,7 @@ export default function Connexion({navigation}) {
 
     const [last, setLast] = useState(""); 
     const [newPass, setNewPass] = useState(""); 
-    const {token} = useContext(AuthContext); 
+    const {token, language} = useContext(AuthContext);
     const {postFunction} = useFetchFunctions();
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export default function Connexion({navigation}) {
 
             if(!newPass && !last){
 
-                setErrorMessage("Veuillez renseigner les deux champs"); 
+                setErrorMessage(language === "English" ? "Please fill in both fields" : "Veuillez renseigner les deux champs");
                 setTimeout(() => {
                     setErrorMessage("")  
                 }, 8000);
@@ -37,7 +37,7 @@ export default function Connexion({navigation}) {
 
                 if(newPass.length < 6){
 
-                    setErrorMessage("Mot de passe trop court, minimum six(6) caractères"); 
+                    setErrorMessage(language === "English" ? "Password too short, minimum 6 characters" : "Mot de passe trop court, minimum six(6) caractères");
                     setTimeout(() => {
                         setErrorMessage("")  
                     }, 8000);
@@ -47,7 +47,7 @@ export default function Connexion({navigation}) {
 
                         if(data && data.status === 0){
 
-                            alert("Félicitations, votre mot de passe a été changé avec succès"); 
+                            alert(language === "English" ? "Congratulations, your password has been changed successfully" : "Félicitations, votre mot de passe a été changé avec succès");
                             setLast(""); 
                             setNewPass("");
                             
@@ -110,7 +110,7 @@ export default function Connexion({navigation}) {
 
                     marginLeft: -10
                 }}>
-                    Information de connexion
+                    {language === "English" ? "Change password" : "Modifier le mot de passe"}
                 </Text>
             </View>
 
@@ -144,7 +144,7 @@ export default function Connexion({navigation}) {
                         color: "#000", 
                         textAlign: "center"
                     }}>
-                        Renseignez ci-dessous votre ancien mot de passe, suivi de votre nouveau mot de passe et enfin cliquez sur le bouton Modifier
+                        {language === "English" ? "Enter your old password below, followed by your new password, then click Change" : "Renseignez ci-dessous votre ancien mot de passe, suivi de votre nouveau mot de passe et enfin cliquez sur le bouton Modifier"}
                     </Text>
 
                 
@@ -159,21 +159,21 @@ export default function Connexion({navigation}) {
                 <View style={{
                     
                 }}>
-                    <FormInput placeholder="Saisissez votre ancien mot de passe " label="Ancien mot de passe" iconName="eye" 
+                    <FormInput placeholder={language === "English" ? "Enter your old password" : "Saisissez votre ancien mot de passe"} label={language === "English" ? "Old password" : "Ancien mot de passe"} iconName="eye"
                         password={true} onChangeText={setLast} value={last} />
                 </View>
 
                 <View style={{
                     marginTop: 15
                 }}>
-                    <FormInput onChangeText={setNewPass} value={newPass} placeholder="Saisissez votre nouveau mot de passe " label="Nouveau mot de passe" iconName="eye" 
+                    <FormInput onChangeText={setNewPass} value={newPass} placeholder={language === "English" ? "Enter your new password" : "Saisissez votre nouveau mot de passe"} label={language === "English" ? "New password" : "Nouveau mot de passe"} iconName="eye"
                         password={true} />
                 </View>
 
                 <View style={{
                     marginTop: 15
                 }}>
-                    <Button1 label="Modifier" backgroundColor={COLORS.primary} textColor="#fff" borderRadius={8} fontFamily={FONTS.bold}  onPress={onRequest} />
+                    <Button1 label={language === "English" ? "Change" : "Modifier"} backgroundColor={COLORS.primary} textColor="#fff" borderRadius={8} fontFamily={FONTS.bold}  onPress={onRequest} />
                 </View>
 
                 <View style={{
@@ -186,8 +186,8 @@ export default function Connexion({navigation}) {
                             fontFamily: FONTS.ligth, 
                             color: "#000", 
                             fontSize: SIZES.h6
-                        }}> { Platform.OS === "android" ? "Si vous vous êtes connecté via Google, vous ne pouvez pas changer le mot de passe." : 
-                        "Si vous vous êtes connecté via Google ou via Apple, vous ne pouvez pas changer le mot de passe."  } </Text>
+                        }}> { Platform.OS === "android" ? (language === "English" ? "If you signed in with Google, you cannot change the password." : "Si vous vous êtes connecté via Google, vous ne pouvez pas changer le mot de passe.") :
+                        (language === "English" ? "If you signed in with Google or Apple, you cannot change the password." : "Si vous vous êtes connecté via Google ou via Apple, vous ne pouvez pas changer le mot de passe.")  } </Text>
                     
                 </View>
 
