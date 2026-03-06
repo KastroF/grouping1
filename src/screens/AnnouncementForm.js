@@ -1634,7 +1634,7 @@ if (good) {
       loadCongratStack2();
       return <Loading />;
     }
-    return <CongratStack2 />;
+    return <CongratStack2 type={value} goHome={() => { setGood(false); navigation.navigate("Hommee"); }} />;
   }
 
 
