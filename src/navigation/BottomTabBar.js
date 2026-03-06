@@ -85,9 +85,10 @@ const badgeStyles = StyleSheet.create({
 
 export default function BottomTabBar() {
 
-    const {isTabBarVisible, setIsTabBarVisible, user, setBadgee, token, badgee} = useContext(AuthContext);
+    const {isTabBarVisible, setIsTabBarVisible, user, token, badgee, refreshBadgeCount} = useContext(AuthContext);
     const {laFonctionGet} = useFetchFunctions();
     const navigation = useNavigation();
+    const [activeScreen, setActiveScreen] = useState('Hommee');
 
     // Notification banner states
     const [isVisible, setIsVisible] = useState(false);
@@ -102,17 +103,9 @@ export default function BottomTabBar() {
 
       setIsTabBarVisible(false);
 
-      notifee.setBadgeCount(0);
-
       // Fetch initial badge count from API
       if(token){
-        laFonctionGet(API.NOTIF_NOT_READ, token).then((data) => {
-          if(data && data.status === 0){
-            setBadgee(data.badges || 0);
-          }
-        }, (err) => {
-          console.log(err);
-        })
+        refreshBadgeCount();
       }
 
       // Créer le channel Android (requis pour Android 8+)
@@ -129,17 +122,14 @@ export default function BottomTabBar() {
 
       // Foreground notifications - visible on ALL screens
       const unsubOnMessage = messaging().onMessage(async (message) => {
-        const badge = message.data?.badge || 0;
-
-        await notifee.setBadgeCount(parseInt(badge));
-
         const notifTitle = message.notification?.title || '';
         const notifBody = message.notification?.body || '';
 
         setTitle(notifTitle);
         setBody(notifBody);
-        setBadgee(parseInt(badge));
         setIsVisible(true);
+
+        await refreshBadgeCount();
 
         // Afficher une vraie notification système en foreground
         await notifee.displayNotification({
@@ -167,12 +157,10 @@ export default function BottomTabBar() {
 
       // Notification opened from background
       const unsubOnOpen = messaging().onNotificationOpenedApp(async (message) => {
-        await notifee.setBadgeCount(0);
-        setBadgee(0);
-
         if (token) {
-          laFonctionGet(VIEW_NOTIFS_URL, token);
+          await laFonctionGet(VIEW_NOTIFS_URL, token);
         }
+        await refreshBadgeCount();
 
         const status = message.data?.status;
         if (status && parseInt(status) === 0) {
@@ -211,6 +199,16 @@ export default function BottomTabBar() {
   return (
     <View style={{flex: 1}}>
     <Tab.Navigator
+    screenListeners={{
+        state: (e) => {
+            const tabRoute = e.data.state.routes[e.data.state.index];
+            const nestedState = tabRoute.state;
+            const screenName = nestedState
+              ? nestedState.routes[nestedState.index]?.name
+              : tabRoute.name;
+            setActiveScreen(screenName);
+        }
+    }}
     screenOptions={{
         tabBarShowLabel: false,
         tabBarHideOnKeyboard: true,
@@ -301,10 +299,10 @@ export default function BottomTabBar() {
 
         }}
         listeners={{
-            tabPress: () => {
-                setBadgee(0);
+            tabPress: async () => {
                 if(token){
-                    laFonctionGet(VIEW_NOTIFS_URL, token);
+                    await laFonctionGet(VIEW_NOTIFS_URL, token);
+                    refreshBadgeCount();
                 }
             }
         }}
@@ -312,7 +310,7 @@ export default function BottomTabBar() {
 
     </Tab.Navigator>
 
-    {!isTabBarVisible && <FloatingChatButton />}
+    {!isTabBarVisible && activeScreen === 'Hommee' && <FloatingChatButton />}
 
     <NotificationBanner
       isVisible={isVisible}

@@ -20,7 +20,7 @@ export default function Messenger({navigation, route}) {
 
     const {_id} = route.params; 
 
-    const {setIsTabBarVisible, user, token} = useContext(AuthContext); 
+    const {setIsTabBarVisible, user, token, language, refreshBadgeCount} = useContext(AuthContext);
 
     const {postFunction, timeAgo} = useFetchFunctions(); 
     const [startAt, setStartAt] = useState(0); 
@@ -87,7 +87,7 @@ export default function Messenger({navigation, route}) {
             if(data && data.status === 0){
 
                     setUserr(data.user);
-                    setStartAt(data.startAt); 
+                    setStartAt(data.startAt);
                     setCount(data.count)
                     const mapped = (data.messages || []).map((m) => ({
                       ...m,
@@ -95,12 +95,11 @@ export default function Messenger({navigation, route}) {
                       _id: toId(m._id),
                     }));
                     setMessages(mapped);
-                    
-                    
 
                     console.log(data.messages.length);
 
-
+                    // Messages du correspondant marques comme lus cote backend, mettre a jour le badge
+                    refreshBadgeCount();
             }
         })
 
@@ -414,7 +413,7 @@ const renderLoader = () => {
 
 <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : null}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
 
@@ -550,7 +549,7 @@ const renderLoader = () => {
                  fontFamily: FONTS.bold, 
                  fontSize: SIZES.h6, 
                  
-                }}> {count} annonce(s) partagée(s)</Text> 
+                }}> {count} {language === "English" ? "shared ad(s)" : "annonce(s) partagée(s)"}</Text>
             </View>
 
                
@@ -776,7 +775,7 @@ const renderLoader = () => {
                     paddingHorizontal: 15, 
                     justifyContent: "space-between"
                 }}>
-                    <TextInput placeholder='Entrer votre message ici...' 
+                    <TextInput placeholder={language === "English" ? "Enter your message here..." : "Entrer votre message ici..."}
                         placeholderTextColor="#bbb"
                         multiline={true}
                         onChangeText={setText}

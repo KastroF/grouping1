@@ -8,103 +8,95 @@ import Entypo from "react-native-vector-icons/Entypo"
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6"
 import AntDesign from "react-native-vector-icons/AntDesign"
 import Ionicons from "react-native-vector-icons/Ionicons"
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import { useFocusEffect } from '@react-navigation/native';
-import { useFetchFunctions } from '../infrastructures/functions';
-import { SocketContext } from '../navigation/SocketProv';
-import { API } from '../config/api';
+import Animated, {
+  FadeInUp,
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
-const NOT_READ_URL = API.NOTIF_NOT_READ;
+// Badge anime avec bounce
+function AnimatedCardBadge({ count }) {
+  const scale = useSharedValue(0);
+
+  useEffect(() => {
+    if (count && count > 0) {
+      scale.value = withSequence(
+        withTiming(0, { duration: 0 }),
+        withSpring(1, { damping: 10, stiffness: 180 })
+      );
+    } else {
+      scale.value = withTiming(0, { duration: 120 });
+    }
+  }, [count]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: scale.value,
+  }));
+
+  if (!count || count === 0) return null;
+
+  return (
+    <Animated.View style={[{
+      position: "absolute",
+      right: 5,
+      top: -10,
+      height: 20,
+      minWidth: 20,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#FF3B30",
+      borderRadius: 10,
+      paddingHorizontal: 4,
+    }, animatedStyle]}>
+      <Text style={{
+        fontFamily: FONTS.bold,
+        color: "#fff",
+        fontSize: 8,
+        fontWeight: '700',
+      }}>{count > 99 ? '99+' : count}</Text>
+    </Animated.View>
+  );
+}
 
 export default function MyAccount({navigation, route}) {
 
-
-
-const {laFonctionGet} = useFetchFunctions(); 
-const {token} = useContext(AuthContext);
-
-  const {user} = useContext(AuthContext); 
+const {token, language, user, refreshBadgeCount} = useContext(AuthContext);
   const [badge, setBadge] = useState(null);
   const [annonce, setAnnonce] = useState(null);
-  const socket = useContext(SocketContext); // Accès à l'instance socket
-  const [messages, setMessages] = useState([]);
 
-  const [messageInput, setMessageInput] = useState("");
-
-  // Rejoindre une room dès le montage du composant
- /* useEffect(() => {
-    if (socket) {
-      const roomId1 = "room1"; // Par exemple, une room statique ou dynamique
-
-      // Rejoindre la room
-      socket.emit("joinRoom", { roomId1 });
-
-      // Écouter les messages reçus
-      socket.on("messageReceived", (message) => {
-        console.log("Message reçu :", message);
-        setMessages((prevMessages) => [...prevMessages, message]);
-      });
-
-      // Écouter les notifications d'état utilisateur
-      socket.on("userStatusChanged", (statusUpdate) => {
-        console.log("Mise à jour de l'état utilisateur :", statusUpdate);
-      });
-
-      // Nettoyage lors du démontage
-      return () => {
-        socket.off("messageReceived");
-        socket.off("userStatusChanged");
-      };
-    }
-  }, [socket]); */
-
-
-  let _id ; 
+  let _id ;
   if(route){
-
-    _id = route.params; 
-
+    _id = route.params;
   }
 
-  
-
   const disconnect = () => {
-
-      console.log("navigue")
       navigation.navigate("Deconnexion")
   }
 
-
+  const goToReception = () => {
+    navigation.navigate("Reception");
+  }
 
   useFocusEffect(
     React.useCallback(() => {
 
-
-      laFonctionGet(NOT_READ_URL, token).then((data) => {
-
-        console.log(data);
-        if(data && data.status === 0){
-
-            //console.log("Hi man ")
-        //    alert(data.badges)
-
-       //   alert(data.badges);
-
-      // alert("un ok")
-
-            setBadge(data.badges);
-            setAnnonce(data.annonces);
-
+      refreshBadgeCount().then((data) => {
+        if(data){
+            setBadge(data.badges || 0);
+            setAnnonce(data.annonces || 0);
         }
+      }).catch((err) => {
+          console.log(err);
+      });
 
-      }, (err) => {
-
-          console.log(err); 
-      })
-
-  
-      return () => {
-       // console.log('Je suis parti de cette page !');
-      };
+      return () => {};
     }, [])
   );
 
@@ -112,109 +104,100 @@ const {token} = useContext(AuthContext);
 
   return (
     <View style={{
-        flex: 1,  
-        backgroundColor: COLORS.light_blue, 
-      
+        flex: 1,
+        backgroundColor: COLORS.light_blue,
     }}>
 
-        <View style={{
-            paddingTop: Platform.OS === "ios" ? 65 : 25, 
-            paddingBottom: 10, 
-            backgroundColor: "#fff", 
+        <Animated.View entering={FadeInDown.duration(400)} style={{
+            paddingTop: Platform.OS === "ios" ? 65 : 25,
+            paddingBottom: 10,
+            backgroundColor: "#fff",
             shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
+            shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
             shadowRadius: 4,
-            elevation: 5, // 
-
+            elevation: 5,
         }}>
 
             <View style={{
-                paddingHorizontal: 15, 
-                flexDirection: "row", 
-                alignItems: "center", 
+                paddingHorizontal: 15,
+                flexDirection: "row",
+                alignItems: "center",
                 justifyContent: "space-between"
             }}>
                 { _id && <TouchableOpacity onPress={() => navigation.goBack()} >
                     <FontAwesome6 name='angle-left' color={COLORS.primary} size={SIZES.h2} />
                 </TouchableOpacity> }
-                <View > 
+                <View >
                 <Text style={{
-                    fontFamily: FONTS.bold, 
-                    color: COLORS.primary, 
+                    fontFamily: FONTS.bold,
+                    color: COLORS.primary,
                     fontSize: SIZES.h3
-                }}>Mon compte</Text>
+                }}>{language === "English" ? "My account" : "Mon compte"}</Text>
                 </View>
                 <View style={{
-                    flexDirection: "row", 
+                    flexDirection: "row",
                     alignItems: "center"
                 }}>
-
                     <TouchableOpacity onPress={() => navigation.navigate("Announcement") } style={{
                       marginLeft: 10
                     }}>
                        <Ionicons name='add-circle-outline' size={SIZES.h2} color={COLORS.primary} />
                     </TouchableOpacity>
-                        
                 </View>
-               
             </View>
 
-        </View>
+        </Animated.View>
 
 
     { user ?  <ScrollView contentContainerStyle={{
         paddingBottom: 85
       }}>
 
-        <View style={{
-          marginTop: 15, 
-          backgroundColor: "#fff", 
-          flexDirection: "row", 
+        <Animated.View entering={FadeInUp.delay(100).duration(450).springify().damping(16)} style={{
+          marginTop: 15,
+          backgroundColor: "#fff",
+          flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "flex-end",
           padding: 10
-        }}> 
+        }}>
         <View style={{
-          flexDirection: "row", 
+          flexDirection: "row",
           flex: 1
         }}>
 
-
             {
              user ?  user.photo && <View >
-                  <Image 
+                  <Image
                       source={{uri: user.photo}}
                       style={{
-                        height: SIZES.width * 0.17, 
-                        width: SIZES.width * 0.17, 
-                        resizeMode: "cover", 
+                        height: SIZES.width * 0.17,
+                        width: SIZES.width * 0.17,
+                        resizeMode: "cover",
                         borderRadius: 8
                       }}
-                  /> 
+                  />
                 </View> : null
             }
 
             <View style={{
-              marginLeft: 10, 
+              marginLeft: 10,
               marginTop: Platform.OS === "android" ? -7 : 0
             }}>
                 <Text style={{
-                  color: "#000", 
-                  fontFamily: FONTS.bold, 
-                  fontSize: SIZES.h4, 
+                  color: "#000",
+                  fontFamily: FONTS.bold,
+                  fontSize: SIZES.h4,
                   textTransform: "capitalize"
                 }}>
                   {user.name}
                 </Text>
                 <Text style={{
-                  color: "#aaa", 
-                  fontFamily: FONTS.regular, 
-                  fontSize: SIZES.h7, 
-                  marginTop: Platform.OS === "android" ? -5 : 0 
+                  color: "#aaa",
+                  fontFamily: FONTS.regular,
+                  fontSize: SIZES.h7,
+                  marginTop: Platform.OS === "android" ? -5 : 0
                 }}>
                   {user.email}
                 </Text>
@@ -230,27 +213,26 @@ const {token} = useContext(AuthContext);
                 </View>
             </View>
 
-      </View>   
+      </View>
 
           <TouchableOpacity onPress={() => navigation.navigate("Modify")} style={{
-           
               marginHorizontal: 10
           }}>
             <Image source={require("../assets/images/crayon.png")} style={{
-              height: SIZES.h3, 
+              height: SIZES.h3,
               width: SIZES.h3, resizeMode: "contain"
             }} />
           </TouchableOpacity>
 
-        </View>
+        </Animated.View>
 
         <View style={{
           paddingHorizontal: 25
         }}>
-           <View 
+           <View
           style={{
-            marginTop: 15, 
-            borderBottomColor: "rgb(211, 220, 235)", 
+            marginTop: 15,
+            borderBottomColor: "rgb(211, 220, 235)",
             borderBottomWidth: 2
           }}
         />
@@ -261,230 +243,228 @@ const {token} = useContext(AuthContext);
         }}>
 
         <View style={{
-          paddingHorizontal: 15, 
-          flexDirection: "row", 
+          paddingHorizontal: 15,
+          flexDirection: "row",
           alignItems: "center"
         }}>
 
+          <Animated.View entering={FadeInUp.delay(200).duration(450).springify().damping(16)}>
           <TouchableOpacity onPress={() => navigation.navigate("My Announcements", {_id: true})} style={{
-            backgroundColor: "#fff", 
+            backgroundColor: "#fff",
             paddingVertical: 5,
-            paddingHorizontal: 10, 
-            width: SIZES.width/2 - 22.5, 
-            borderRadius: 8, 
+            paddingHorizontal: 10,
+            width: SIZES.width/2 - 22.5,
+            borderRadius: 8,
             position: "relative"
           }}>
               <Image source={require("../assets/images/annonces.png")}
                 style={{
-                    width: SIZES.h1, 
-                    height: SIZES.h1, 
-                    resizeMode: "contain", 
+                    width: SIZES.h1,
+                    height: SIZES.h1,
+                    resizeMode: "contain",
                 }}/>
               <Text style={{
-                color: COLORS.primary, 
-                fontSize: SIZES.h6, 
-                fontFamily: FONTS.regular, 
+                color: COLORS.primary,
+                fontSize: SIZES.h6,
+                fontFamily: FONTS.regular,
                 marginTop: 3
               }}>
-                Mes annonces
+                {language === "English" ? "My listings" : "Mes annonces"}
               </Text>
 
-              {
-                annonce ? <View style={{
-                  position: "absolute", 
-                  right: 5, 
-                  top: -10, 
-                  height: 20, 
-                  width: 20, 
-                  alignItems: "center", 
-                  justifyContent: "center", 
-                  backgroundColor: "red", 
-                  borderRadius: 10
-                }} >
-                    <Text style={{
-                      fontFamily: FONTS.bold, 
-                      color: "#fff", 
-                      fontSize: 8
-                    }} > {annonce > 99 ? `99+` : annonce} </Text>
-                </View> : ""
-              }
-
+              <AnimatedCardBadge count={annonce} />
 
           </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Reception") } style={{
-            backgroundColor: "#fff", 
+          <Animated.View entering={FadeInUp.delay(300).duration(450).springify().damping(16)}>
+          <TouchableOpacity onPress={goToReception} style={{
+            backgroundColor: "#fff",
             paddingHorizontal: 10,
-            paddingVertical: 5, 
-            width: SIZES.width/2 - 22.5, 
-            borderRadius: 8, 
-            marginLeft: 15, 
+            paddingVertical: 5,
+            width: SIZES.width/2 - 22.5,
+            borderRadius: 8,
+            marginLeft: 15,
             position: "relative"
           }}>
               <Image source={require("../assets/images/boite.png")}
                 style={{
-                    width: SIZES.h1, 
-                    height: SIZES.h1, 
-                    resizeMode: "contain", 
+                    width: SIZES.h1,
+                    height: SIZES.h1,
+                    resizeMode: "contain",
                 }}/>
               <Text style={{
-                color: COLORS.primary, 
-                fontSize: SIZES.h6, 
-                fontFamily: FONTS.regular, 
+                color: COLORS.primary,
+                fontSize: SIZES.h6,
+                fontFamily: FONTS.regular,
                 marginTop: 3
               }}>
-                Boîte de reception
+                {language === "English" ? "Inbox" : "Boîte de réception"}
               </Text>
 
-              {
-                badge ? <View style={{
-                  position: "absolute", 
-                  right: 5, 
-                  top: -10, 
-                  height: 20, 
-                  width: 20, 
-                  alignItems: "center", 
-                  justifyContent: "center", 
-                  backgroundColor: "red", 
-                  borderRadius: 10
-                }} >
-                    <Text style={{
-                      fontFamily: FONTS.bold, 
-                      color: "#fff", 
-                      fontSize: 8
-                    }} > {badge > 99 ? `99+` : badge} </Text>
-                </View> : ""
-              }
+              <AnimatedCardBadge count={badge} />
 
           </TouchableOpacity>
+          </Animated.View>
 
         </View>
 
         </View>
 
-        <View style={{
-            marginTop: 15, 
+        <Animated.View entering={FadeInUp.delay(400).duration(450).springify().damping(16)} style={{
+            marginTop: 15,
             paddingHorizontal: 15
         }}>
           <TouchableOpacity onPress={() => navigation.navigate("Parameters")}  style={{
-            width: "100%", 
-            backgroundColor: "#fff", 
-            paddingHorizontal: 15, 
+            width: "100%",
+            backgroundColor: "#fff",
+            paddingHorizontal: 15,
             paddingVertical: 15,
-            borderRadius: 8, 
-            flexDirection: "row", 
+            borderRadius: 8,
+            flexDirection: "row",
             alignItems: "center"
           }}>
 
             <Image source={require("../assets/images/parametre.png")}
                 style={{
-                    width: SIZES.h1, 
-                    height: SIZES.h1, 
-                    resizeMode: "contain", 
+                    width: SIZES.h1,
+                    height: SIZES.h1,
+                    resizeMode: "contain",
                 }} />
 
                 <Text style={{
-                color: COLORS.primary, 
-                fontSize: SIZES.h5, 
-                fontFamily: FONTS.regular, 
+                color: COLORS.primary,
+                fontSize: SIZES.h5,
+                fontFamily: FONTS.regular,
                   marginLeft: 10
-              }} > Paramètres </Text>
+              }} > {language === "English" ? "Settings" : "Paramètres"} </Text>
 
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
 
         <View style={{
           paddingHorizontal: 25
         }}>
-           <View 
+           <View
           style={{
-            marginTop: 15, 
-            borderBottomColor: "rgb(211, 220, 235)", 
+            marginTop: 15,
+            borderBottomColor: "rgb(211, 220, 235)",
             borderBottomWidth: 2
           }}
         />
         </View>
-       
 
-       <View style={{
+
+       <Animated.View entering={FadeInUp.delay(500).duration(450).springify().damping(16)} style={{
         marginTop: 15
        }}>
-          <View style={{
-            alignItems: "center", 
-            flexDirection: "row", 
-            justifyContent: "space-between", 
+          <TouchableOpacity onPress={() => navigation.navigate("Home", { screen: "ChatBot" })} style={{
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
             paddingHorizontal: 25,
-            paddingVertical: 10, 
-            backgroundColor: "#fff", 
+            paddingVertical: 10,
+            backgroundColor: "#fff",
             borderBottomWidth: 3,
-            borderBottomColor: COLORS.gray, 
+            borderBottomColor: COLORS.gray,
           }} >
-              <Text style={{
-                fontFamily: FONTS.regular, 
-                fontSize: SIZES.h5, 
-                color: COLORS.primary
-              }}>Aide et assistance</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <MaterialCommunityIcons name='robot-outline' size={SIZES.h3} color={COLORS.primary} />
+                <Text style={{
+                  fontFamily: FONTS.regular,
+                  fontSize: SIZES.h5,
+                  color: COLORS.primary,
+                  marginLeft: 10
+                }}>{language === "English" ? "Grouping Assistant" : "Assistant Grouping"}</Text>
+              </View>
+              <Entypo name='chevron-right' size={SIZES.h2} color={COLORS.primary} />
+          </TouchableOpacity>
+       </Animated.View>
 
-              <Entypo name='chevron-down' size={SIZES.h2} color={COLORS.primary} />
-          </View>
+       <Animated.View entering={FadeInUp.delay(600).duration(450).springify().damping(16)}>
           <View style={{
-            alignItems: "center", 
-            flexDirection: "row", 
-            justifyContent: "space-between", 
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
             paddingHorizontal: 25,
-            paddingVertical: 10, 
-            backgroundColor: "#fff", 
+            paddingVertical: 10,
+            backgroundColor: "#fff",
             borderBottomWidth: 3,
-            borderBottomColor: COLORS.gray, 
+            borderBottomColor: COLORS.gray,
           }} >
               <Text style={{
-                fontFamily: FONTS.regular, 
-                fontSize: SIZES.h5, 
+                fontFamily: FONTS.regular,
+                fontSize: SIZES.h5,
                 color: COLORS.primary
-              }}>Conditions d'utilisations</Text>
+              }}>{language === "English" ? "Help & support" : "Aide et assistance"}</Text>
 
               <Entypo name='chevron-down' size={SIZES.h2} color={COLORS.primary} />
           </View>
+       </Animated.View>
+
+       <Animated.View entering={FadeInUp.delay(700).duration(450).springify().damping(16)}>
           <View style={{
-            alignItems: "center", 
-            flexDirection: "row", 
-            justifyContent: "space-between", 
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
             paddingHorizontal: 25,
-            paddingVertical: 10, 
-            backgroundColor: "#fff", 
-        
+            paddingVertical: 10,
+            backgroundColor: "#fff",
+            borderBottomWidth: 3,
+            borderBottomColor: COLORS.gray,
           }} >
               <Text style={{
-                fontFamily: FONTS.regular, 
-                fontSize: SIZES.h5, 
+                fontFamily: FONTS.regular,
+                fontSize: SIZES.h5,
                 color: COLORS.primary
-              }}>Mention légale</Text>
+              }}>{language === "English" ? "Terms of Use" : "Conditions d'utilisations"}</Text>
 
               <Entypo name='chevron-down' size={SIZES.h2} color={COLORS.primary} />
           </View>
-       </View>
+       </Animated.View>
 
+       <Animated.View entering={FadeInUp.delay(800).duration(450).springify().damping(16)}>
+          <View style={{
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 25,
+            paddingVertical: 10,
+            backgroundColor: "#fff",
+          }} >
+              <Text style={{
+                fontFamily: FONTS.regular,
+                fontSize: SIZES.h5,
+                color: COLORS.primary
+              }}>{language === "English" ? "Legal Notice" : "Mention légale"}</Text>
+
+              <Entypo name='chevron-down' size={SIZES.h2} color={COLORS.primary} />
+          </View>
+       </Animated.View>
+
+       <Animated.View entering={FadeInUp.delay(900).duration(450).springify().damping(16)}>
        <TouchableOpacity onPress={disconnect}  style={{
-        marginTop: 25, 
-        flexDirection: "row", 
-        alignItems: "center", 
+        marginTop: 25,
+        flexDirection: "row",
+        alignItems: "center",
         alignSelf: "center"
        }}>
 
           <AntDesign name='poweroff' color={COLORS.primary} size={SIZES.h2} />
 
           <Text style={{
-            marginLeft: 10, 
-            color: COLORS.primary, 
-            fontFamily: FONTS.regular, 
-            fontSize: SIZES.h3, 
+            marginLeft: 10,
+            color: COLORS.primary,
+            fontFamily: FONTS.regular,
+            fontSize: SIZES.h3,
             marginTop: 5
           }}>
-            Déconnexion
+            {language === "English" ? "Log out" : "Déconnexion"}
           </Text>
 
        </TouchableOpacity>
+       </Animated.View>
 
        </ScrollView> : null}
 

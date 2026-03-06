@@ -12,7 +12,7 @@ const DELETE_NOTIF_URL = API.NOTIF_DELETE;
 
 export default function Reception({navigation}) {
 
-    const {user, token, setBadgee, language} = useContext(AuthContext);
+    const {user, token, language, refreshBadgeCount} = useContext(AuthContext);
     const {postFunction, laFonctionGet} = useFetchFunctions()
     const [notifications, setNotifications] = useState([]);
     const [messages, setMessages] = useState([]);
@@ -23,9 +23,10 @@ export default function Reception({navigation}) {
 
     useEffect(() => {
 
-        setBadgee(0);
         if(token){
-            laFonctionGet(API.NOTIF_VIEW, token);
+            laFonctionGet(API.NOTIF_VIEW, token).then(() => {
+                refreshBadgeCount();
+            });
         }
 
         postFunction(GET_NOTIFS_URL, {startAt}, token).then((data) => {
