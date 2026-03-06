@@ -1114,7 +1114,7 @@ transparent={true}
                             label= {language === "English" ? "Country" : "Pays"}
                             placeholder={language === "English" ? 'Select the country' : 'Sélectionnez le pays'}
                             options={countries.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             }))}
                             selectedValue={openFor === "container" ? type === "a" ? cACountry : cDCountry : type=== "a" ? kACountry : kDCountry}
@@ -1138,13 +1138,18 @@ transparent={true}
                             }}
                             isSearchable={true}
                             selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: "red", 
+                                fontFamily: FONTS.regular,
+                                color: "red",
                                 fontSize: 15
                             }}
-                            
-                            
-                        />                
+                            checkboxLabelStyle={{
+                                fontFamily: FONTS.regular,
+                                color: COLORS.primary,
+                                fontSize: 15
+                            }}
+
+
+                        />
 
                              
 
@@ -1161,18 +1166,18 @@ transparent={true}
 
                             options={openFor === "container" ? type === "a" ? 
                             cACities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             })) :  cDCities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             })) : 
                             type=== "a" ? 
                             kACities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             })) :  kDCities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             }))}
 
@@ -1196,14 +1201,19 @@ transparent={true}
                             }}
                             isSearchable={true}
                             selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: "#000", 
+                                fontFamily: FONTS.regular,
+                                color: "#000",
+                                fontSize: 15
+                            }}
+                            checkboxLabelStyle={{
+                                fontFamily: FONTS.regular,
+                                color: COLORS.primary,
                                 fontSize: 15
                             }}
                             disabled={openFor === "container" ? type === "a" ? (!cACountry && !load) :  !cDCountry : type=== "a" ? !kACountry : !kDCountry}
-                            
-                            
-                        />   }              
+
+
+                        />   }
 
                              
 

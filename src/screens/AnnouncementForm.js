@@ -1855,7 +1855,7 @@ if (good) {
                             label="Pays"
                             placeholder={language === "English" ? "Select the country" : "Sélectionnez le pays"}
                             options={countries.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             }))}
                             selectedValue={value === "container" ? type === "a" ? cACountry : cDCountry : type=== "a" ? kACountry : kDCountry}
@@ -1877,22 +1877,25 @@ if (good) {
                             }}
                         
                             isSearchable={true}
-                        
+
                             selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: "#000", 
+                                fontFamily: FONTS.regular,
+                                color: "#000",
                                 fontSize: SIZES.h5
                             }}
-                            
-                            
-                        />                
+                            checkboxLabelStyle={{
+                                fontFamily: FONTS.regular,
+                                color: COLORS.primary,
+                                fontSize: SIZES.h5
+                            }}
 
-                             
+
+                        />
 
                     </View>
 
                         <View style={{
-                            marginTop: 20, 
+                            marginTop: 20,
                             alignItems: "center"
                     }}>
                        { load ? <ActivityIndicator size="large" />  : <Dropdown
@@ -1900,18 +1903,18 @@ if (good) {
                             placeholder={language === "English" ? "Select the city" : "Sélectionnez la ville"}
                             options={value === "container" ? type === "a" ? 
                             cACities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             })) : cDCities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             }))
                             : type=== "a" ? 
                             kACities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             }))  : kDCities.map((country) => ({
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{country.label}</Text>,
+                                label: country.label,
                                 value: country.value,
                             }))
                             }
@@ -1934,14 +1937,19 @@ if (good) {
                             }}
                             isSearchable={true}
                             selectedItemStyle={{
-                                fontFamily: FONTS.regular, 
-                                color: "#000", 
+                                fontFamily: FONTS.regular,
+                                color: "#000",
+                                fontSize: SIZES.h5
+                            }}
+                            checkboxLabelStyle={{
+                                fontFamily: FONTS.regular,
+                                color: COLORS.primary,
                                 fontSize: SIZES.h5
                             }}
                             disabled={value === "container" ? type === "a" ? (!cACountry && !load) :  !cDCountry : type=== "a" ? !kACountry : !kDCountry}
-                            
-                            
-                        />   }              
+
+
+                        />   }
 
                              
 
@@ -2397,7 +2405,7 @@ if (good) {
                             placeholder={language === "English" ? "Make a choice" : "Faites un choix"}
                             options={conteneurs.map(item => ({
                                 ...item,
-                                label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{item.label}</Text>,
+                                label: item.label,
                             }))}
                             selectedValue={pieds}
 
@@ -2424,6 +2432,10 @@ if (good) {
                                 fontFamily: FONTS.regular,
                                 color: COLORS.primary,
                                 fontSize: 17
+                            }}
+                            checkboxLabelStyle={{
+                                fontFamily: FONTS.regular,
+                                color: COLORS.primary,
                             }}
 
 
@@ -2508,7 +2520,7 @@ if (good) {
                     <Dropdown
                         options={getDevises(language).map(item => ({
                             ...item,
-                            label: <Text style={{ color: COLORS.primary, fontFamily: FONTS.regular }}>{item.label}</Text>,
+                            label: item.label,
                         }))}
                         label={language === "English" ? "Select a currency" : "Sélectionnez une devise"}
                         placeholder={language === "English" ? "Make a choice" : "Faites un choix"}
@@ -2537,7 +2549,11 @@ if (good) {
                             color: COLORS.primary,
                             fontSize: 17
                         }}
-                    />  
+                        checkboxLabelStyle={{
+                            fontFamily: FONTS.regular,
+                            color: COLORS.primary,
+                        }}
+                    />
                 </View>
 
                 <View style={{
