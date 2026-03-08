@@ -192,6 +192,14 @@ export default function Home({navigation}) {
 
 
     
+    const goToDetails = (_id) => {
+        if (!token) {
+            navigation.navigate("Login1");
+            return;
+        }
+        navigation.navigate("Details", { _id });
+    }
+
     const chargerDepartsImminents = () => {
         setDepartsLoading(true);
         setModalDepartsVisible(true);
@@ -1483,7 +1491,7 @@ transparent={true}
                 if(flatLoading) return <View />
 
                 return (
-                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); navigation.navigate("Details", {_id: item._id})}}
+                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); goToDetails(item._id)}}
                     date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} name={item.transitaire || (item.user && item.user.name)} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
                     startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country} />
                 )
@@ -2336,7 +2344,7 @@ transparent={true}
             containers.map((item, idx) => {
 
                     return (
-                        <AnnounceBlock key={item._id} index={idx} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => navigation.navigate("Details", {_id: item._id})}
+                        <AnnounceBlock key={item._id} index={idx} status="container" userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => goToDetails(item._id)}
                         date={item.dateOfDeparture} name={item.transitaire || (item.user && item.user.name)} views={item.views} datee={item.date} company={item.company} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
                         startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})} />
@@ -2419,7 +2427,7 @@ transparent={true}
 
                     return (
                         <AnnounceBlock key={item._id} index={idx} userId={item.userId} status="kilos" city1={item.startCity} city2={item.endCity}
-                        date={item.dateOfDeparture}  datee={item.date} onPress= {() => navigation.navigate("Details", {_id: item._id})}
+                        date={item.dateOfDeparture}  datee={item.date} onPress= {() => goToDetails(item._id)}
                         company={item.company} views={item.views} startCity={ item.startCity2 && item.startCity2.code} endCity={item.endCity2 &&  item.endCity2.code}
                         startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country}
                         goToModify={(status) => navigation.navigate("AnnouncementForm", {_id: item._id, value: status})}  />
@@ -2515,7 +2523,7 @@ transparent={true}
                                 return (
                                     <TouchableOpacity key={item._id} onPress={() => {
                                         setModalDepartsVisible(false);
-                                        navigation.navigate("Details", { _id: item._id });
+                                        goToDetails(item._id);
                                     }} style={{
                                         backgroundColor: "#fff",
                                         borderRadius: 14,
