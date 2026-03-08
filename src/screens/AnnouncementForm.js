@@ -19,7 +19,6 @@ import DocumentPicker from 'react-native-document-picker';
 import Loading from '../components/Loading';
 import SuccessModal from '../components/successModal';
 import DatePicker from 'react-native-date-picker';
-import { check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import axios from "axios";
 import RNModal from 'react-native-modal';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -368,80 +367,6 @@ export default function AnnouncementForm({route, navigation}) {
   };
   
 
-const requestStoragePermission = async () => {
-  if (Platform.OS === 'android') {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-
-      {
-        title: 'Storage Permission',
-        message: 'App needs access to your storage to download Photos.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('Storage permission denied');
-    }
-  }
-};
-
-const checkPermission = async () => {
-  if (Platform.OS === 'android') {
-    const result = await check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
-    switch (result) {
-      case RESULTS.UNAVAILABLE:
-        console.log('This feature is not available (on this device / in this context)');
-        break;
-      case RESULTS.DENIED:
-        requestStoragePermission();
-        break;
-      case RESULTS.GRANTED:
-        console.log('The permission is granted');
-        break;
-      case RESULTS.BLOCKED:
-        console.log('The permission is denied and not requestable anymore');
-        break;
-    }
-  }
-};
-
-useEffect(() => {
-
-    requestCameraPermission();
-   
-
-
-  }, [])
-
-  const requestCameraRollPermission = async () => {
-    try {
-        if(Platform.OS === "android"){
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: language === "English" ? 'Photo gallery access permission' : 'Permission d\'accès à la galerie photo',
-          message: language === "English" ? 'This app needs access to your photo gallery.' : 'Cette application a besoin d\'accéder à votre galerie photo.',
-          buttonNeutral: language === "English" ? 'Ask Me Later' : 'Plus tard',
-          buttonNegative: language === "English" ? 'Cancel' : 'Annuler',
-          buttonPositive: 'OK',
-        },
-      ); 
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Autorisation accordée'); 
-        
-       // getMediaFromGallery()
-
-      } else {
-        console.log('Autorisation refusée');
-      }
-
-    }
-    } catch (err) {
-      console.warn(err);  
-    }
-  };
 
   const onFinish = (i) => {
 
@@ -517,57 +442,8 @@ useEffect(() => {
     },[]); 
 
 
-    useEffect(() => {
 
-        const isAndroid = Platform.OS === "android"; 
-    
-        if(isAndroid){
-    
-                requestCameraPermission();
-        }
-    
-       },[])
-    
-       const requestCameraPermission = async () => {
-        try {
-          if (Platform.OS === 'android') {
-            const granted = await PermissionsAndroid.requestMultiple([
-              PermissionsAndroid.PERMISSIONS.CAMERA,
-              PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-              PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-              
-            ]);
-      
-            console.log("Permissions :", granted);
-      
-            const values = Object.values(granted);
-      
-            if (values.includes(PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN)) {
-              Alert.alert(
-                language === "English" ? "Permission blocked" : "Permission bloquée",
-                language === "English" ? "Some permissions are blocked. Please enable them manually in settings." : "Certaines permissions sont bloquées. Veuillez les activer manuellement dans les paramètres.",
-                [
-                  { text: language === "English" ? "Cancel" : "Annuler", style: "cancel" },
-                  { text: language === "English" ? "Open settings" : "Ouvrir les paramètres", onPress: () => Linking.openSettings() }
-                ]
-              );
-              return;
-            }
-      
-            const allGranted = values.every(value => value === PermissionsAndroid.RESULTS.GRANTED);
-            if (allGranted) {
-              console.log('Toutes les autorisations ont été accordées');
-              // takePicture();
-            } else {
-              console.log('Une ou plusieurs autorisations ont été refusées');
-            }
-          }
-        } catch (err) {
-          console.warn(err);
-        }
-      };
-      
-      
+
 
 
     const toValidCity = () => {
@@ -646,12 +522,39 @@ useEffect(() => {
 
 
     
-    const pickMedia = () => {
+    const pickMedia = async () => {
+        if (Platform.OS === 'android') {
+          try {
+            const granted = await PermissionsAndroid.requestMultiple([
+              PermissionsAndroid.PERMISSIONS.CAMERA,
+              PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+              PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+            ]);
+            const values = Object.values(granted);
+            const allGranted = values.every(v => v === PermissionsAndroid.RESULTS.GRANTED);
+
+            if (!allGranted) {
+              Alert.alert(
+                language === "English" ? "Permission required" : "Permission requise",
+                language === "English" ? "Please allow access to your gallery to select an image." : "Veuillez autoriser l'accès à votre galerie pour sélectionner une image.",
+                [
+                  { text: language === "English" ? "Cancel" : "Annuler", style: "cancel" },
+                  { text: language === "English" ? "Open settings" : "Ouvrir les paramètres", onPress: () => Linking.openSettings() }
+                ]
+              );
+              return;
+            }
+          } catch (err) {
+            console.warn(err);
+            return;
+          }
+        }
+
         const options = {
           mediaType: "image",
           quality: 0.6,
         };
-      
+
         launchImageLibrary(options, async (response) => {
             setIsVisible(false);
           if (response.didCancel) {
@@ -921,10 +824,20 @@ const onRegister = async () => {
 
         if(value === "kilos"){
 
-            if((!announcementKiloStartCity || !announcementKiloEndCity) && (announcementKiloStartCity === "" || announcementKiloEndCity === "") ){
+            if(!announcementKiloStartCity && !announcementKiloEndCity){
 
-                setCitiesError("Veuillez choisir les villes de Départ et de Destination"); 
-                setLoading(false); 
+                setCitiesError(language === "English" ? "Please select the departure and destination cities" : "Veuillez choisir les villes de Départ et de Destination");
+                setLoading(false);
+
+            }else if(!announcementKiloStartCity){
+
+                setCitiesError(language === "English" ? "Please select the departure city" : "Veuillez choisir la ville de Départ");
+                setLoading(false);
+
+            }else if(!announcementKiloEndCity){
+
+                setCitiesError(language === "English" ? "Please select the destination city" : "Veuillez choisir la ville de Destination");
+                setLoading(false);
 
             }else{
 
@@ -941,7 +854,7 @@ const onRegister = async () => {
 
                         if(!kiloss){
 
-                            setCountKilosError("Veuillez mentionner le nombre de kilos que vous proposez");
+                            setCountKilosError(language === "English" ? "Please specify the number of kilos you are offering" : "Veuillez mentionner le nombre de kilos que vous proposez");
                             setLoading(false);
                             setTimeout(() => {
                                 setErrorMessage("");
@@ -953,7 +866,7 @@ const onRegister = async () => {
 
                             if(announcementKiloStartCity === announcementKiloEndCity){
 
-                                    setCitiesError("La ville de départ ne peut-être identique à celle d'arrivée"); 
+                                    setCitiesError(language === "English" ? "The departure city cannot be the same as the arrival city" : "La ville de départ ne peut-être identique à celle d'arrivée"); 
                                     setLoading(false);
                                     setTimeout(() => {
                                         setErrorMessage("");
@@ -1114,14 +1027,29 @@ const onRegister = async () => {
 
 
 
-     if(!announcementContainerEndCity && !announcementContainerStartCity){
+     if(!announcementContainerStartCity && !announcementContainerEndCity){
 
-        setCitiesError("Veuillez choisir les villes de Départ et de Destination"); 
-        setLoading(false); 
+        setCitiesError(language === "English" ? "Please select the departure and destination cities" : "Veuillez choisir les villes de Départ et de Destination");
+        setLoading(false);
         setTimeout(() => {
             setCitiesError("");
         }, 7000);
 
+     }else if(!announcementContainerStartCity){
+
+        setCitiesError(language === "English" ? "Please select the departure city" : "Veuillez choisir la ville de Départ");
+        setLoading(false);
+        setTimeout(() => {
+            setCitiesError("");
+        }, 7000);
+
+     }else if(!announcementContainerEndCity){
+
+        setCitiesError(language === "English" ? "Please select the destination city" : "Veuillez choisir la ville de Destination");
+        setLoading(false);
+        setTimeout(() => {
+            setCitiesError("");
+        }, 7000);
 
      }else{
 
@@ -1141,7 +1069,7 @@ const onRegister = async () => {
 
             if(announcementContainerStartCity === announcementContainerEndCity){
 
-                setCitiesError("La ville de départ ne peut-être identique à celle d'arrivée"); 
+                setCitiesError(language === "English" ? "The departure city cannot be the same as the arrival city" : "La ville de départ ne peut-être identique à celle d'arrivée"); 
                 setLoading(false);
                 setTimeout(() => {
                     setErrorMessage("");
@@ -2132,10 +2060,10 @@ if (good) {
                     flexDirection: "row",
 
                 }}>
-                    <Pressable onPress={() => {setType("d"); setModalVisible(true)}} style={{
+                    <Pressable onPress={() => {if(!annonce){setType("d"); setModalVisible(true)}}} style={{
                         width: SIZES.width/2 - 20,
                         backgroundColor: COLORS.input_blue,
-
+                        opacity: annonce ? 0.6 : 1,
                         borderRadius: 10,
                         borderWidth: 1,
                         borderColor: COLORS.other_blue,
@@ -2143,76 +2071,76 @@ if (good) {
                         paddingHorizontal: 10
                     }}>
                         <Text style={{
-                                fontFamily: FONTS.ligth, 
-                                fontSize: SIZES.h7, 
+                                fontFamily: FONTS.ligth,
+                                fontSize: SIZES.h7,
                                 lineHeight: SIZES.h7,
                                 color: COLORS.textInput
                             }}>{language === "English" ? "Departure country" : "Pays de départ"}</Text>
 
                     {value === "container" ?  <Text style={{
-                            marginTop: Platform.OS === "ios" ? 10 : 4, 
-                            fontFamily: FONTS.ligth, 
-                            fontSize: SIZES.h6, 
+                            marginTop: Platform.OS === "ios" ? 10 : 4,
+                            fontFamily: FONTS.ligth,
+                            fontSize: SIZES.h6,
                             textTransform: "capitalize",
                             color: "#000"
                         }}>
-                        {cDFinalCountry }  
+                        {cDFinalCountry }
                         </Text> :  <Text style={{
-                            marginTop: Platform.OS === "ios" ? 10 : 4, 
-                            fontFamily: FONTS.ligth, 
+                            marginTop: Platform.OS === "ios" ? 10 : 4,
+                            fontFamily: FONTS.ligth,
                             fontSize:  SIZES.h6,
                             textTransform: "capitalize",
                             color: "#000"
                         }}>
-                     {kDFinalCountry} 
+                     {kDFinalCountry}
                         </Text>}
 
                     </Pressable>
 
-                    <Pressable onPress={() => {setType("d"); setModalVisible(true)}} style={{
-                        width: SIZES.width/2 - 20, 
-                        backgroundColor: COLORS.input_blue, 
-                        
-                        borderRadius: 10, 
-                        borderWidth: 1, 
-                        borderColor: citiesError ? "red" : COLORS.other_blue, 
-                        marginLeft: 10, 
-                        flexDirection: "row", 
+                    <Pressable onPress={() => {if(!annonce){setType("d"); setModalVisible(true)}}} style={{
+                        width: SIZES.width/2 - 20,
+                        backgroundColor: COLORS.input_blue,
+                        opacity: annonce ? 0.6 : 1,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: citiesError ? "red" : COLORS.other_blue,
+                        marginLeft: 10,
+                        flexDirection: "row",
                         alignItems: "center"
                     }}>
 
                         <View style={{
-                            flex: 1, 
-                            borderRightWidth: 1, 
-                            borderRightColor: COLORS.other_blue, 
+                            flex: 1,
+                            borderRightWidth: 1,
+                            borderRightColor: COLORS.other_blue,
                             paddingVertical: Platform.OS === "ios" ? 10 : 8,
-                            
+
                             paddingHorizontal: 10
                         }}>
                             <Text style={{
-                                fontFamily: FONTS.ligth, 
+                                fontFamily: FONTS.ligth,
                                 fontSize: SIZES.h7,
-                                lineHeight: SIZES.h7, 
-                                color: COLORS.textInput, 
-                                
+                                lineHeight: SIZES.h7,
+                                color: COLORS.textInput,
+
                             }}>{language === "English" ? "Departure city" : "Ville de départ"}</Text>
                            <Text style={{
-                            marginTop: Platform.OS === "ios" ? 10 : 4, 
-                            fontFamily: FONTS.ligth, 
+                            marginTop: Platform.OS === "ios" ? 10 : 4,
+                            fontFamily: FONTS.ligth,
                             textTransform: "capitalize",
                             fontSize: SIZES.h6,
-                            color: "#000", 
+                            color: "#000",
                            }}>{value === "container" ? announcementContainerStartCity :  announcementKiloStartCity} </Text>
                         </View>
 
-                        <TouchableOpacity onPress={() => {setType("d"); setModalVisible(true)}} style={{
-                            alignItems: "center", 
-                            justifyContent: "center", 
-                            paddingHorizontal: 3, 
-                            
+                        {!annonce && <TouchableOpacity onPress={() => {setType("d"); setModalVisible(true)}} style={{
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingHorizontal: 3,
+
                         }} >
                             <MaterialCommunityIcons name='menu-down' color={COLORS.primary} size={30} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
 
                     </Pressable>
 
@@ -2223,35 +2151,35 @@ if (good) {
 
                     marginTop: 10
                 }}>
-                    <Pressable onPress={() => {setType("a"); setModalVisible(true)}} style={{
-                        width: SIZES.width/2 - 20, 
-                        backgroundColor: COLORS.input_blue, 
-                   
-                        borderRadius: 10, 
-                        borderWidth: 1, 
-                        borderColor: COLORS.other_blue, 
-                        paddingVertical:  Platform.OS === "ios" ? 10 : 8, 
+                    <Pressable onPress={() => {if(!annonce){setType("a"); setModalVisible(true)}}} style={{
+                        width: SIZES.width/2 - 20,
+                        backgroundColor: COLORS.input_blue,
+                        opacity: annonce ? 0.6 : 1,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: COLORS.other_blue,
+                        paddingVertical:  Platform.OS === "ios" ? 10 : 8,
                         paddingHorizontal: 10
                     }}>
                         <Text style={{
-                                fontFamily: FONTS.ligth, 
-                                fontSize: SIZES.h7, 
+                                fontFamily: FONTS.ligth,
+                                fontSize: SIZES.h7,
                                 lineHeight: SIZES.h7,
                                 color: COLORS.textInput
                             }}>{language === "English" ? "Destination country" : "Pays de destination"} </Text>
 
                         {value === "container" ?  <Text style={{
-                            marginTop: Platform.OS === "ios" ? 10 : 3, 
-                            fontFamily: FONTS.ligth, 
+                            marginTop: Platform.OS === "ios" ? 10 : 3,
+                            fontFamily: FONTS.ligth,
                             fontSize: SIZES.h6,
                             textTransform: "capitalize",
                             color: "#000"
                         }}>
-                        {cAFinalCountry} 
+                        {cAFinalCountry}
                         </Text> :  <Text style={{
-                            marginTop: Platform.OS === "ios" ? 10 : 3, 
-                            fontFamily: FONTS.ligth, 
-                            fontSize: SIZES.h6, 
+                            marginTop: Platform.OS === "ios" ? 10 : 3,
+                            fontFamily: FONTS.ligth,
+                            fontSize: SIZES.h6,
                             textTransform: "capitalize",
                             color: "#000"
                         }}>
@@ -2260,49 +2188,49 @@ if (good) {
 
                     </Pressable>
 
-                    <Pressable onPress={() => {setType("a"); setModalVisible(true)}} style={{
-                        width: SIZES.width/2 - 20, 
-                        backgroundColor:  COLORS.input_blue, 
-                     
-                        borderRadius: 10, 
-                        borderWidth: 1, 
-                        borderColor: citiesError ? "red" : COLORS.other_blue, 
-                        marginLeft: 10, 
-                        flexDirection: "row", 
+                    <Pressable onPress={() => {if(!annonce){setType("a"); setModalVisible(true)}}} style={{
+                        width: SIZES.width/2 - 20,
+                        backgroundColor:  COLORS.input_blue,
+                        opacity: annonce ? 0.6 : 1,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: citiesError ? "red" : COLORS.other_blue,
+                        marginLeft: 10,
+                        flexDirection: "row",
                         alignItems: "center",
-            
+
                     }}>
 
                         <View style={{
-                            flex: 1, 
-                            borderRightWidth: 1, 
-                            borderRightColor: COLORS.other_blue, 
-                         
-                            paddingVertical:  Platform.OS === "ios" ? 10 : 8, 
+                            flex: 1,
+                            borderRightWidth: 1,
+                            borderRightColor: COLORS.other_blue,
+
+                            paddingVertical:  Platform.OS === "ios" ? 10 : 8,
                             paddingHorizontal: 10
                         }}>
                             <Text style={{
-                                fontFamily: FONTS.ligth, 
+                                fontFamily: FONTS.ligth,
                                 fontSize:  SIZES.h7,
-                                lineHeight: SIZES.h7, 
+                                lineHeight: SIZES.h7,
                                 color: COLORS.textInput
                             }}>{language === "English" ? "Destination city" : "Ville de destination"} </Text>
                         <Text style={{
-                            marginTop: Platform.OS === "ios"  ? 10 : 4, 
-                            fontFamily: FONTS.ligth, 
+                            marginTop: Platform.OS === "ios"  ? 10 : 4,
+                            fontFamily: FONTS.ligth,
                             fontSize: SIZES.h6,
                             textTransform: "capitalize",
-                            color: "#000", 
+                            color: "#000",
                            }}>{value === "container" ? announcementContainerEndCity :  announcementKiloEndCity}</Text>
                         </View>
 
-                        <TouchableOpacity onPress={() => {setType("a"); setModalVisible(true)}} style={{
-                            alignItems: "center", 
-                            justifyContent: "center", 
+                        {!annonce && <TouchableOpacity onPress={() => {setType("a"); setModalVisible(true)}} style={{
+                            alignItems: "center",
+                            justifyContent: "center",
                             paddingHorizontal: 3
                         }} >
                             <MaterialCommunityIcons name='menu-down' color={COLORS.primary} size={30} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
 
                     </Pressable>
 

@@ -301,7 +301,6 @@ export default function BottomTabBar() {
         listeners={{
             tabPress: async () => {
                 if(token){
-                    await laFonctionGet(VIEW_NOTIFS_URL, token);
                     refreshBadgeCount();
                 }
             }

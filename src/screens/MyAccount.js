@@ -67,7 +67,7 @@ function AnimatedCardBadge({ count }) {
 
 export default function MyAccount({navigation, route}) {
 
-const {token, language, user, refreshBadgeCount} = useContext(AuthContext);
+const {token, language, user, refreshBadgeCount, badgee} = useContext(AuthContext);
   const [badge, setBadge] = useState(null);
   const [annonce, setAnnonce] = useState(null);
 
@@ -97,7 +97,7 @@ const {token, language, user, refreshBadgeCount} = useContext(AuthContext);
       });
 
       return () => {};
-    }, [])
+    }, [badgee])
   );
 
 
@@ -397,34 +397,13 @@ const {token, language, user, refreshBadgeCount} = useContext(AuthContext);
                 fontFamily: FONTS.regular,
                 fontSize: SIZES.h5,
                 color: COLORS.primary
-              }}>{language === "English" ? "Help & support" : "Aide et assistance"}</Text>
-
-              <Entypo name='chevron-down' size={SIZES.h2} color={COLORS.primary} />
-          </View>
-       </Animated.View>
-
-       <Animated.View entering={FadeInUp.delay(700).duration(450).springify().damping(16)}>
-          <View style={{
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 25,
-            paddingVertical: 10,
-            backgroundColor: "#fff",
-            borderBottomWidth: 3,
-            borderBottomColor: COLORS.gray,
-          }} >
-              <Text style={{
-                fontFamily: FONTS.regular,
-                fontSize: SIZES.h5,
-                color: COLORS.primary
               }}>{language === "English" ? "Terms of Use" : "Conditions d'utilisations"}</Text>
 
               <Entypo name='chevron-down' size={SIZES.h2} color={COLORS.primary} />
           </View>
        </Animated.View>
 
-       <Animated.View entering={FadeInUp.delay(800).duration(450).springify().damping(16)}>
+       <Animated.View entering={FadeInUp.delay(700).duration(450).springify().damping(16)}>
           <View style={{
             alignItems: "center",
             flexDirection: "row",
@@ -443,7 +422,7 @@ const {token, language, user, refreshBadgeCount} = useContext(AuthContext);
           </View>
        </Animated.View>
 
-       <Animated.View entering={FadeInUp.delay(900).duration(450).springify().damping(16)}>
+       <Animated.View entering={FadeInUp.delay(800).duration(450).springify().damping(16)}>
        <TouchableOpacity onPress={disconnect}  style={{
         marginTop: 25,
         flexDirection: "row",

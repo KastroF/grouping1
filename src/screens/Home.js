@@ -72,7 +72,7 @@ export default function Home({navigation}) {
     const [load, setLoad] = useState(false);
     const [annoucements, setAnnoucements] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-    const {token, user, refresh, setBadgee, setLanguage, language, setRefresh, pendingSearch, setPendingSearch} = useContext(AuthContext);
+    const {token, user, refresh, setBadgee, setLanguage, language, setRefresh, pendingSearch, setPendingSearch, refreshModify} = useContext(AuthContext);
     const [containers, setContainers] = useState([]); 
     const [kilos, setKilos] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
@@ -184,7 +184,7 @@ export default function Home({navigation}) {
           return () => {
            // console.log('Je suis parti de cette page !');
           };
-        }, [])
+        }, [refreshModify])
       );
 
 
@@ -1467,16 +1467,6 @@ transparent={true}
                             </View>
                         </View>
 
-                        <TouchableOpacity onPress={() => setModalVisible6(true) }>
-                            <Image 
-                                source={require("../assets/images/xxx.png")}
-                                style={{
-                                    height: 20, 
-                                    width: 30, 
-                                    resizeMode: "contain"
-                                }}
-                            />
-                        </TouchableOpacity>
                     </View>
                     )
             }}

@@ -24,7 +24,7 @@ export default function MyAnnouncements({route, navigation}) {
     const [kilos, setKilos] = useState([]); 
     const [containers, setContainers] = useState([]);
     const {laFonctionGet, postFunction} = useFetchFunctions(); 
-    const {token, language} = useContext(AuthContext);
+    const {token, language, refreshModify} = useContext(AuthContext);
     const [startAt, setStartAt] = useState(0); 
     const [startBt, setStartBt] = useState(0);
     const [loading, setLoading]  = useState(true)
@@ -66,7 +66,7 @@ export default function MyAnnouncements({route, navigation}) {
         }
 
 
-    },[])
+    },[refreshModify])
 
 
 
@@ -256,15 +256,6 @@ const renderLoader = () => {
                     flexDirection: "row", 
                     alignItems: "center"
                 }} > 
-                <Image source={require("../assets/images/annonce.png")} 
-                        style={{
-                            height: SIZES.h2, 
-                            width: SIZES.h2, 
-                            resizeMode: "contain", 
-                            marginTop: Platform.OS === "android" ? 3 : 0, 
-                            marginRight: 10
-                        }}
-                    />
                 <Text style={{
                     fontFamily: FONTS.bold, 
                     color: COLORS.primary, 

@@ -288,7 +288,7 @@ export default function Contacts({navigation}) {
                     <TouchableOpacity
                         onPress={() => {
                             setSuccessVisible(false);
-                            navigation.navigate("Home");
+                            navigation.navigate("Hommee");
                         }}
                         style={{
                             marginTop: 20,

@@ -164,7 +164,7 @@ export default function Search({route, navigation}) {
                 fontSize: SIZES.h5, 
                 lineHeight: SIZES.h5
             }}>
-                {language === "English" ? "Your request has been received. One of our advertisers will contact you within 72 business hours." : "Votre demande a été prise en compte. Un de nos annonceurs vous contactera sous 72h ouvrés."}
+                {language === "English" ? "Your request has been received. One of our advertisers will contact you shortly." : "Votre demande a été prise en compte. Un de nos annonceurs vous contactera sous peu."}
             </Text>
         </View>
 
