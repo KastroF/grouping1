@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Alert, Image, Modal, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import AntDesign from "react-native-vector-icons/AntDesign"
@@ -8,8 +8,11 @@ import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import uuid from 'react-native-uuid';
 import CameraModal from "./CameraModal";
+import { AuthContext } from '../navigation/AuthProvider';
 
 export default function DownloadBlModal({modalVisible, dismissModal, terminate, putImage, downloadPdf}) {
+
+   const { language } = useContext(AuthContext);
 
    // const [modalVisible, setModalVisible] = useState(false);
    const [medias, setMedias] = useState([]); 
@@ -84,10 +87,10 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
           const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
             {
-              title: 'Permission d\'accès à la galerie photo',
-              message: 'Cette application a besoin d\'accéder à votre galerie photo.',
-              buttonNeutral: 'Plus tard',
-              buttonNegative: 'Annuler',
+              title: language === "English" ? "Photo gallery access permission" : "Permission d'accès à la galerie photo",
+              message: language === "English" ? "This app needs access to your photo gallery." : "Cette application a besoin d'accéder à votre galerie photo.",
+              buttonNeutral: language === "English" ? "Later" : "Plus tard",
+              buttonNegative: language === "English" ? "Cancel" : "Annuler",
               buttonPositive: 'OK',
             },
           );
@@ -143,10 +146,10 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           {
-            title: 'Permission de lire les fichiers',
-            message: 'Cette application a besoin de la permission de lire les fichiers sur votre appareil.',
-            buttonNeutral: 'Demander plus tard',
-            buttonNegative: 'Annuler',
+            title: language === "English" ? "File read permission" : "Permission de lire les fichiers",
+            message: language === "English" ? "This app needs permission to read files on your device." : "Cette application a besoin de la permission de lire les fichiers sur votre appareil.",
+            buttonNeutral: language === "English" ? "Ask later" : "Demander plus tard",
+            buttonNegative: language === "English" ? "Cancel" : "Annuler",
             buttonPositive: 'OK',
           },
         );
@@ -231,7 +234,7 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
                         fontSize: SIZES.h5, 
                         color: "rgba(0,0,0,0.8)", 
                         marginLeft: SIZES.h3 + SIZES.h2/2
-                    }}>Pellicule</Text>
+                    }}>{language === "English" ? "Camera Roll" : "Pellicule"}</Text>
                 </View>
 
                 <View >
@@ -243,7 +246,7 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
                                 fontFamily: FONTS.bold, 
                                 color: COLORS.primary, 
                                 fontSize: SIZES.h5
-                            }}>Terminer</Text>
+                            }}>{language === "English" ? "Done" : "Terminer"}</Text>
                         </TouchableOpacity> : 
                         <View style={{
                             flexDirection: "row", 

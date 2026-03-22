@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Button1 from '../components/Button1'
 import { COLORS, FONTS, SIZES } from '../constants/theme'
+import { AuthContext } from '../navigation/AuthProvider';
 
 export default function Ouhaaa({navigation, route}) {
 
-    let userId; 
+    const {language} = useContext(AuthContext);
+
+    let userId;
 
     if(route.params && route.params.userId){
 
@@ -85,7 +88,7 @@ export default function Ouhaaa({navigation, route}) {
                             fontFamily: FONTS.bold, 
                             color: "#fff", 
                             fontSize: SIZES.height * 0.075
-                        }}>Ouhaaa !</Text>
+                        }}>{language === "English" ? "Oops!" : "Ouhaaa !"}</Text>
                     </View>
                     <View style={{
                         marginTop: Platform.OS === "android" ? -10 : 5, 
@@ -98,14 +101,14 @@ export default function Ouhaaa({navigation, route}) {
                             fontSize: SIZES.h3, 
                             marginTop: Platform.OS === "android" ? 5 : 15, 
                             textAlign: "center"
-                        }}>Connectez-vous ou créez un compte pour avoir accès à cette annonce</Text>
+                        }}>{language === "English" ? "Sign in or create an account to access this listing" : "Connectez-vous ou créez un compte pour avoir accès à cette annonce"}</Text>
                     </View>
 
                     <View style={{width: "100%", paddingHorizontal: 40, marginTop: 20}}>
-                        <Button1 label="Se connecter"  fontFamily={FONTS.regular} backgroundColor= "#fff" 
+                        <Button1 label={language === "English" ? "Sign in" : "Se connecter"}  fontFamily={FONTS.regular} backgroundColor= "#fff"
                         textColor={COLORS.primary} borderRadius={10} onPress = {() => { navigation.goBack();  navigation.navigate("Sign In", {from: true, _id: userId}) }} />
 
-                         <Button1 label="Créer un compte"  fontFamily={FONTS.regular} backgroundColor= "rgba(255, 255, 255, 0.2)" 
+                         <Button1 label={language === "English" ? "Create an account" : "Créer un compte"}  fontFamily={FONTS.regular} backgroundColor= "rgba(255, 255, 255, 0.2)"
                         textColor={"#fff"} borderRadius={10}  onPress = {() => { navigation.goBack();  navigation.navigate("Login1", {_id: userId,})}} />
                     </View>
 

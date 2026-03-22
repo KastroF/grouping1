@@ -85,6 +85,35 @@ const COUNTRY_ISO = {
     "Liban": "LB", "Israël": "IL", "Jordanie": "JO", "Irak": "IQ",
     "Iran": "IR", "Syrie": "SY", "Qatar": "QA", "Koweït": "KW",
     "Oman": "OM", "Bahreïn": "BH", "Yémen": "YE",
+    // Noms anglais courants
+    "Gabon": "GA", "Chad": "TD", "Ivory Coast": "CI",
+    "South Africa": "ZA", "Morocco": "MA", "Tunisia": "TN",
+    "Algeria": "DZ", "Libya": "LY", "Egypt": "EG",
+    "Kenya": "KE", "Tanzania": "TZ", "Uganda": "UG",
+    "Ethiopia": "ET", "Sudan": "SD", "South Sudan": "SS",
+    "France": "FR", "Germany": "DE", "Spain": "ES", "Italy": "IT",
+    "Belgium": "BE", "Netherlands": "NL", "Portugal": "PT",
+    "Switzerland": "CH", "Ireland": "IE", "Austria": "AT",
+    "Greece": "GR", "Sweden": "SE", "Norway": "NO", "Denmark": "DK",
+    "Finland": "FI", "Poland": "PL", "Romania": "RO", "Hungary": "HU",
+    "Czech Republic": "CZ", "Turkey": "TR",
+    "United Arab Emirates": "AE", "Saudi Arabia": "SA",
+    "Lebanon": "LB", "Israel": "IL", "Jordan": "JO", "Iraq": "IQ",
+    "China": "CN", "Japan": "JP", "India": "IN", "South Korea": "KR",
+    "Thailand": "TH", "Indonesia": "ID", "Malaysia": "MY",
+    "Philippines": "PH", "Singapore": "SG", "Pakistan": "PK",
+    "Brazil": "BR", "Argentina": "AR", "Colombia": "CO", "Chile": "CL",
+    "Peru": "PE", "Venezuela": "VE", "Ecuador": "EC",
+    "Mexico": "MX", "Cuba": "CU", "Haiti": "HT",
+    "Cameroon": "CM", "Senegal": "SN", "Mali": "ML",
+    "Burkina Faso": "BF", "Benin": "BJ", "Togo": "TG",
+    "Guinea": "GN", "Ghana": "GH", "Nigeria": "NG",
+    "Congo": "CG", "Democratic Republic of the Congo": "CD", "DRC": "CD",
+    "Central African Republic": "CF", "Equatorial Guinea": "GQ",
+    "Madagascar": "MG", "Mozambique": "MZ", "Angola": "AO",
+    "Zambia": "ZM", "Zimbabwe": "ZW", "Namibia": "NA",
+    "Botswana": "BW", "Rwanda": "RW", "Burundi": "BI",
+    "Mauritius": "MU", "Seychelles": "SC", "Comoros": "KM",
 };
 
 const getFlag = (countryName) => {
@@ -224,7 +253,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                         color: COLORS.primary,
                         fontFamily: FONTS.bold,
                         fontSize: SIZES.h4
-                    }}>{startCity && startCity.toUpperCase()}</Text>
+                    }}>{startCity ? startCity.toUpperCase() : ''}</Text>
                     <Text style={{
                         fontFamily: FONTS.ligth,
                         fontSize: SIZES.h7,
@@ -232,7 +261,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                         textAlign: "center",
                         textTransform: "capitalize"
                     }}>
-                        {startCountry || city1}
+                        {city1 || ''}
                     </Text>
                 </View>
                 {startCountry ? <Text style={{ fontSize: SIZES.h5, marginLeft: 2 }}>{getFlag(startCountry)}</Text> : null}
@@ -326,7 +355,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                         color: COLORS.primary,
                         fontFamily: FONTS.bold,
                         fontSize: SIZES.h4
-                    }}>{endCity && endCity.toUpperCase()}</Text>
+                    }}>{endCity ? endCity.toUpperCase() : ''}</Text>
                     <Text style={{
                         fontFamily: FONTS.ligth,
                         fontSize: SIZES.h7,
@@ -334,7 +363,7 @@ export default function AnnounceBlock({status, date, startCity, endCity, city1, 
                         textAlign: "center",
                         textTransform: "capitalize"
                     }}>
-                        {endCountry || city2}
+                        {city2 || ''}
                     </Text>
                 </View>
             </View>

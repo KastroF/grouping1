@@ -7,7 +7,7 @@ import { AuthContext } from '../navigation/AuthProvider'
 
 export default function Congrats() {
 
-    const {setAccount, idd, setIdd, setUserId} = useContext(AuthContext); 
+    const {setAccount, idd, setIdd, setUserId, language} = useContext(AuthContext);
 
     const iamConnected = () => {
 
@@ -35,7 +35,7 @@ export default function Congrats() {
                 fontSize: 26, 
                 color: "#fff", 
                 textAlign: "center"
-            }}> {'Félicitations, vous êtes désormais connecté à Grouping.'}</Text>
+            }}>{language === "English" ? "Congratulations, you are now connected to Grouping." : "Félicitations, vous êtes désormais connecté à Grouping."}</Text>
         </View>
 
         <View >
@@ -52,7 +52,7 @@ export default function Congrats() {
         <View style={{
             width: "100%"
         }}>
-            <Button1 onPress={iamConnected} backgroundColor="#fff" label={idd ? "Commencer" : "Commencer"}  textColor={COLORS.primary} fontFamily={FONTS.regular} 
+            <Button1 onPress={iamConnected} backgroundColor="#fff" label={language === "English" ? "Get started" : "Commencer"}  textColor={COLORS.primary} fontFamily={FONTS.regular}
             fontSize={25} borderRadius={15} />
         </View>
     

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { useEffect } from 'react';
 import { Image, ImageBackground, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import { AuthContext } from '../navigation/AuthProvider';
 import Feather from "react-native-vector-icons/Feather"
@@ -38,7 +39,7 @@ export default function CreateAnnouncement({navigation}) {
 
   return (
     <View style={{
-        flex: 1
+        flex: 1 
     }}>
         <ImageBackground source={require("../assets/images/degrade.png")} 
             style={{
@@ -79,66 +80,66 @@ export default function CreateAnnouncement({navigation}) {
     contentContainerStyle={{
         
     }}>
-            <View style={{
-                marginTop: 15, 
+            <Animated.View entering={FadeInDown.duration(400).springify().damping(18)} style={{
+                marginTop: 15,
                 paddingHorizontal: 15
             }}>
                 <TouchableOpacity onPress={goBack}>
                     <Feather name='chevron-left' size={SIZES.h1} color="#fff" />
                 </TouchableOpacity>
-               
-            </View>
 
-            <View style={{
-                alignItems: "center", 
+            </Animated.View>
+
+            <Animated.View entering={FadeInDown.delay(100).duration(450).springify().damping(16)} style={{
+                alignItems: "center",
                 marginTop: 10
             }}>
-                <Image 
+                <Image
                     source={require("../assets/images/white_grouping.png")}
 
                     style={{
-                        width : SIZES.width / 2.5, 
+                        width : SIZES.width / 2.5,
                         height: SIZES.width / 2.5
                     }}
                 />
-            </View>
+            </Animated.View>
 
-            <View style={{
-                alignItems: "center", 
-                marginTop: Platform.OS === "ios" ? 50 : 30, 
+            <Animated.View entering={FadeInUp.delay(250).duration(500).springify().damping(18)} style={{
+                alignItems: "center",
+                marginTop: Platform.OS === "ios" ? 50 : 30,
                 paddingHorizontal: 30
             }}>
                 <Text style={{
-                    fontFamily: FONTS.bold, 
-                    fontSize: SIZES.h1, 
-                    color: "#fff", 
+                    fontFamily: FONTS.bold,
+                    fontSize: SIZES.h1,
+                    color: "#fff",
                     textAlign: "center"
                 }}>
                    {language === "English" ? "What would you like to post?" : "Que souhaitez-vous annoncer?" }
                 </Text>
 
                 <Text style={{
-                    marginTop: Platform.OS === "ios" ? 10 : 5, 
-                    fontFamily: FONTS.regular, 
-                    color: "#fff", 
-                    textAlign: "center", 
-                    fontSize: SIZES.h4, 
+                    marginTop: Platform.OS === "ios" ? 10 : 5,
+                    fontFamily: FONTS.regular,
+                    color: "#fff",
+                    textAlign: "center",
+                    fontSize: SIZES.h4,
                     lineHeight: SIZES.h4
                 }}>
-                    {language === "English" ? "You can share your container space or your luggage by posting an ad!" : "Vous pouvez partager votre espace de conteneur ou vos"+ 
+                    {language === "English" ? "You can share your container space or your luggage by posting an ad!" : "Vous pouvez partager votre espace de conteneur ou vos "+
                     "bagages en publiant une annonce !"}
                 </Text>
 
-                <View style={{
-                    marginTop: Platform.OS === "ios" ? 30 : 20, 
+                <Animated.View entering={FadeInUp.delay(450).duration(450).springify().damping(18)} style={{
+                    marginTop: Platform.OS === "ios" ? 30 : 20,
                     width: "100%"
                 }}>
 
                     <Button1
-                    
-                    borderRadius={12} 
 
-                    label={language === "English" ? "Share your kilos" : "Partagez vos kilos"} 
+                    borderRadius={12}
+
+                    label={language === "English" ? "Share your kilos" : "Partagez vos kilos"}
                     backgroundColor="#fff"
                     textColor={COLORS.primary}
                     fontFamily={FONTS.regular}
@@ -149,7 +150,8 @@ export default function CreateAnnouncement({navigation}) {
                     onPress={() => goToForm("kilos")}
                     />
 
-                <Button1 borderRadius={12} 
+                <Animated.View entering={FadeInUp.delay(580).duration(450).springify().damping(18)}>
+                <Button1 borderRadius={12}
 
                     label={language === "English" ? "Share a container" : "Partagez un conteneur"}
                     backgroundColor="#fff"
@@ -161,12 +163,13 @@ export default function CreateAnnouncement({navigation}) {
                     imagePath = {require("../assets/images/container1.png")}
                     onPress={() => goToForm("container")}
                     />
+                </Animated.View>
 
-                </View>
+                </Animated.View>
 
-    
 
-            </View>
+
+            </Animated.View>
 
             
 

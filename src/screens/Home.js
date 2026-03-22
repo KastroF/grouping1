@@ -18,6 +18,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import { translate } from '../i18n/locales/translate';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../config/api';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const MES_ANNONCES_URL = API.ANNONCE_LIST;
 const GET_CITIES_URL = API.CITY_LIST_BY_COUNTRY;
@@ -1405,9 +1406,9 @@ transparent={true}
         transparent={true}
     >
 
-
+        <GestureHandlerRootView style={{flex: 1}}>
         <View style={{
-            flex: 1, 
+            flex: 1,
             backgroundColor: COLORS.light_blue
         }}>
 
@@ -1491,7 +1492,7 @@ transparent={true}
                 if(flatLoading) return <View />
 
                 return (
-                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); goToDetails(item._id)}}
+                    <AnnounceBlock key={item._id} index={index} status= {currentType === "c" ? "container" : "kilos"} userId={item.userId}  city1={item.startCity} city2={item.endCity}  onPress= {() => { setModalVisible5(false); setTimeout(() => goToDetails(item._id), 300)}}
                     date={item.dateOfDeparture} views={item.views} datee={item.date} company={item.company} name={item.transitaire || (item.user && item.user.name)} startCity={item.startCity2 && item.startCity2.code} endCity={item.endCity2 && item.endCity2.code}
                     startCountry={item.startCity2 && item.startCity2.country} endCountry={item.endCity2 && item.endCity2.country} />
                 )
@@ -1502,9 +1503,10 @@ transparent={true}
 
 
         </View>
+        </GestureHandlerRootView>
 
 </Modal>
-    <Modal 
+    <Modal
         visible={modalVisible3}
         onRequestClose={() => {
 
@@ -2266,7 +2268,7 @@ transparent={true}
         <Text style={{
             fontFamily: FONTS.bold,
             fontSize: SIZES.h6,
-            color: COLORS.primary,
+            color: "red",
             marginLeft: 10,
             flex: 1
         }}>{language === "English" ? "Upcoming departures" : "Départs imminents"}</Text>
@@ -2523,7 +2525,7 @@ transparent={true}
                                 return (
                                     <TouchableOpacity key={item._id} onPress={() => {
                                         setModalDepartsVisible(false);
-                                        goToDetails(item._id);
+                                        setTimeout(() => goToDetails(item._id), 300);
                                     }} style={{
                                         backgroundColor: "#fff",
                                         borderRadius: 14,

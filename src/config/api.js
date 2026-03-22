@@ -13,6 +13,8 @@ const API = {
   USER_CHANGE_PHOTO: `${BASE_URL}/api/user/changephoto`,
   USER_UPDATE_FCM: `${BASE_URL}/api/user/updatefcmToken`,
   USER_CONTACT_US: `${BASE_URL}/api/user/contactus`,
+  USER_APPLY_REFERRAL: `${BASE_URL}/api/user/applyreferral`,
+  USER_GET_REFERRAL: `${BASE_URL}/api/user/getreferralcode`,
 
   // Annonces
   ANNONCE_LIST: `${BASE_URL}/api/annonce/announces`,

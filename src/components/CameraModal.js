@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ImageBackground, Modal, Platform, StyleSheet, Text, TouchableOpacity, PermissionsAndroid, View, Alert } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../constants/theme';
+import { AuthContext } from '../navigation/AuthProvider';
 
 export default function CameraModal({ modalVisible, dismissModal, isFinished }) {
+  const { language } = useContext(AuthContext);
   const device = useCameraDevice("back");
   const [imageData, setImageData] = useState(null);
   const cameraRef = useRef(null);
@@ -18,7 +20,7 @@ export default function CameraModal({ modalVisible, dismissModal, isFinished }) 
       setPhoto(photo);
     } catch (e) {
       console.log(e);
-      Alert.alert("Erreur", "Impossible de prendre la photo");
+      Alert.alert(language === "English" ? "Error" : "Erreur", language === "English" ? "Unable to take the photo" : "Impossible de prendre la photo");
     }
   };
 
@@ -51,10 +53,10 @@ export default function CameraModal({ modalVisible, dismissModal, isFinished }) 
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
         {
-          title: 'Permission caméra',
-          message: "L'application a besoin d'accéder à votre caméra.",
-          buttonNeutral: 'Plus tard',
-          buttonNegative: 'Annuler',
+          title: language === "English" ? "Camera permission" : "Permission caméra",
+          message: language === "English" ? "The app needs access to your camera." : "L'application a besoin d'accéder à votre caméra.",
+          buttonNeutral: language === "English" ? "Later" : "Plus tard",
+          buttonNegative: language === "English" ? "Cancel" : "Annuler",
           buttonPositive: 'OK',
         }
       );
@@ -93,7 +95,7 @@ export default function CameraModal({ modalVisible, dismissModal, isFinished }) 
             </ImageBackground>
             <View style={{ height: 100, justifyContent: "center", alignItems: "center" }}>
               <TouchableOpacity onPress={takePhoto} style={{ height: 60, width: 120, borderRadius: 30, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ fontSize: 16 }}>Suivant</Text>
+                <Text style={{ fontSize: 16 }}>{language === "English" ? "Next" : "Suivant"}</Text>
               </TouchableOpacity>
             </View>
           </View>

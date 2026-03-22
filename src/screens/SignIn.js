@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View, Platform, Image, Text, KeyboardAvoidingView, Modal } from 'react-native'
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
@@ -416,7 +417,7 @@ export default function SignIn({navigation, route}) {
 
             }else{
 
-                    setErrorMessage("Veuillez remplir tous les champs");
+                    setErrorMessage(language === "English" ? "Please fill in all fields" : "Veuillez remplir tous les champs");
                     setLoading(false);
             }
     }
@@ -433,7 +434,7 @@ export default function SignIn({navigation, route}) {
 
         if(!validateEmail(mail)){
 
-            alert("Veuillez renseigner une adresse email valide"); 
+            alert(language === "English" ? "Please enter a valid email address" : "Veuillez renseigner une adresse email valide");
         
           }else{
 
@@ -445,7 +446,7 @@ export default function SignIn({navigation, route}) {
 
                     setModalVisible(false); 
                     setMail(""); 
-                    alert("📩 Un e-mail de réinitialisation vient d’être envoyé. Consulte ta boîte de réception (ou tes spams) et suis les instructions pour choisir un nouveau mot de passe.")
+                    alert(language === "English" ? "📩 A password reset email has been sent. Check your inbox (or spam folder) and follow the instructions to set a new password." : "📩 Un e-mail de réinitialisation vient d’être envoyé. Consulte ta boîte de réception (ou tes spams) et suis les instructions pour choisir un nouveau mot de passe.")
                     setLoading(false);
                   }
 
@@ -453,7 +454,7 @@ export default function SignIn({navigation, route}) {
 
                   setModalVisible(false); 
                   setMail(""); 
-                  alert("Adresse email introuvable"); 
+                  alert(language === "English" ? "Email address not found" : "Adresse email introuvable");
                   setLoading(false);
               }
 
@@ -553,129 +554,126 @@ export default function SignIn({navigation, route}) {
             
         
         }}>
-        <View style={{
-            marginTop: Platform.OS === "ios" ? 75 : 45, 
-         
+        <Animated.View entering={FadeInDown.duration(400).springify().damping(18)} style={{
+            marginTop: Platform.OS === "ios" ? 75 : 45,
+
         }}>
            { (from || idg) && <TouchableOpacity style={{
             marginBottom: Platform.OS === "ios" ? 10 : 3
            }} onPress={goBack}>
                     <FontAwesome6 name='angle-left' color={COLORS.primary} size={SIZES.h2} />
             </TouchableOpacity> }
-            <View style={{
-                alignItems: "center", 
-            
-            
+            <Animated.View entering={FadeInDown.delay(80).duration(450).springify().damping(16)} style={{
+                alignItems: "center",
+
+
             }}>
 
 
-                <Image 
+                <Image
 
                     source={require("../assets/images/Grouping.png")}
 
                     style={{
-                        height: SIZES.width * 0.3, 
-                        width: SIZES.width * 0.3, 
+                        height: SIZES.width * 0.3,
+                        width: SIZES.width * 0.3,
                         resizeMode: "contain"
                     }}
 
                     />
 
-            </View>
+            </Animated.View>
 
-                <View style={{
-                    marginTop: Platform.OS === "ios" ?  30 : 20, 
-                  
-                   
+                <Animated.View entering={FadeInDown.delay(180).duration(450).springify().damping(18)} style={{
+                    marginTop: Platform.OS === "ios" ?  30 : 20,
+
+
                 }}>
                     <Text style={{
-                        textAlign: "center", 
-                        fontFamily: FONTS.bold, 
-                        fontSize: SIZES.h1, 
+                        textAlign: "center",
+                        fontFamily: FONTS.bold,
+                        fontSize: SIZES.h1,
                         color: COLORS.primary
                     }}>
-                       {language === "English" ? "Sign in" : "Connectez-vous"} 
+                       {language === "English" ? "Sign in" : "Connectez-vous"}
                     </Text>
 
                     <Text style={{
-                        textAlign: "center", 
-                        fontFamily: FONTS.ligth, 
-                        fontSize: SIZES.h6, 
+                        textAlign: "center",
+                        fontFamily: FONTS.ligth,
+                        fontSize: SIZES.h6,
                         marginTop: Platform.OS === "ios" ? 10 : 5,
                         color: COLORS.primary
                     }}>
                         {language === 'English' ? "Enter your login details..." : "Entrez vos informations de connexion..."}
                     </Text>
 
-                   
 
 
-                </View>
 
-                
+                </Animated.View>
 
-              
 
-               
 
-            </View>
 
-            <View style={{
-               
-                alignItems: "center", 
-                justifyContent: "center", 
-                flexDirection: "row", 
+            </Animated.View>
+
+            <Animated.View entering={FadeInUp.delay(300).duration(450).springify().damping(18)} style={{
+
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
                 paddingVertical: 35
-            }} >  
+            }} >
 
                 <TouchableOpacity onPress={googleSignIn} style={{
-                padding: 20, 
-                borderRadius: 100, 
+                padding: 20,
+                borderRadius: 100,
                 backgroundColor: "rgb(250, 250, 250)"
                 }} >
-                    <Image source={require("../assets/images/google1.png")} 
+                    <Image source={require("../assets/images/google1.png")}
                     style={{height: 40, width: 40, resizeMode: "contain"}}
                     />
                 </TouchableOpacity>
 
             {Platform.OS === "ios" &&  <TouchableOpacity onPress={onAppleButtonPress} style={{
-                marginLeft: 20, 
-                padding: 20, 
-                borderRadius: 100, 
+                marginLeft: 20,
+                padding: 20,
+                borderRadius: 100,
                 backgroundColor: "rgb(250, 250, 250)"
                 }}>
-                <Image source={require("../assets/images/apple.png")} 
+                <Image source={require("../assets/images/apple.png")}
                     style={{height: 40, width: 40, resizeMode: "contain"}}
                     />
                 </TouchableOpacity>}
 
-            </View>
+            </Animated.View>
 
-            <View style={{
-                paddingHorizontal: 25, 
-           
-               
+            <Animated.View entering={FadeInUp.delay(400).duration(450).springify().damping(18)} style={{
+                paddingHorizontal: 25,
+
+
                 }}>
-                    <FormInput onChangeText={setEmail} value={email}  label={language === 'English' ? "Email address" : "Adresse mail"}   iconName="mail"  
+                    <FormInput onChangeText={setEmail} value={email}  label={language === 'English' ? "Email address" : "Adresse mail"}   iconName="mail"
                     imagePath={require("../assets/images/mailIcon.png")} />
-            </View>
+            </Animated.View>
 
-            <View style={{
-                paddingHorizontal: 25, 
+            <Animated.View entering={FadeInUp.delay(500).duration(450).springify().damping(18)} style={{
+                paddingHorizontal: 25,
                 marginTop: 15
                 }}>
-                    <FormInput onChangeText={setPassword} value={password} password={true}  label={language === 'English' ? "Password" : "Mot de passe"} iconName="lock" 
+                    <FormInput onChangeText={setPassword} value={password} password={true}  label={language === 'English' ? "Password" : "Mot de passe"} iconName="lock"
                         imagePath={require("../assets/images/lock.png")}
                         />
-            </View>
+            </Animated.View>
 
-            <View style={{
-            paddingHorizontal: 25, 
+            <Animated.View entering={FadeInUp.delay(600).duration(450).springify().damping(18)} style={{
+            paddingHorizontal: 25,
             marginTop: 10
             }}>
 
-            <Button1 
-                label="Connexion"
+            <Button1
+                label={language === "English" ? "Sign in" : "Connexion"}
                 backgroundColor= {COLORS.primary}
                 textColor="#fff"
                 borderRadius={12}
@@ -684,25 +682,25 @@ export default function SignIn({navigation, route}) {
                 onPress={onConnect}
                 />
 
-            </View>
+            </Animated.View>
 
-            <View style={{
-              justifyContent: "center", 
-              flexDirection: "row", 
-              marginTop: 10, 
-             
-              
+            <Animated.View entering={FadeInUp.delay(700).duration(400).springify().damping(18)} style={{
+              justifyContent: "center",
+              flexDirection: "row",
+              marginTop: 10,
+
+
             }}>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
                   <Text style={{
-                    textAlign: "center", 
-                    fontFamily: FONTS.bold, 
-                    color: COLORS.primary, 
-                    fontSize: SIZES.h6, 
+                    textAlign: "center",
+                    fontFamily: FONTS.bold,
+                    color: COLORS.primary,
+                    fontSize: SIZES.h6,
                     textDecorationLine: "underline"
                   }}>{language === "English" ? "Forgot password?" : "Mot de passe oublié ?"}</Text>
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
 
             {
                 errorMessage && <ErrorMessage errorMessage={errorMessage} />

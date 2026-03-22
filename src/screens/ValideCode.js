@@ -18,7 +18,7 @@ export default function ValideCode({route, navigation}) {
 const {code} = route.params; 
 const [otpValue, setOtpValue] = useState('');
 const inputRefs = [useRef(), useRef(), useRef(), useRef()];
-const {user, isTabBarVisible, setIsTabBarVisible, setToken,  setAccount} = useContext(AuthContext); 
+const {user, isTabBarVisible, setIsTabBarVisible, setToken,  setAccount, language} = useContext(AuthContext);
 const [errorMessage, setErrorMessage] = useState(""); 
 const {postFunction} = useFetchFunctions(); 
 const [validate, setVAlidate] = useState(false);
@@ -121,7 +121,7 @@ const focusNextInput = (index) => {
                 })
         }else{
 
-            setErrorMessage("Code invalide");
+            setErrorMessage(language === "English" ? "Invalid code" : "Code invalide");
             setLoad(false);
         }
   }
@@ -173,7 +173,7 @@ const focusNextInput = (index) => {
                             fontFamily: FONTS.bold, 
                             fontSize: 25, 
                             color: COLORS.primary
-                        }}>Authentification</Text>
+                        }}>{language === "English" ? "Authentication" : "Authentification"}</Text>
                         <Text style={{
                             fontFamily: FONTS.regular, 
                             color: COLORS.primary, 
@@ -181,8 +181,7 @@ const focusNextInput = (index) => {
                             textAlign: "center", 
                             marginTop: Platform.OS === "ios" ? 10 : 3
                         }}>
-                            Entrez le code à quatre (4) chiffres que nous vous avons envoyé par mail 
-                            pour confirmer votre inscription.
+                            {language === "English" ? "Enter the 4-digit code we sent you by email to confirm your registration." : "Entrez le code à quatre (4) chiffres que nous vous avons envoyé par mail pour confirmer votre inscription."}
                         </Text>
                 </View>
 
@@ -241,7 +240,7 @@ const focusNextInput = (index) => {
                         color: COLORS.primary, 
                         fontSize: 15, 
                         textAlign: "center"
-                    }}>Vous n'avez pas reçu de code ?</Text>
+                    }}>{language === "English" ? "Didn't receive a code?" : "Vous n'avez pas reçu de code ?"}</Text>
                    <TouchableOpacity style={{
                      marginTop: Platform.OS === "ios" ? 5 : 0
                    }}> 
@@ -251,7 +250,7 @@ const focusNextInput = (index) => {
                        fontSize: 15, 
                        textAlign: "center"
                     }}>
-                        Renvoyez le code
+                        {language === "English" ? "Resend code" : "Renvoyez le code"}
                     </Text>
                     </TouchableOpacity>
                 </View>
@@ -261,7 +260,7 @@ const focusNextInput = (index) => {
                     width: "100%", 
                     paddingHorizontal: 40
                 }}>
-                    <Button1 onPress={onValid} label="Validez le code" backgroundColor={COLORS.primary} 
+                    <Button1 onPress={onValid} label={language === "English" ? "Validate code" : "Validez le code"} backgroundColor={COLORS.primary}
                        textColor="#fff" fontFamily={FONTS.regular} fontSize={18} borderRadius={15} />
                 </View>
 

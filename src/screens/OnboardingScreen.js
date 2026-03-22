@@ -21,7 +21,7 @@ export default function OnboardingScreen({navigation}) {
     const [showHomePage, setShowHomePage] = useState(false); 
     const {setLanguage, language} = useContext(AuthContext)
     const [lang, setLang] = useState(false); 
-    const [langage, setLangage] = useState("Langage"); 
+    const [langage, setLangage] = useState(language === "English" ? "Language" : "Langage");
     const [modalVisible, setModalVisible] = useState(false); 
     const [check, setCheck] = useState(""); 
     //const { t } = useTranslation();
@@ -308,10 +308,10 @@ export default function OnboardingScreen({navigation}) {
                         backgroundColor: COLORS.orange, 
                         width: 25
                     }}
-                    renderNextButton = {() => buttonLabel("Next")}
-                   
-                    
-                    renderDoneButton = {() => buttonLabel("Done")}
+                    renderNextButton = {() => buttonLabel(language === "English" ? "Next" : "Suivant")}
+
+
+                    renderDoneButton = {() => buttonLabel(language === "English" ? "Done" : "Terminé")}
                     onDone={goToHome}
                 />
 

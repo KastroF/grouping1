@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Image, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import FormInput from '../components/FormInput'
@@ -240,7 +241,7 @@ export default function Login({navigation, route}) {
   function estMotDePasseValide(motDePasse) {
     // Vérifier la longueur du mot de passe
     if (motDePasse.length < 8) {
-        return "Le mot de passe doit contenir au moins 8 caractères.";
+        return language === "English" ? "Password must be at least 8 characters." : "Le mot de passe doit contenir au moins 8 caractères.";
     }
 
     // Vérifier s'il contient au moins une lettre minuscule, une majuscule et un chiffre
@@ -250,13 +251,13 @@ export default function Login({navigation, route}) {
 
     // Vérifier chaque critère et retourner un message d'erreur approprié
     if (!contientMinuscule) {
-        return "Le mot de passe doit contenir au moins une lettre minuscule.";
+        return language === "English" ? "Password must contain at least one lowercase letter." : "Le mot de passe doit contenir au moins une lettre minuscule.";
     }
     if (!contientMajuscule) {
-        return "Le mot de passe doit contenir au moins une lettre majuscule.";
+        return language === "English" ? "Password must contain at least one uppercase letter." : "Le mot de passe doit contenir au moins une lettre majuscule.";
     }
     if (!contientChiffre) {
-        return "Le mot de passe doit contenir au moins un chiffre.";
+        return language === "English" ? "Password must contain at least one number." : "Le mot de passe doit contenir au moins un chiffre.";
     }
 
     // Si tous les critères sont remplis, retourner true
@@ -465,7 +466,7 @@ const googleSignIn = async () => {
 
               }else{
 
-                  alert("vérifiez votre connexion internet");
+                  alert(language === "English" ? "Check your internet connection" : "Vérifiez votre connexion internet");
                   setLoading(false);
               }
 
@@ -477,13 +478,13 @@ const googleSignIn = async () => {
 
         }else{
   
-            setErrorMessage("Mot de passe invalide. " + resultat);
+            setErrorMessage((language === "English" ? "Invalid password. " : "Mot de passe invalide. ") + resultat);
             setLoading(false); 
         }
 
       }else{
 
-        setErrorMessage("Format d'Email invalide");
+        setErrorMessage(language === "English" ? "Invalid email format" : "Format d'Email invalide");
         setLoading(false); 
 
       }
@@ -492,7 +493,7 @@ const googleSignIn = async () => {
 
     }else{
 
-        setErrorMessage("Veuillez remplir tous les champs"); 
+        setErrorMessage(language === "English" ? "Please fill in all fields" : "Veuillez remplir tous les champs");
         setLoading(false);
     }
 
@@ -511,8 +512,8 @@ const googleSignIn = async () => {
            
         }}>
 
-<View style={{
-            marginTop: Platform.OS === "ios" ? 45 : 25, 
+<Animated.View entering={FadeInDown.duration(400).springify().damping(18)} style={{
+            marginTop: Platform.OS === "ios" ? 45 : 25,
          paddingHorizontal: 20
         }}>
            { (_id  || idg) && <TouchableOpacity style={{
@@ -521,125 +522,125 @@ const googleSignIn = async () => {
                     <FontAwesome6 name='angle-left' color={COLORS.primary} size={SIZES.h2} />
             </TouchableOpacity> }
 
-      </View>
+      </Animated.View>
 
-      <View style={{
-        marginTop: 20, 
-        alignItems: "center", 
-        
+      <Animated.View entering={FadeInDown.delay(80).duration(450).springify().damping(16)} style={{
+        marginTop: 20,
+        alignItems: "center",
+
       }}>
-        <Image 
+        <Image
             source={require("../assets/images/Grouping.png")}
             style={{
-              width: SIZES.width /4, 
-              height: SIZES.width /4.5, 
+              width: SIZES.width /4,
+              height: SIZES.width /4.5,
               resizeMode: "contain"
             }}
         />
-      </View>
-      <View style={{
-        marginTop: 15, 
-        alignItems: "center", 
+      </Animated.View>
+      <Animated.View entering={FadeInDown.delay(180).duration(450).springify().damping(18)} style={{
+        marginTop: 15,
+        alignItems: "center",
         paddingHorizontal: 40
       }}>
 
         <Text style={{
-          fontFamily: FONTS.bold, 
-          fontSize: SIZES.h2, 
+          fontFamily: FONTS.bold,
+          fontSize: SIZES.h2,
           color: COLORS.primary
         }}>
             {language === "English" ? "Create an account" : "Créer votre compte"}
         </Text>
 
         <Text style={{
-          marginTop: Platform.OS === "android" ? 2 : 10, 
-          fontSize: SIZES.h6, 
-          fontFamily: FONTS.ligth, 
-          color: COLORS.primary, 
+          marginTop: Platform.OS === "android" ? 2 : 10,
+          fontSize: SIZES.h6,
+          fontFamily: FONTS.ligth,
+          color: COLORS.primary,
           textAlign: "center"
         }}>
-          {language !== "English" ? "Afin de vous proposer des offres correspondant à vos recherches, veuillez renseigner vos informations." 
+          {language !== "English" ? "Afin de vous proposer des offres correspondant à vos recherches, veuillez renseigner vos informations."
           : "To offer you deals that match your search, please provide your information."}
         </Text>
 
-      </View>
+      </Animated.View>
 
       {
         errorMessage2 && <ErrorMessage errorMessage={errorMessage2} />
       }
 
-      <View style={{
-        marginTop: 30, 
+      <Animated.View entering={FadeInUp.delay(280).duration(450).springify().damping(18)} style={{
+        marginTop: 30,
         alignItems: "center"
       }}>
         <Text style={{
-          fontFamily: FONTS.ligth, 
-          fontSize: SIZES.h6, 
+          fontFamily: FONTS.ligth,
+          fontSize: SIZES.h6,
           color: COLORS.primary
         }}>{language === "English" ? "Create an account with..." : "Créer un compte avec..."}</Text>
-      </View>
+      </Animated.View>
 
-      <View style={{
-        marginTop: 10, 
-        alignItems: "center", 
-        justifyContent: "center", 
+      <Animated.View entering={FadeInUp.delay(360).duration(450).springify().damping(18)} style={{
+        marginTop: 10,
+        alignItems: "center",
+        justifyContent: "center",
         flexDirection: "row"
-      }} >  
+      }} >
 
         <TouchableOpacity onPress={googleSignIn} style={{
-           padding: 20, 
-           borderRadius: 100, 
+           padding: 20,
+           borderRadius: 100,
            backgroundColor: "rgb(250, 250, 250)"
         }} >
-            <Image source={require("../assets/images/google1.png")} 
+            <Image source={require("../assets/images/google1.png")}
               style={{height: 40, width: 40, resizeMode: "contain"}}
             />
         </TouchableOpacity>
 
       {Platform.OS === "ios" &&  <TouchableOpacity onPress={onAppleButtonPress} style={{
-          marginLeft: 20, 
-          padding: 20, 
-          borderRadius: 100, 
+          marginLeft: 20,
+          padding: 20,
+          borderRadius: 100,
           backgroundColor: "rgb(250, 250, 250)"
         }}>
-        <Image source={require("../assets/images/apple.png")} 
+        <Image source={require("../assets/images/apple.png")}
               style={{height: 40, width: 40, resizeMode: "contain"}}
             />
         </TouchableOpacity>}
 
-      </View>
+      </Animated.View>
 
-        <View style={{
-          paddingHorizontal: 35, 
+        <Animated.View entering={FadeInUp.delay(440).duration(450).springify().damping(18)} style={{
+          paddingHorizontal: 35,
           marginTop: 20
         }}>
-          <FormInput  label={language === "English" ? "Full name" : "Nom complet"}  value={name} onChangeText={setName} iconName="account-outline" 
+          <FormInput  label={language === "English" ? "Full name" : "Nom complet"}  value={name} onChangeText={setName} iconName="account-outline"
           imagePath={require("../assets/images/user.png")} />
-        </View>
+        </Animated.View>
 
-  
 
-        <View style={{
-          paddingHorizontal: 35, 
+
+        <Animated.View entering={FadeInUp.delay(520).duration(450).springify().damping(18)} style={{
+          paddingHorizontal: 35,
           marginTop: 15
         }}>
-          <FormInput value={email} onChangeText={setEmail} label={language === "English" ? "Email address" :"Adresse mail"} iconName="mail" 
+          <FormInput value={email} onChangeText={setEmail} label={language === "English" ? "Email address" :"Adresse mail"} iconName="mail"
           imagePath={require("../assets/images/mailIcon.png")}  />
-        </View>
+        </Animated.View>
 
-        <View style={{
-          paddingHorizontal: 35, 
+        <Animated.View entering={FadeInUp.delay(600).duration(450).springify().damping(18)} style={{
+          paddingHorizontal: 35,
           marginTop: 15
         }}>
           <FormInput password={true} value={password} onChangeText={setPassword}  label={language === "English" ? "Password" :"Mot de passe"} placeholder={language === "English" ? "Create a password": "Créez un mot de passe"} iconName="eye" />
-        </View>
+        </Animated.View>
 
-        <View style={{
-          paddingHorizontal: 35, 
+        <Animated.View entering={FadeInUp.delay(680).duration(450).springify().damping(18)} style={{
+          paddingHorizontal: 35,
           marginTop: 25
         }}>
 
-          <Button1 
+          <Button1
               label={language === "English" ? "Create an account" : "Créer un compte"}
               backgroundColor= {COLORS.primary}
               textColor="#fff"
@@ -649,47 +650,47 @@ const googleSignIn = async () => {
               onPress={onRegister}
             />
 
-        </View>
+        </Animated.View>
 
-        <View style={{
-          paddingHorizontal: 35, 
+        <Animated.View entering={FadeInUp.delay(750).duration(400).springify().damping(18)} style={{
+          paddingHorizontal: 35,
           marginTop: 5
         }}>
           <Text style={{
-            fontFamily: FONTS.ligth, 
-            color: "rgba(0,0,0,0.6)", 
-            fontSize: SIZES.h6, 
+            fontFamily: FONTS.ligth,
+            color: "rgba(0,0,0,0.6)",
+            fontSize: SIZES.h6,
             textAlign: "center"
           }}>
           {language === "English" ? "Your password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@, !, etc.)." : "Votre mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial (@, !, , etc.)"}
           </Text>
-        </View>
+        </Animated.View>
 
         {
           errorMessage && <ErrorMessage errorMessage={errorMessage} />
         }
 
-        <View style={{
-          paddingHorizontal: 35, 
-          marginTop: 25, 
+        <Animated.View entering={FadeInUp.delay(820).duration(400).springify().damping(18)} style={{
+          paddingHorizontal: 35,
+          marginTop: 25,
           alignItems: "center"
         }}>
           <Text style={{
-            fontFamily: FONTS.regular, 
-            fontSize: 13, 
-            color: COLORS.primary, 
+            fontFamily: FONTS.regular,
+            fontSize: 13,
+            color: COLORS.primary,
             textAlign: "center"
           }}>{language === "English" ? "Already have an account?" : "Avez-vous déjà un compte ?"}</Text>
           <TouchableOpacity onPress={() => goToSignIn()}>
             <Text style={{
-              fontFamily: FONTS.bold, 
-              fontSize: 16, 
-              color: COLORS.other_blue3, 
-              marginTop: 10, 
+              fontFamily: FONTS.bold,
+              fontSize: 16,
+              color: COLORS.other_blue3,
+              marginTop: 10,
               textDecorationLine: "underline"
             }}>{language === "English" ? "Sign in here !" : "Connectez-vous ici!"}</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
 
         

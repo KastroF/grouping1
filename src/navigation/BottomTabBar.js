@@ -16,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { API } from '../config/api';
 import NotificationBanner from '../components/NotificationBanner';
 import FloatingChatButton from '../components/FloatingChatButton';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -261,13 +262,7 @@ export default function BottomTabBar() {
                         alignItems: "center"
                     }}>
 
-                        <Image  source={ focused ? require("../assets/images/white_map.png") :  require("../assets/images/map.png")}
-                            style={{
-                                height:  focused ? SIZES.h4 : SIZES.h3,
-                                width: focused ? SIZES.h4 : SIZES.h3,
-                                resizeMode: "contain"
-                            }}
-                        />
+                        <FontAwesome6 name="location-dot" size={focused ? SIZES.h4 : SIZES.h3} color={focused ? "#fff" : COLORS.primary} />
 
                     </View>
             )

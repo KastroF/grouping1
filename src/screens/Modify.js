@@ -1,10 +1,11 @@
-import { View, Text, TouchableOpacity, Image, Platform, Modal, ActivityIndicator, TextInput, PermissionsAndroid } from 'react-native'
+import { View, Text, TouchableOpacity, Image, Platform, Modal, ActivityIndicator, TextInput, PermissionsAndroid, Alert, Share } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { AuthContext } from '../navigation/AuthProvider'
 import Feather from "react-native-vector-icons/Feather"
 import AntDesign from "react-native-vector-icons/AntDesign"
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import { useFetchFunctions } from '../infrastructures/functions'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -15,14 +16,39 @@ const CHANGE_USER_NAME_URL = API.USER_CHANGE_NAME;
 const CHANGE_PHOTO_URL = API.USER_CHANGE_PHOTO;
 export default function Modify({navigation}) {
 
-    const {user, token, setUser} = useContext(AuthContext);
+    const {user, token, setUser, language} = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
-    const [name, setName] = useState(""); 
-    const [loading, setLoading] = useState(false); 
-    const [loadingg, setLoadingg] = useState(false); 
-    const {postFunction, postWithFile} = useFetchFunctions(); 
+    const [name, setName] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [loadingg, setLoadingg] = useState(false);
+    const {postFunction, postWithFile, laFonctionGet} = useFetchFunctions();
     const [imageUri, setImageUri] = useState(null);
     const viewRef = useRef();
+    const [referralCode, setReferralCode] = useState(null);
+
+    useEffect(() => {
+        if (token) {
+            laFonctionGet(API.USER_GET_REFERRAL, token).then((data) => {
+                if (data && data.status === 0 && data.referralCode) {
+                    setReferralCode(data.referralCode);
+                }
+            }).catch(() => {});
+        }
+    }, [token]);
+
+    const shareReferralCode = async () => {
+        if (referralCode) {
+            try {
+                await Share.share({
+                    message: language === "English"
+                        ? `Join me on Grouping! Use my referral code: ${referralCode}`
+                        : `Rejoins-moi sur Grouping ! Utilise mon code de parrainage : ${referralCode}`,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    };
 
 
 
@@ -102,7 +128,7 @@ export default function Modify({navigation}) {
 
         if(!name){
 
-                alert("Nom obligatoire"); 
+                alert(language === "English" ? "Name is required" : "Nom obligatoire");
                 setLoading(false);
         
             }else{
@@ -169,7 +195,7 @@ export default function Modify({navigation}) {
                         fontFamily: FONTS.bold, 
                         color: COLORS.primary, 
                         fontSize: SIZES.h3
-                    }}>Changer de nom</Text>
+                    }}>{language === "English" ? "Change name" : "Changer de nom"}</Text>
                 </View>
                 <View style={{
                     paddingHorizontal: 15, 
@@ -180,7 +206,7 @@ export default function Modify({navigation}) {
                         color: COLORS.primary, 
                         fontSize: SIZES.h5
                     }}>
-                        Votre nom
+                        {language === "English" ? "Your name" : "Votre nom"}
                     </Text>
 
                     <View style={{
@@ -197,7 +223,7 @@ export default function Modify({navigation}) {
                             color: "#000", 
                             fontSize: SIZES.h5,
                             flex: 1
-                        }} placeholder="Saisir le nom"  
+                        }} placeholder={language === "English" ? "Enter name" : "Saisir le nom"}
                         value={name}
                         onChangeText={setName}
                         />
@@ -224,7 +250,7 @@ export default function Modify({navigation}) {
                             fontFamily: FONTS.bold, 
                             fontSize: SIZES.h5, 
                             color: "red"
-                        }}>Annuler</Text>
+                        }}>{language === "English" ? "Cancel" : "Annuler"}</Text>
                     </TouchableOpacity>
                     
 
@@ -241,7 +267,7 @@ export default function Modify({navigation}) {
                             fontFamily: FONTS.bold, 
                             fontSize: SIZES.h5, 
                             color: "green"
-                        }}>Modifier</Text>}
+                        }}>{language === "English" ? "Save" : "Modifier"}</Text>}
                     </TouchableOpacity>
                 </View>
             </View>
@@ -278,7 +304,7 @@ export default function Modify({navigation}) {
     
                         marginLeft: -10
                     }}>
-                        Modifier le profil
+                        {language === "English" ? "Edit profile" : "Modifier le profil"}
                     </Text>
                 </View>
     
@@ -317,7 +343,7 @@ export default function Modify({navigation}) {
                             color: COLORS.primary, 
                             fontSize: SIZES.h4, 
                             textDecorationLine: "underline"
-                        }}>{user.photo ? "Modifiez la photo" : "Ajoutez une photo"} <Feather name='edit-2' size={15} /> </Text>
+                        }}>{user.photo ? (language === "English" ? "Change photo" : "Modifiez la photo") : (language === "English" ? "Add a photo" : "Ajoutez une photo")} <Feather name='edit-2' size={15} /> </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -345,7 +371,7 @@ export default function Modify({navigation}) {
                             color: COLORS.primary, 
                             fontSize: SIZES.h4
                         }}>
-                            Nom : 
+                            {language === "English" ? "Name:" : "Nom :"}
                         </Text>
                         <Text  style={{
                             fontFamily: FONTS.regular, 
@@ -359,27 +385,89 @@ export default function Modify({navigation}) {
                         <AntDesign color={COLORS.primary} name="edit" size={25} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ 
-                       marginTop: 15, 
-                       paddingBottom: 15, 
-                       borderBottomWidth: 1, 
+                <View style={{
+                       marginTop: 15,
+                       paddingBottom: 15,
+                       borderBottomWidth: 1,
                        borderBottomColor: "#ccc",
-                       width: "100%", 
+                       width: "100%",
                        alignItems: "flex-start"
                     }}>
                         <Text style={{
-                            fontFamily: FONTS.bold, 
-                            color: COLORS.primary, 
+                            fontFamily: FONTS.bold,
+                            color: COLORS.primary,
                             fontSize: SIZES.h4
                         }}>
-                            Email : 
+                            {language === "English" ? "Email:" : "Email :"}
                         </Text>
                         <Text  style={{
-                            fontFamily: FONTS.regular, 
-                            color: "rgba(0,0,0,0.8)", 
+                            fontFamily: FONTS.regular,
+                            color: "rgba(0,0,0,0.8)",
                             fontSize: SIZES.h5
                         }}> {user.email} </Text>
                     </View>
+
+                    {/* Referral Code Section */}
+                    {referralCode && (
+                    <View style={{
+                        marginTop: 25,
+                        width: "100%",
+                        backgroundColor: COLORS.light_blue,
+                        borderRadius: 12,
+                        padding: 20,
+                    }}>
+                        <View style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            marginBottom: 10,
+                        }}>
+                            <MaterialCommunityIcons name="account-group" color={COLORS.primary} size={22} />
+                            <Text style={{
+                                fontFamily: FONTS.bold,
+                                color: COLORS.primary,
+                                fontSize: SIZES.h4,
+                                marginLeft: 8,
+                            }}>
+                                {language === "English" ? "My referral code" : "Mon code de parrainage"}
+                            </Text>
+                        </View>
+                        <Text style={{
+                            fontFamily: FONTS.regular,
+                            color: "rgba(0,0,0,0.6)",
+                            fontSize: SIZES.h6,
+                            marginBottom: 12,
+                        }}>
+                            {language === "English"
+                                ? "Share this code with your friends to invite them to Grouping."
+                                : "Partagez ce code avec vos amis pour les inviter sur Grouping."}
+                        </Text>
+                        <TouchableOpacity
+                            onPress={shareReferralCode}
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "#fff",
+                                borderRadius: 10,
+                                paddingVertical: 14,
+                                paddingHorizontal: 20,
+                                borderWidth: 1,
+                                borderColor: COLORS.primary,
+                                borderStyle: "dashed",
+                            }}
+                        >
+                            <Text style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h2,
+                                color: COLORS.primary,
+                                letterSpacing: 3,
+                            }}>
+                                {referralCode}
+                            </Text>
+                            <Feather name="share-2" size={20} color={COLORS.primary} style={{ marginLeft: 12 }} />
+                        </TouchableOpacity>
+                    </View>
+                    )}
             </KeyboardAwareScrollView>
     
             

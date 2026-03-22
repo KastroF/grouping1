@@ -1,43 +1,33 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Platform, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import FontAwesome from "react-native-vector-icons/FontAwesome"
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6"
 import Feather from "react-native-vector-icons/Feather"
-import { AuthContext } from '../navigation/AuthProvider'
 import RNPickerSelect from 'react-native-picker-select';
 
 
 export default function FormInput({indicatif, label, iconName, placeholder,
      value, password, isNumeric,  imagePath, backgroundColor, multilines, numberOfLines, fontSize, devise, ...rest}) {
 
-    const {isTabBarVisible, setIsTabBarVisible} = useContext(AuthContext);
     const [eyee, setEyee] = React.useState(false);
-    const [securePass, setSecurePass] = React.useState(false); 
-  
+    const [securePass, setSecurePass] = React.useState(false);
+
     React.useEffect(() => {
-  
+
         if(password){
 
             setSecurePass(password);
         }
 
-  
+
     }, [])
-  
+
     const changeEye = () => {
-  
-        setEyee(!eyee); 
+
+        setEyee(!eyee);
         setSecurePass(!securePass);
     }
-
-
-    const handleFocusChange = (focused) => {
-        
-            setIsTabBarVisible(focused);
-            console.log(focused);
-
-      };
     
 
   return (
@@ -66,16 +56,14 @@ export default function FormInput({indicatif, label, iconName, placeholder,
                 color: COLORS.other_blue
             }}>{label}</Text>
 
-           <TextInput 
-        
+           <TextInput
+
                 secureTextEntry={securePass ? true : false}
-                onFocus={() => handleFocusChange(true)}
                 placeholder={placeholder}
                 multiline={multilines ?  true : false}
                 numberOfLines={multilines ? numberOfLines : 1 }
                 placeholderTextColor="#bbb"
                 keyboardType={isNumeric ? "numeric" : "default"}
-                onBlur={() => handleFocusChange(false)}
                 style={{
                     fontSize: SIZES.h6,
                     lineHeight: SIZES.h6,

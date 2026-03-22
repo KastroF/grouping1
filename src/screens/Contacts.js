@@ -20,6 +20,7 @@ export default function Contacts({navigation}) {
     const [object, setObject] = useState(""); 
     const [message, setMessage] = useState("");
     const {postFunction} = useFetchFunctions(); 
+    const [email, setEmail] = useState(user.email || "");
     const [load, setLoad] = useState(false);
     const [successVisible, setSuccessVisible] = useState(false);
 
@@ -33,7 +34,7 @@ export default function Contacts({navigation}) {
         }else{
 
             setLoad(true);
-            postFunction(CONTACT_US_URL, {message, object, name: user.name, mail: user.email}, token).then((data) => {
+            postFunction(CONTACT_US_URL, {message, object, name: user.name, mail: email}, token).then((data) => {
 
                 setLoad(false);
                 if(data?.status === 0){
@@ -148,21 +149,39 @@ export default function Contacts({navigation}) {
                         color: "#000"
                     }}>{language === "English" ? "From:" : "De :"}</Text>
                     <View style={{
-                        paddingHorizontal: 15, 
-                        paddingVertical: 11, 
-                        borderColor: "#ccc", 
-                        borderWidth: 1, 
-                        width: "100%", 
-                        marginTop: 3, 
-                        borderRadius: 8, 
-                        backgroundColor: "#eee"
+                        paddingHorizontal: 15,
+                        paddingVertical: 11,
+                        borderColor: COLORS.primary,
+                        borderWidth: 1,
+                        width: "100%",
+                        marginTop: 3,
+                        borderRadius: 8,
+                        backgroundColor: "#fff"
                     }}>
-                        <Text  style={{
-                        fontFamily: FONTS.regular, 
-                        fontSize: SIZES.h5, 
-                        color: "#000"
-                    }}>{user.email}</Text> 
+                        <TextInput
+                        style={{
+                            fontFamily: FONTS.regular,
+                            fontSize: SIZES.h5,
+                            color: "#000",
+                            padding: 0
+                        }}
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        />
                     </View>
+                    <Text style={{
+                        fontFamily: FONTS.regular,
+                        fontSize: 12,
+                        color: "#888",
+                        marginTop: 5
+                    }}>
+                        {language === "English"
+                            ? "We will respond to this email address. If it is not correct, please update it."
+                            : "C'est sur cette adresse que nous allons vous joindre. Si ce n'est pas la bonne, veuillez la modifier."}
+                    </Text>
 
                    {/* <View style={{
                         marginTop: 15, 
@@ -209,14 +228,16 @@ export default function Contacts({navigation}) {
                         justifyContent: "flex-start", 
                         alignItems: "flex-start"
                     }}>
-                        <TextInput 
+                        <TextInput
                             multiline={true}
                             numberOfLines={21}
                             style={{
-                                fontFamily: FONTS.regular, 
+                                fontFamily: FONTS.regular,
                                 color: "#000",
-                                fontSize: SIZES.h5, 
-                                flex: 1
+                                fontSize: SIZES.h5,
+                                flex: 1,
+                                padding: 12,
+                                textAlignVertical: "top"
                             }}
                             placeholderTextColor="#bbb"
                             placeholder={language === "English" ? "Type your text here" : "Tapez votre texte ici"}
