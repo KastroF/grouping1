@@ -91,12 +91,14 @@ android {
             keyPassword 'android'
         }
         release {
-            if (project.hasProperty('GROUPING_UPLOAD_STORE_FILE')) {
-                storeFile file(GROUPING_UPLOAD_STORE_FILE)
-                storePassword GROUPING_UPLOAD_STORE_PASSWORD
-                keyAlias GROUPING_UPLOAD_KEY_ALIAS
-                keyPassword GROUPING_UPLOAD_KEY_PASSWORD
-            }
+            // Malgre son nom, debug.keystore contient le certificat
+            // CN=Fidele NDZIME (SHA1 12:CD:E2:65:...) : c'est la cle d'upload
+            // enregistree sur la Play Console. Toute autre cle fait rejeter
+            // l'envoi avec "signe avec la mauvaise cle".
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
         }
     }
     buildTypes {
