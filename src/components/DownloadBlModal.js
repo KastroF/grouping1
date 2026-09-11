@@ -84,8 +84,11 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
 
     const requestCameraRollPermission = async () => {
         try {
+          const galleryPermission = Platform.Version >= 33
+            ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+            : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
           const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            galleryPermission,
             {
               title: language === "English" ? "Photo gallery access permission" : "Permission d'accès à la galerie photo",
               message: language === "English" ? "This app needs access to your photo gallery." : "Cette application a besoin d'accéder à votre galerie photo.",
@@ -141,23 +144,6 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
   
   const selectDoc = async () => {
     try {
-      // Demander la permission de lire les fichiers si nécessaire
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: language === "English" ? "File read permission" : "Permission de lire les fichiers",
-            message: language === "English" ? "This app needs permission to read files on your device." : "Cette application a besoin de la permission de lire les fichiers sur votre appareil.",
-            buttonNeutral: language === "English" ? "Ask later" : "Demander plus tard",
-            buttonNegative: language === "English" ? "Cancel" : "Annuler",
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Permission refusée');
-          return;
-        }
-      }
   
       const doc = await DocumentPicker.pickSingle({
         type: [DocumentPicker.types.pdf],

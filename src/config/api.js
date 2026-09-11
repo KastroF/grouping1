@@ -8,6 +8,7 @@ const API = {
   USER_SIGNIN_GOOGLE: `${BASE_URL}/api/user/signinwithgoogle`,
   USER_CONNECT_APPLE: `${BASE_URL}/api/user/connectwithapple`,
   USER_GO_TO_EMAIL: `${BASE_URL}/api/user/gotoemail`,
+  USER_RESET_PASSWORD: `${BASE_URL}/api/user/resetpassword`,
   USER_CHANGE_PASSWORD: `${BASE_URL}/api/user/changepassword`,
   USER_CHANGE_NAME: `${BASE_URL}/api/user/changename`,
   USER_CHANGE_PHOTO: `${BASE_URL}/api/user/changephoto`,
@@ -15,6 +16,7 @@ const API = {
   USER_CONTACT_US: `${BASE_URL}/api/user/contactus`,
   USER_APPLY_REFERRAL: `${BASE_URL}/api/user/applyreferral`,
   USER_GET_REFERRAL: `${BASE_URL}/api/user/getreferralcode`,
+  USER_DELETE_ACCOUNT: `${BASE_URL}/api/user/deleteaccount`,
 
   // Annonces
   ANNONCE_LIST: `${BASE_URL}/api/annonce/announces`,
@@ -46,6 +48,9 @@ const API = {
   NOTIF_DELETE: `${BASE_URL}/api/notification/deletenotif`,
   NOTIF_NOT_READ: `${BASE_URL}/api/notification/notread`,
   NOTIF_VIEW: `${BASE_URL}/api/notification/viewnotifs`,
+
+  // Signalement
+  REPORT_SUBMIT: `${BASE_URL}/api/report/submit`,
 
   // Tracking
   TRACKING_SUBSCRIBE: `${BASE_URL}/api/tracking/subscribe`,

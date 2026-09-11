@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>grouping</string>
+	<string>Grouping</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -35,25 +35,12 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the photo library for the purposes of the application. 
-	 to attach to your request</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>need you to share your location with Okira to better assist you with your requests</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>need you to share your location with Okira to better assist you with your requests</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>need you to share your location with Okira to better assist you with your requests</string>
+	<string>Grouping utilise l'appareil photo pour vous permettre de photographier vos colis et vos documents de transport.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library for the purposes of the application. 
-	 to attach to your request</string>
+	<string>Grouping accède à vos photos pour vous permettre de joindre des images à vos annonces et à vos messages.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/FontAwesome.ttf</string>

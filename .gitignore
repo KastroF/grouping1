@@ -64,3 +64,12 @@ yarn-error.log
 
 # testing
 /coverage
+
+# Signature release (clé d'upload Play Store)
+*.jks
+
+# Artefacts générés par le bundling JS (regénérés par gradle en release)
+android/app/src/main/assets/index.android.bundle
+android/app/src/main/assets/index.android.bundle.map
+android/app/src/main/res/drawable-*/node_modules_*
+android/app/src/main/res/drawable-*/src_assets_*

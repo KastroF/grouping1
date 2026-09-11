@@ -27,6 +27,7 @@ const CONNECT_USER_URL = API.USER_SIGNIN;
 const ADD_WITH_GOOGLE = API.USER_SIGNIN_GOOGLE;
 const CONNECT_WITH_APPLE = API.USER_CONNECT_APPLE;
 const GO_TO_EMAIL_URL = API.USER_GO_TO_EMAIL;
+const RESET_PASSWORD_URL = API.USER_RESET_PASSWORD;
 
 export default function SignIn({navigation, route}) {
 
@@ -39,7 +40,11 @@ export default function SignIn({navigation, route}) {
     const {postFunction, validateEmail} = useFetchFunctions(); 
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible]= useState(false);
-    const [mail, setMail] = useState(""); 
+    const [mail, setMail] = useState("");
+    // Reinitialisation en deux etapes : 1 = saisie de l'e-mail, 2 = code recu + nouveau mot de passe
+    const [resetStep, setResetStep] = useState(1);
+    const [resetCode, setResetCode] = useState("");
+    const [newPassword, setNewPassword] = useState("");
 
     const storeData = async (value, user) => {
 
@@ -110,30 +115,30 @@ export default function SignIn({navigation, route}) {
                     //  alert(_id);
   
                       if(_id){
-  
+
                               setIdd(_id)
-                              navigation.goBack(); 
-                            
+                              navigation.goBack();
+
                       }else{
-  
-                        setAccount(true);
-  
+
+                        setAccount(false);
+
                       }
-                  
-        
+
+
                       setTimeout(() => {
-        
+
                         setLoading(false);
-                        
+
                       }, 2000);
-        
-        
+
+
                     }, 3000);
-        
-        
+
+
                 }else{
 
-                    setLoading(false); 
+                    setLoading(false);
                     setErrorMessage(data.message || "Une erreur est survenue");
                 }
 
@@ -308,7 +313,7 @@ export default function SignIn({navigation, route}) {
                 
 
                   }else{
-                    setAccount(true); 
+                    setAccount(false);
                   //  navigation.navigate("Home");
                   }
 
@@ -384,11 +389,11 @@ export default function SignIn({navigation, route}) {
                             if(_id){
 
                                 setIdd(_id);
-                                navigation.goBack(); 
-                             
+                                navigation.goBack();
+
                             }else{
 
-                              setAccount(true)
+                              setAccount(false)
 
                             }
 
@@ -430,40 +435,84 @@ export default function SignIn({navigation, route}) {
     }
 
 
+    const closeResetModal = () => {
+        setModalVisible(false);
+        setResetStep(1);
+        setMail("");
+        setResetCode("");
+        setNewPassword("");
+    }
+
+    // Etape 1 : demande d'un code de reinitialisation envoye par e-mail.
     const sendEmail = () => {
 
         if(!validateEmail(mail)){
 
             alert(language === "English" ? "Please enter a valid email address" : "Veuillez renseigner une adresse email valide");
-        
+
           }else{
 
               setLoading(true);
 
               postFunction(GO_TO_EMAIL_URL, {email: mail}).then((data) => {
 
+                setLoading(false);
+
                 if(data && data.status === 0){
 
-                    setModalVisible(false); 
-                    setMail(""); 
-                    alert(language === "English" ? "📩 A password reset email has been sent. Check your inbox (or spam folder) and follow the instructions to set a new password." : "📩 Un e-mail de réinitialisation vient d’être envoyé. Consulte ta boîte de réception (ou tes spams) et suis les instructions pour choisir un nouveau mot de passe.")
-                    setLoading(false);
+                    setResetStep(2);
+
+                  }else{
+
+                    alert(language === "English" ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");
                   }
-
-                if(data && data.status === 1){
-
-                  setModalVisible(false); 
-                  setMail(""); 
-                  alert(language === "English" ? "Email address not found" : "Adresse email introuvable");
-                  setLoading(false);
-              }
 
               }, (err) => {
 
-                  console.log(err   )
+                  console.log(err);
                   setLoading(false);
+                  alert(language === "English" ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");
               })
           }
+    }
+
+    // Etape 2 : verification du code et enregistrement du nouveau mot de passe.
+    const submitNewPassword = () => {
+
+        if(!resetCode || resetCode.trim().length !== 6){
+
+            alert(language === "English" ? "Please enter the 6-digit code you received by email" : "Veuillez saisir le code à 6 chiffres reçu par e-mail");
+            return;
+        }
+
+        if(!newPassword || newPassword.length < 6){
+
+            alert(language === "English" ? "Your password must be at least 6 characters long" : "Votre mot de passe doit contenir au moins 6 caractères");
+            return;
+        }
+
+        setLoading(true);
+
+        postFunction(RESET_PASSWORD_URL, {email: mail, code: resetCode.trim(), password: newPassword}).then((data) => {
+
+            setLoading(false);
+
+            if(data && data.status === 0){
+
+                closeResetModal();
+                alert(language === "English" ? "Your password has been updated. You can now sign in." : "Votre mot de passe a été modifié. Vous pouvez maintenant vous connecter.");
+
+            }else{
+
+                alert((data && data.message) || (language === "English" ? "Invalid or expired code" : "Code invalide ou expiré"));
+            }
+
+        }, (err) => {
+
+            console.log(err);
+            setLoading(false);
+            alert(language === "English" ? "An error occurred. Please try again." : "Une erreur est survenue. Veuillez réessayer.");
+        })
     }
 
 
@@ -475,11 +524,7 @@ export default function SignIn({navigation, route}) {
           visible={modalVisible}
           transparent={true}
           animationType="slide"
-          onRequestClose={()=> {
-
-            setModalVisible(false);
-
-          }}
+          onRequestClose={closeResetModal}
           >
         <View style={{
           flex: 1, 
@@ -505,7 +550,7 @@ export default function SignIn({navigation, route}) {
                   justifyContent: "flex-start", 
                   width: "100%"
                 }}>
-                  <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <TouchableOpacity onPress={closeResetModal}>
                       <AntDesign name='close' color={"#000"} size={25} />
                   </TouchableOpacity>
                   
@@ -516,7 +561,9 @@ export default function SignIn({navigation, route}) {
                     fontSize: SIZES.h4, 
                     color: COLORS.primary, 
                     textAlign: "center"
-                  }}>{language === "English" ? "Forgot password?" : "Mot de passe oublié ?"}</Text>
+                  }}>{resetStep === 1
+                        ? (language === "English" ? "Forgot password?" : "Mot de passe oublié ?")
+                        : (language === "English" ? "Enter your code" : "Saisis ton code")}</Text>
 
                   <Text style={{
                     fontFamily: FONTS.regular, 
@@ -524,26 +571,67 @@ export default function SignIn({navigation, route}) {
                     color: "#000", 
                     textAlign: "center"
                   }}>
-                  {language ==="English" ? "Don’t worry! Enter your email address below and we’ll send you a link to reset your password." : "Pas d'inquiétude ! Saisis ton adresse e-mail ci-dessous et nous t'enverrons un lien pour réinitialiser ton mot de passe."}
+                  {resetStep === 1
+                    ? (language ==="English" ? "Don’t worry! Enter your email address below and we’ll send you a 6-digit code to reset your password." : "Pas d'inquiétude ! Saisis ton adresse e-mail ci-dessous et nous t'enverrons un code à 6 chiffres pour réinitialiser ton mot de passe.")
+                    : (language ==="English" ? "If an account exists for this address, a 6-digit code has just been sent to it. It is valid for 30 minutes." : "Si un compte existe pour cette adresse, un code à 6 chiffres vient d'y être envoyé. Il est valable 30 minutes.")}
                   </Text>
                 </View>
 
-                <View style={{
-                  marginTop: 10, 
-                  width: "100%"
-                }}>
-                  <FormInput label={language ==="English" ? "Email address" : "Email"} value={mail} 
-                  onChangeText={setMail}  iconName="mail"  
-                  imagePath={require("../assets/images/mailIcon.png")} />
-                </View>
+                {resetStep === 1 ? (
+                  <>
+                    <View style={{
+                      marginTop: 10, 
+                      width: "100%"
+                    }}>
+                      <FormInput label={language ==="English" ? "Email address" : "Email"} value={mail} 
+                      onChangeText={setMail}  iconName="mail"  
+                      imagePath={require("../assets/images/mailIcon.png")} />
+                    </View>
 
-                <View style={{
-                  marginTop: 10, 
-                  width: "100%"
-                }}>
-                  <Button1 label={language === "English" ? "Send" : "Envoyer"} textColor="#fff" fontFamily={FONTS.regular}  borderRadius={8}
-                  fontSize={SIZES.h6} backgroundColor={COLORS.primary} onPress={sendEmail} />
-                </View>
+                    <View style={{
+                      marginTop: 10, 
+                      width: "100%"
+                    }}>
+                      <Button1 label={language === "English" ? "Send" : "Envoyer"} textColor="#fff" fontFamily={FONTS.regular}  borderRadius={8}
+                      fontSize={SIZES.h6} backgroundColor={COLORS.primary} onPress={sendEmail} />
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={{
+                      marginTop: 10, 
+                      width: "100%"
+                    }}>
+                      <FormInput label={language ==="English" ? "6-digit code" : "Code à 6 chiffres"} value={resetCode} 
+                      onChangeText={setResetCode} isNumeric={true} maxLength={6} iconName="lock" />
+                    </View>
+
+                    <View style={{
+                      marginTop: 10, 
+                      width: "100%"
+                    }}>
+                      <FormInput label={language ==="English" ? "New password" : "Nouveau mot de passe"} value={newPassword} 
+                      onChangeText={setNewPassword} password={true} iconName="lock" />
+                    </View>
+
+                    <View style={{
+                      marginTop: 10, 
+                      width: "100%"
+                    }}>
+                      <Button1 label={language === "English" ? "Reset my password" : "Réinitialiser mon mot de passe"} textColor="#fff" fontFamily={FONTS.regular}  borderRadius={8}
+                      fontSize={SIZES.h6} backgroundColor={COLORS.primary} onPress={submitNewPassword} />
+                    </View>
+
+                    <TouchableOpacity onPress={sendEmail} style={{marginTop: 12}}>
+                      <Text style={{
+                        fontFamily: FONTS.regular, 
+                        fontSize: SIZES.h6, 
+                        color: COLORS.primary, 
+                        textAlign: "center"
+                      }}>{language === "English" ? "Resend the code" : "Renvoyer le code"}</Text>
+                    </TouchableOpacity>
+                  </>
+                )}
             </View>
         </View>
       </Modal>

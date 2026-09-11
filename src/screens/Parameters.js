@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ActivityIndicator, Image, Platform, Share, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, Platform, Share, Text, TouchableOpacity, View } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { COLORS, FONTS, SIZES } from '../constants/theme'
 import { AuthContext } from '../navigation/AuthProvider'
 import { useFetchFunctions } from '../infrastructures/functions'
@@ -8,10 +9,11 @@ import Feather from 'react-native-vector-icons/Feather'
 
 export default function Parameters({navigation}) {
 
-    const {language, token} = useContext(AuthContext);
-    const {laFonctionGet} = useFetchFunctions();
+    const {language, token, setToken, setUser} = useContext(AuthContext);
+    const {laFonctionGet, postFunction} = useFetchFunctions();
     const [referralCode, setReferralCode] = useState(null);
     const [loadingCode, setLoadingCode] = useState(true);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         laFonctionGet(API.USER_GET_REFERRAL, token).then((data) => {
@@ -22,6 +24,67 @@ export default function Parameters({navigation}) {
             setLoadingCode(false);
         }, (err) => { console.log("REFERRAL ERROR:", err); setLoadingCode(false); });
     }, []);
+
+    const deleteAccount = async () => {
+        setDeleting(true);
+        try {
+            const data = await postFunction(API.USER_DELETE_ACCOUNT, {}, token);
+
+            if (data && data.status === 0) {
+                await AsyncStorage.removeItem("token");
+                setToken("");
+                setUser(null);
+                navigation.navigate("Home");
+            } else {
+                Alert.alert(
+                    language === "English" ? "Error" : "Erreur",
+                    (data && data.message) || (language === "English"
+                        ? "Unable to delete your account. Please try again."
+                        : "Impossible de supprimer votre compte. Veuillez réessayer.")
+                );
+            }
+        } catch (e) {
+            Alert.alert(
+                language === "English" ? "Error" : "Erreur",
+                language === "English"
+                    ? "Unable to delete your account. Please try again."
+                    : "Impossible de supprimer votre compte. Veuillez réessayer."
+            );
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    // Double confirmation : la suppression est définitive.
+    const confirmDeleteAccount = () => {
+        Alert.alert(
+            language === "English" ? "Delete my account" : "Supprimer mon compte",
+            language === "English"
+                ? "Your account, your listings, your messages and your notifications will be permanently deleted. This action cannot be undone."
+                : "Votre compte, vos annonces, vos messages et vos notifications seront définitivement supprimés. Cette action est irréversible.",
+            [
+                { text: language === "English" ? "Cancel" : "Annuler", style: "cancel" },
+                {
+                    text: language === "English" ? "Continue" : "Continuer",
+                    style: "destructive",
+                    onPress: () => Alert.alert(
+                        language === "English" ? "Final confirmation" : "Confirmation finale",
+                        language === "English"
+                            ? "Do you really want to delete your Grouping account?"
+                            : "Voulez-vous vraiment supprimer votre compte Grouping ?",
+                        [
+                            { text: language === "English" ? "Cancel" : "Annuler", style: "cancel" },
+                            {
+                                text: language === "English" ? "Delete" : "Supprimer",
+                                style: "destructive",
+                                onPress: deleteAccount
+                            }
+                        ]
+                    )
+                }
+            ]
+        );
+    };
 
     const shareReferralCode = async () => {
         if (referralCode) {
@@ -163,6 +226,30 @@ export default function Parameters({navigation}) {
 
         {//miniMenu("Paramètres de facturation")}
 }
+
+        {/* Suppression de compte (exigée par l'App Store et le Play Store) */}
+        <TouchableOpacity
+            onPress={confirmDeleteAccount}
+            disabled={deleting}
+            style={{
+                marginTop: 25,
+                backgroundColor: "#fff",
+                paddingHorizontal: 35,
+                paddingVertical: Platform.OS === "android" ? 12 : 16,
+                flexDirection: "row",
+                alignItems: "center"
+            }}
+        >
+            {deleting
+                ? <ActivityIndicator color="#d93025" />
+                : <Feather name="trash-2" size={18} color="#d93025" />}
+            <Text style={{
+                fontFamily: FONTS.bold,
+                color: "#d93025",
+                fontSize: SIZES.h3,
+                marginLeft: 10
+            }}>{language === "English" ? "Delete my account" : "Supprimer mon compte"}</Text>
+        </TouchableOpacity>
         
 
     </View>
