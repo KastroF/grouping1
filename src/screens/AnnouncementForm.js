@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ActivityIndicator, Image, ImageBackground, Modal, PermissionsAndroid, Platform, Linking, Alert, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ImageBackground, Modal, Platform, Alert, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
 import { COLORS, conteneurs, FONTS, kilos, SIZES } from '../constants/theme';
 import Feather from "react-native-vector-icons/Feather"
@@ -523,32 +523,6 @@ export default function AnnouncementForm({route, navigation}) {
 
     
     const pickMedia = async () => {
-        if (Platform.OS === 'android') {
-          try {
-            const granted = await PermissionsAndroid.requestMultiple([
-              PermissionsAndroid.PERMISSIONS.CAMERA,
-              PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-              PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-            ]);
-            const values = Object.values(granted);
-            const allGranted = values.every(v => v === PermissionsAndroid.RESULTS.GRANTED);
-
-            if (!allGranted) {
-              Alert.alert(
-                language === "English" ? "Permission required" : "Permission requise",
-                language === "English" ? "Please allow access to your gallery to select an image." : "Veuillez autoriser l'accès à votre galerie pour sélectionner une image.",
-                [
-                  { text: language === "English" ? "Cancel" : "Annuler", style: "cancel" },
-                  { text: language === "English" ? "Open settings" : "Ouvrir les paramètres", onPress: () => Linking.openSettings() }
-                ]
-              );
-              return;
-            }
-          } catch (err) {
-            console.warn(err);
-            return;
-          }
-        }
 
         const options = {
           mediaType: "image",

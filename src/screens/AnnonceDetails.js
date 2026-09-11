@@ -13,6 +13,7 @@ import { API } from '../config/api';
 
 const MON_ANNONCE_URL = API.ANNONCE_GET_ONE;
 const DEACTIVATE_URL = API.ANNONCE_DEACTIVATE;
+const REPORT_URL = API.REPORT_SUBMIT;
 
 export default function AnnonceDetails({navigation, route}) {
 
@@ -27,6 +28,9 @@ export default function AnnonceDetails({navigation, route}) {
     const [sum, setSum] = useState(null);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [reportModalVisible, setReportModalVisible] = useState(false);
+    const [reportLoading, setReportLoading] = useState(false);
+    const [reportDone, setReportDone] = useState(false);
   
 
    // alert(_id)
@@ -121,6 +125,48 @@ function calculateContainerVolume(feet) {
 
 
 }
+
+  const handleReport = async () => {
+    setReportLoading(true);
+    try {
+      const data = await postFunction(REPORT_URL, {
+        reportedUserId: userr._id,
+        annonceId: _id,
+      }, token);
+
+      setReportLoading(false);
+      setReportModalVisible(false);
+
+      if (data && data.status === 0) {
+        setReportDone(true);
+        Alert.alert(
+          language === "English" ? "Report sent" : "Signalement envoyé",
+          language === "English"
+            ? "Thank you, our team will review this report."
+            : "Merci, notre équipe va examiner ce signalement."
+        );
+      } else if (data && data.status === 3) {
+        Alert.alert(
+          language === "English" ? "Already reported" : "Déjà signalé",
+          language === "English"
+            ? "You have already reported this listing."
+            : "Vous avez déjà signalé cette annonce."
+        );
+      } else {
+        Alert.alert(
+          language === "English" ? "Error" : "Erreur",
+          language === "English" ? "An error occurred." : "Une erreur est survenue."
+        );
+      }
+    } catch (e) {
+      setReportLoading(false);
+      setReportModalVisible(false);
+      Alert.alert(
+        language === "English" ? "Error" : "Erreur",
+        language === "English" ? "Network error." : "Erreur réseau."
+      );
+    }
+  };
 
   if(loading) return <Loading/>
 
@@ -726,12 +772,6 @@ function calculateContainerVolume(feet) {
                                 color: "#000", 
                                 fontSize: SIZES.h5
                             }}>{userr && userr.name}</Text>
-                             <Text style={{
-                                fontFamily: FONTS.bold, 
-                                marginTop: Platform.OS === "android" ? -5 : 2,
-                                color: "rgba(0,0,0,0.6)", 
-                                fontSize: SIZES.h6
-                            }}>{userr && userr.email}</Text>
                             <Text style={{
                                 fontFamily: FONTS.bold, 
                                 marginTop: Platform.OS === "android" ? -5 : 10,
@@ -755,12 +795,47 @@ function calculateContainerVolume(feet) {
                     paddingHorizontal: 15
                 }}>
                     <View style={{
-                        marginTop: 15, 
-                        marginBottom: 30
+                        marginTop: 15,
+                        marginBottom: 10
                     }}>
                         <Button1 label={language === "English" ? "Start a conversation" : "Lancer la discussion"} backgroundColor={COLORS.primary} imagePath={require("../assets/images/mail.png")}
                         textColor="#fff" fontFamily={FONTS.regular} borderRadius={12} onPress={goToMessenger} disabled={user && userr._id === user._id} />
                     </View>
+
+                    { token && !reportDone && <TouchableOpacity
+                        onPress={() => setReportModalVisible(true)}
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginBottom: 30,
+                            paddingVertical: 10
+                        }}
+                    >
+                        <Ionicons name="flag-outline" size={16} color="rgba(0,0,0,0.35)" />
+                        <Text style={{
+                            marginLeft: 6,
+                            fontFamily: FONTS.regular,
+                            fontSize: SIZES.h7,
+                            color: "rgba(0,0,0,0.35)"
+                        }}>
+                            {language === "English" ? "Report this advertiser" : "Signaler cet annonceur"}
+                        </Text>
+                    </TouchableOpacity>}
+
+                    { reportDone && <View style={{
+                        alignItems: "center",
+                        marginBottom: 30,
+                        paddingVertical: 10
+                    }}>
+                        <Text style={{
+                            fontFamily: FONTS.regular,
+                            fontSize: SIZES.h7,
+                            color: "rgba(0,0,0,0.35)"
+                        }}>
+                            {language === "English" ? "Report sent" : "Signalement envoyé"}
+                        </Text>
+                    </View>}
                 </View> }
 
                     
@@ -859,6 +934,109 @@ function calculateContainerVolume(feet) {
                                 fontSize: SIZES.h5,
                                 color: "red"
                             }}>{language === "English" ? "Delete" : "Supprimer"}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            <Modal
+                visible={reportModalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setReportModalVisible(false)}
+            >
+                <TouchableOpacity
+                    style={{
+                        flex: 1,
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        justifyContent: "flex-end"
+                    }}
+                    activeOpacity={1}
+                    onPress={() => !reportLoading && setReportModalVisible(false)}
+                >
+                    <View style={{
+                        backgroundColor: "#fff",
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        paddingHorizontal: 20,
+                        paddingTop: 25,
+                        paddingBottom: Platform.OS === "ios" ? 40 : 25
+                    }}>
+                        <View style={{
+                            width: 40,
+                            height: 4,
+                            backgroundColor: "#ccc",
+                            borderRadius: 2,
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} />
+
+                        <View style={{
+                            alignItems: "center",
+                            marginBottom: 20
+                        }}>
+                            <Ionicons name="flag" size={32} color="rgba(220,50,50,0.8)" />
+                            <Text style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h4,
+                                color: "#000",
+                                marginTop: 12,
+                                textAlign: "center"
+                            }}>
+                                {language === "English" ? "Report this advertiser?" : "Signaler cet annonceur ?"}
+                            </Text>
+                            <Text style={{
+                                fontFamily: FONTS.regular,
+                                fontSize: SIZES.h6,
+                                color: "rgba(0,0,0,0.55)",
+                                marginTop: 10,
+                                textAlign: "center",
+                                lineHeight: 20
+                            }}>
+                                {language === "English"
+                                    ? "Our team will review your report and take appropriate action if necessary."
+                                    : "Notre équipe examinera votre signalement et prendra les mesures nécessaires."}
+                            </Text>
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={handleReport}
+                            disabled={reportLoading}
+                            style={{
+                                backgroundColor: "rgba(220,50,50,0.85)",
+                                borderRadius: 12,
+                                paddingVertical: 14,
+                                alignItems: "center",
+                                marginBottom: 10,
+                                opacity: reportLoading ? 0.6 : 1
+                            }}
+                        >
+                            <Text style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h5,
+                                color: "#fff"
+                            }}>
+                                {reportLoading
+                                    ? (language === "English" ? "Sending..." : "Envoi en cours...")
+                                    : (language === "English" ? "Confirm report" : "Confirmer le signalement")}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => setReportModalVisible(false)}
+                            disabled={reportLoading}
+                            style={{
+                                paddingVertical: 12,
+                                alignItems: "center"
+                            }}
+                        >
+                            <Text style={{
+                                fontFamily: FONTS.regular,
+                                fontSize: SIZES.h5,
+                                color: "rgba(0,0,0,0.45)"
+                            }}>
+                                {language === "English" ? "Cancel" : "Annuler"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </TouchableOpacity>

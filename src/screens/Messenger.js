@@ -286,11 +286,33 @@ export default function Messenger({navigation, route}) {
 const renderLoader = () => {
 
     return(
-    
-      isLoading ?
-      <View style={{marginVertical: 20, alignItems: "center"}}>
-        <ActivityIndicator size="large" color="#aaa" />
-      </View> : null
+      <View>
+        {isLoading ?
+          <View style={{marginVertical: 20, alignItems: "center"}}>
+            <ActivityIndicator size="large" color="#aaa" />
+          </View> : null
+        }
+        <View style={{
+          backgroundColor: "rgba(255, 243, 205, 0.95)",
+          marginHorizontal: 30,
+          marginVertical: 15,
+          paddingVertical: 15,
+          paddingHorizontal: 20,
+          borderRadius: 12,
+        }}>
+          <Text style={{
+            fontFamily: FONTS.regular,
+            fontSize: SIZES.h7,
+            color: "#555",
+            textAlign: "center",
+            lineHeight: 20,
+          }}>
+            {language === "English"
+              ? "🔒 Grouping advice: Verify the conformity of the goods and the validity of transport documents (BL, Airline ticket, etc.) before any financial transaction."
+              : "🔒 Le conseil Grouping : Vérifiez la conformité de la marchandise et la validité des documents de transport (BL, Billet d'avion etc…) avant toute transaction financière."}
+          </Text>
+        </View>
+      </View>
     )
  }
 
@@ -568,7 +590,8 @@ const renderLoader = () => {
                // Centrer le texte horizontalement si nécessaire
             }}>
                 <ImageBackground source={require("../assets/images/motif3.png")} resizeMode="cover" style={{flex: 1, width: "100%", height: "100%",}} >
-                    <FlatList 
+
+                    <FlatList
                         data={messages}
                         inverted={true}
                         ListFooterComponent={renderLoader}

@@ -150,7 +150,7 @@ export default function Search({route, navigation}) {
                 fontFamily: FONTS.bold, 
                 color: "#fff", 
                 fontSize: SIZES.h2
-            }}>{language === "English" ? "Congratulations!" : "Félicitations !"}</Text>
+            }}>{language === "English" ? "OOPS!" : "OUPS !"}</Text>
         </View>
 
         <View style={{
@@ -164,7 +164,7 @@ export default function Search({route, navigation}) {
                 fontSize: SIZES.h5, 
                 lineHeight: SIZES.h5
             }}>
-                {language === "English" ? "Your request has been received. One of our advertisers will contact you shortly." : "Votre demande a été prise en compte. Un de nos annonceurs vous contactera sous peu."}
+                {language === "English" ? "No ads matching your search at the moment. One of our advertisers will contact you shortly." : "Aucune annonce correspondant à votre recherche pour le moment. Un de nos annonceurs vous contactera sous peu."}
             </Text>
         </View>
 

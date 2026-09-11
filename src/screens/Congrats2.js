@@ -61,7 +61,7 @@ export default function Congrats2({navigation, type, goHome}) {
                 {isContainer
                     ? (language === "English"
                         ? "Your listing has been submitted successfully. It will be available shortly after validation."
-                        : "Votre annonce a été soumise avec succès. Elle sera disponible sous peu après validation.")
+                        : "Votre annonce a été soumise avec succès. Elle sera postée sous peu après validation.")
                     : (language === "English"
                         ? "Your listing has been added successfully and is now available to everyone!"
                         : "Votre annonce a été ajoutée avec succès et est désormais disponible pour tous !")}

@@ -20,14 +20,14 @@ export const translate = {
         }, 
         welcomeSubTitle: {
             en: "Post your listings, share your shipping container space or your available baggage kilos in your city.", 
-            fr: "Postez vos annonces, partagez votre espace de conteneur ou vos kilos de bagages dans votre ville."
+            fr: "Poster vos annonces, partager votre espace de conteneur ou vos kilos de bagages dans votre ville."
         }, 
         container: {
             fr: "Conteneurs", 
             en: "Containers"
         }, 
         createListing: {
-            fr: "Ajoutez une annonce", 
+            fr: "Ajouter une annonce",
             en: "Create a listing"
         }, 
         searchListing: {
@@ -54,7 +54,7 @@ export const translate = {
                 en: "Create an account"
             }, 
             postAListing: {
-                fr: "Déposer une annonce", 
+                fr: "Ajouter une annonce",
                 en: "Create a listing"
             }, 
             search: {

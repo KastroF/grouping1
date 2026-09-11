@@ -343,7 +343,7 @@ export default function Modify({navigation}) {
                             color: COLORS.primary, 
                             fontSize: SIZES.h4, 
                             textDecorationLine: "underline"
-                        }}>{user.photo ? (language === "English" ? "Change photo" : "Modifiez la photo") : (language === "English" ? "Add a photo" : "Ajoutez une photo")} <Feather name='edit-2' size={15} /> </Text>
+                        }}>{user.photo ? (language === "English" ? "Change photo" : "Modifier la photo") : (language === "English" ? "Add a photo" : "Ajouter une photo")} <Feather name='edit-2' size={15} /> </Text>
                     </TouchableOpacity>
                 </View>
 

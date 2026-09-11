@@ -87,8 +87,44 @@ export default function Home({navigation}) {
     const [departsImminents, setDepartsImminents] = useState([]);
     const [modalDepartsVisible, setModalDepartsVisible] = useState(false);
     const [departsLoading, setDepartsLoading] = useState(false)
+    const [sortFilter, setSortFilter] = useState(null) // "recent", "oldest", "price_desc", "price_asc"
+    const [countryFilter, setCountryFilter] = useState(null) // { type: "departure"|"arrival", country: "..." }
+    const [showFilterPanel, setShowFilterPanel] = useState(false)
 
     const scrollY = useRef(new Animated.Value(0)).current;
+
+    const getFilteredAnnonces = () => {
+        let filtered = [...lesAnnonces];
+
+        if (countryFilter && countryFilter.country) {
+            if (countryFilter.type === "departure") {
+                filtered = filtered.filter(a => a.startCity2 && a.startCity2.country === countryFilter.country);
+            } else {
+                filtered = filtered.filter(a => a.endCity2 && a.endCity2.country === countryFilter.country);
+            }
+        }
+
+        if (sortFilter === "recent") {
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } else if (sortFilter === "oldest") {
+            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else if (sortFilter === "price_desc") {
+            filtered.sort((a, b) => (b.kiloPrice || 0) - (a.kiloPrice || 0));
+        } else if (sortFilter === "price_asc") {
+            filtered.sort((a, b) => (a.kiloPrice || 0) - (b.kiloPrice || 0));
+        }
+
+        return filtered;
+    };
+
+    const getAvailableCountries = (type) => {
+        const set = new Set();
+        lesAnnonces.forEach(a => {
+            const city = type === "departure" ? a.startCity2 : a.endCity2;
+            if (city && city.country) set.add(city.country);
+        });
+        return Array.from(set).sort();
+    };
 
     
     const months = language === "English" ?
@@ -1429,8 +1465,123 @@ transparent={true}
                             <TouchableOpacity onPress={() => setModalVisible5(false)}>
                                 <AntDesign name='leftcircleo' color={COLORS.primary} size={SIZES.h1} />
                             </TouchableOpacity>
-                            
+
+                            <TouchableOpacity onPress={() => setShowFilterPanel(!showFilterPanel)} style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                backgroundColor: showFilterPanel ? COLORS.primary : "#fff",
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                borderRadius: 20,
+                                marginLeft: 15
+                            }}>
+                                <Feather name="filter" size={16} color={showFilterPanel ? "#fff" : COLORS.primary} />
+                                <Text style={{
+                                    fontFamily: FONTS.bold,
+                                    fontSize: SIZES.h7,
+                                    color: showFilterPanel ? "#fff" : COLORS.primary,
+                                    marginLeft: 5
+                                }}>{language === "English" ? "Filter" : "Filtrer"}</Text>
+                            </TouchableOpacity>
+
                         </View>
+
+        {showFilterPanel && (
+            <View style={{
+                backgroundColor: "#fff",
+                paddingHorizontal: 15,
+                paddingVertical: 12,
+                borderBottomWidth: 1,
+                borderBottomColor: "#eee"
+            }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: SIZES.h6, color: "#333", marginBottom: 8 }}>
+                    {language === "English" ? "Sort by" : "Trier par"}
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
+                    {[
+                        { key: "recent", fr: "Plus récentes", en: "Most recent" },
+                        { key: "oldest", fr: "Plus anciennes", en: "Oldest" },
+                        { key: "price_desc", fr: "Prix décroissant", en: "Price high to low" },
+                        { key: "price_asc", fr: "Prix croissant", en: "Price low to high" },
+                    ].map(f => (
+                        <TouchableOpacity key={f.key} onPress={() => setSortFilter(sortFilter === f.key ? null : f.key)} style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 15,
+                            backgroundColor: sortFilter === f.key ? COLORS.primary : "#f0f0f0",
+                            marginRight: 8
+                        }}>
+                            <Text style={{
+                                fontFamily: FONTS.regular,
+                                fontSize: SIZES.h7,
+                                color: sortFilter === f.key ? "#fff" : "#333"
+                            }}>{language === "English" ? f.en : f.fr}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+
+                <Text style={{ fontFamily: FONTS.bold, fontSize: SIZES.h6, color: "#333", marginBottom: 8 }}>
+                    {language === "English" ? "Departure country" : "Pays de départ"}
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
+                    {getAvailableCountries("departure").map(c => (
+                        <TouchableOpacity key={c} onPress={() => setCountryFilter(
+                            countryFilter && countryFilter.type === "departure" && countryFilter.country === c
+                                ? null
+                                : { type: "departure", country: c }
+                        )} style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 15,
+                            backgroundColor: countryFilter && countryFilter.type === "departure" && countryFilter.country === c ? COLORS.primary : "#f0f0f0",
+                            marginRight: 8
+                        }}>
+                            <Text style={{
+                                fontFamily: FONTS.regular,
+                                fontSize: SIZES.h7,
+                                color: countryFilter && countryFilter.type === "departure" && countryFilter.country === c ? "#fff" : "#333"
+                            }}>{c}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+
+                <Text style={{ fontFamily: FONTS.bold, fontSize: SIZES.h6, color: "#333", marginBottom: 8 }}>
+                    {language === "English" ? "Arrival country" : "Pays d'arrivée"}
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {getAvailableCountries("arrival").map(c => (
+                        <TouchableOpacity key={c} onPress={() => setCountryFilter(
+                            countryFilter && countryFilter.type === "arrival" && countryFilter.country === c
+                                ? null
+                                : { type: "arrival", country: c }
+                        )} style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            borderRadius: 15,
+                            backgroundColor: countryFilter && countryFilter.type === "arrival" && countryFilter.country === c ? COLORS.primary : "#f0f0f0",
+                            marginRight: 8
+                        }}>
+                            <Text style={{
+                                fontFamily: FONTS.regular,
+                                fontSize: SIZES.h7,
+                                color: countryFilter && countryFilter.type === "arrival" && countryFilter.country === c ? "#fff" : "#333"
+                            }}>{c}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+
+                {(sortFilter || countryFilter) && (
+                    <TouchableOpacity onPress={() => { setSortFilter(null); setCountryFilter(null); }} style={{
+                        alignSelf: "flex-end",
+                        marginTop: 10
+                    }}>
+                        <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.h7, color: "red", textDecorationLine: "underline" }}>
+                            {language === "English" ? "Clear filters" : "Réinitialiser les filtres"}
+                        </Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+        )}
 
         <FlatList
 
@@ -1438,39 +1589,39 @@ transparent={true}
 
                     return(
                         <View style={{
-                            flexDirection: "row", 
-                            alignItems: "center", 
-                            paddingVertical: 20, 
-                            paddingHorizontal: 15, 
+                            flexDirection: "row",
+                            alignItems: "center",
+                            paddingVertical: 20,
+                            paddingHorizontal: 15,
                             justifyContent: "space-between"
                         }}>
                         <View style={{
-                            flexDirection: "row", 
-                            alignItems: "center", 
-                      
+                            flexDirection: "row",
+                            alignItems: "center",
+
                         }}>
                             <View style={{
-                                flexDirection: "row", 
+                                flexDirection: "row",
                                 alignItems: "center"
                             }}>
                             {
                                 currentType === "c" ? <Image source={require("../assets/images/container1.png")} style={{
-                                    height: 15, 
+                                    height: 15,
                                     width: 30
                                 }} /> : <Image source={require("../assets/images/avion1.png")} style={{
-                                    height: 15, 
+                                    height: 15,
                                     width: 30
                                 }} />
                             }
                            {currentType === "c" ? <Text style={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: SIZES.h5, 
-                                color: COLORS.primary, 
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h5,
+                                color: COLORS.primary,
                                 marginTop: Platform.OS === "ios" ? 3 : 0
                             }}> {total} Annonces conteneurs...</Text> :  <Text style={{
-                                fontFamily: FONTS.bold, 
-                                fontSize: SIZES.h5, 
-                                color: COLORS.orange, 
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.h5,
+                                color: COLORS.orange,
                                 marginTop: Platform.OS === "ios" ? 3 : 0
                             }}> {total} {language === "English" ? "Available kilos..." : "Disponibilitées en kilos..."}</Text>}
                             </View>
@@ -1480,13 +1631,13 @@ transparent={true}
                     )
             }}
             keyExtractor={item => item._id}
-            data={lesAnnonces}
+            data={getFilteredAnnonces()}
             contentContainerStyle={{
-                paddingHorizontal: 10, 
+                paddingHorizontal: 10,
                 paddingBottom: 25
             }}
-            ListFooterComponent={renderLoader}
-            onEndReached={loadMoreItem}
+            ListFooterComponent={(sortFilter || countryFilter) ? null : renderLoader}
+            onEndReached={(sortFilter || countryFilter) ? null : loadMoreItem}
             renderItem={({item, index}) => {
 
                 if(flatLoading) return <View />
@@ -2322,7 +2473,7 @@ transparent={true}
            setDemenageurCity("Paris");
            setDemenageurCountry("France"); 
            
-           setFlatLoading(true); avoirLesAnnonces("c"); setActivee("container"); setModalVisible5(true)}} style={{
+           setFlatLoading(true); avoirLesAnnonces("c"); setActivee("container"); setSortFilter(null); setCountryFilter(null); setShowFilterPanel(false); setModalVisible5(true)}} style={{
                 paddingVertical: 3, 
                 paddingHorizontal: 10, 
                 backgroundColor: COLORS.primary, // "rgb(220, 231, 244)", 
@@ -2404,7 +2555,7 @@ transparent={true}
            setDemenageurCity("Paris");
            setDemenageurCountry("France"); 
            
-           setActivee("kilos"); avoirLesAnnonces("k"); setModalVisible5(true)}}  style={{
+           setActivee("kilos"); avoirLesAnnonces("k"); setSortFilter(null); setCountryFilter(null); setShowFilterPanel(false); setModalVisible5(true)}}  style={{
                 paddingVertical: 3, 
                 paddingHorizontal: 10, 
                 backgroundColor: COLORS.orange, 

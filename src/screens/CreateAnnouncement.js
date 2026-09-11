@@ -115,7 +115,7 @@ export default function CreateAnnouncement({navigation}) {
                     color: "#fff",
                     textAlign: "center"
                 }}>
-                   {language === "English" ? "What would you like to post?" : "Que souhaitez-vous annoncer?" }
+                   {language === "English" ? "What would you like to post?" : "Que souhaitez-vous annoncer ?" }
                 </Text>
 
                 <Text style={{

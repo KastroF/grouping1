@@ -53,32 +53,35 @@ export default function TrackContainer({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{language === "English" ? "Track a container" : "Suivre un container"}</Text>
-      <Text style={{
-        fontFamily: FONTS.regular,
-        fontSize: SIZES.h6,
-        color: "#000",
-        textAlign: "center",
-        marginBottom: 20
+
+      <View style={{
+        backgroundColor: "rgba(0, 0, 0, 0.04)",
+        borderRadius: 12,
+        padding: 25,
+        marginTop: 20,
+        alignItems: "center",
       }}>
-        {language === "English"
-          ? "Enter the Hapag-Lloyd booking reference to track your container's itinerary step by step. This service allows you to monitor the progress of your shipment."
-          : "Entrez la référence de réservation Hapag-Lloyd pour suivre l'itinéraire de votre conteneur étape par étape. Ce service vous permet de vérifier l'avancement de l'acheminement de votre marchandise."}
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder={language === "English" ? "Booking reference (ex: 12345678)" : "Référence de réservation (ex: 12345678)"}
-        placeholderTextColor="#aaa"
-        value={bookingRef}
-        onChangeText={setBookingRef}
-        autoCapitalize="characters"
-        editable={!loading}
-      />
-      <TouchableOpacity onPress={onSubmit} style={[styles.button, loading && {opacity: 0.7}]} disabled={loading}>
-        {loading
-          ? <ActivityIndicator color="#fff" />
-          : <Text style={styles.buttonText}>{language === "English" ? "Track now" : "Suivre"}</Text>
-        }
-      </TouchableOpacity>
+        <Text style={{
+          fontFamily: FONTS.bold,
+          fontSize: SIZES.h4,
+          color: COLORS.primary,
+          textAlign: "center",
+          marginBottom: 10,
+        }}>
+          {language === "English" ? "Coming soon" : "Bientôt disponible"}
+        </Text>
+        <Text style={{
+          fontFamily: FONTS.regular,
+          fontSize: SIZES.h6,
+          color: "#555",
+          textAlign: "center",
+          lineHeight: 22,
+        }}>
+          {language === "English"
+            ? "The container tracking feature will be available in the next update. Stay tuned!"
+            : "La fonctionnalité de suivi de container sera disponible dans la prochaine mise à jour. Restez connectés !"}
+        </Text>
+      </View>
     </View>
   );
 }
