@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FA10CAFE2D00000100000002 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FA10CAFE2D00000100000001 /* PrivacyInfo.xcprivacy */; };
 		00E356F31AD99517003FC87E /* groupingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* groupingTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -15,6 +14,7 @@
 		440D26F70835C57F9B862301 /* libPods-grouping-groupingTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27FFBDE71ABB39E4CBF0EE34 /* libPods-grouping-groupingTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C5E53EDF2F2B132FC12E2BD6 /* libPods-grouping.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A9EC4DB7F3306D599DCF95B /* libPods-grouping.a */; };
+		FA10CAFE2D00000100000002 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FA10CAFE2D00000100000001 /* PrivacyInfo.xcprivacy */; };
 		FA5C727C2BEEEFA200C1EA07 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA5C727B2BEEEFA200C1EA07 /* GoogleService-Info.plist */; };
 		FADC7F102BBD974C00D83AE2 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = FADC7F0F2BBD974B00D83AE2 /* Fonts */; };
 /* End PBXBuildFile section */
@@ -30,7 +30,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FA10CAFE2D00000100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = grouping/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* groupingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = groupingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* groupingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = groupingTests.m; sourceTree = "<group>"; };
@@ -47,6 +46,7 @@
 		741DC5F6FE6B769AF59C9782 /* Pods-grouping-groupingTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-grouping-groupingTests.release.xcconfig"; path = "Target Support Files/Pods-grouping-groupingTests/Pods-grouping-groupingTests.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = grouping/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		FA10CAFE2D00000100000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = grouping/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FA5C727B2BEEEFA200C1EA07 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FAA53AC72BEEBDC4004BA170 /* grouping.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = grouping.entitlements; path = grouping/grouping.entitlements; sourceTree = "<group>"; };
 		FAD496252D328C61007CFF56 /* groupingRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = groupingRelease.entitlements; path = grouping/groupingRelease.entitlements; sourceTree = "<group>"; };
@@ -628,7 +628,10 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -696,7 +699,10 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

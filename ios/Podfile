@@ -8,6 +8,11 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '15.1'
 prepare_react_native_project!
 
+# VisionCamera lie les API CLLocation par defaut. L'application ne demande
+# aucune position, et l'Info.plist ne declare plus de NSLocation* : lier
+# CoreLocation sans purpose string vaut un rejet ITMS-90683.
+$VCEnableLocation = false
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -22,7 +27,6 @@ target 'grouping' do
 
  pod 'GoogleUtilities', :modular_headers => true
  pod 'FirebaseCore', :modular_headers => true
- pod 'GoogleMaps', '~> 7.0'
 
 
  #pod 'RNCPicker', :git => 'https://github.com/react-native-picker/picker.git', :tag => 'v2.6.1'
