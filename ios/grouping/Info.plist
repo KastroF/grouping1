@@ -39,6 +39,8 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>Grouping utilise l'appareil photo pour vous permettre de photographier vos colis et vos documents de transport.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Grouping ne suit pas votre position. Cette autorisation n'est jamais demandée : elle n'est déclarée que parce que des composants de l'application interrogent la disponibilité des services de localisation du système.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Grouping accède à vos photos pour vous permettre de joindre des images à vos annonces et à vos messages.</string>
 	<key>UIAppFonts</key>
