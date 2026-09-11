@@ -80,7 +80,7 @@ android {
         applicationId "com.grouping2025"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 29
+        versionCode 40
         versionName "2.4.3"
     }
     signingConfigs {
