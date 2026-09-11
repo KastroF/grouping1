@@ -1,45 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Alert, Image, Modal, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import React, { useContext, useState } from 'react'
+import { Modal, Platform, Text, TouchableOpacity, View } from 'react-native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import AntDesign from "react-native-vector-icons/AntDesign"
+import Feather from "react-native-vector-icons/Feather"
 import { COLORS, FONTS, SIZES } from '../constants/theme';
-import {CameraRoll} from "@react-native-camera-roll/camera-roll"; 
+import { launchImageLibrary } from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import uuid from 'react-native-uuid';
 import CameraModal from "./CameraModal";
 import { AuthContext } from '../navigation/AuthProvider';
 
+const MAX_IMAGES = 2;
+
 export default function DownloadBlModal({modalVisible, dismissModal, terminate, putImage, downloadPdf}) {
 
    const { language } = useContext(AuthContext);
 
-   // const [modalVisible, setModalVisible] = useState(false);
-   const [medias, setMedias] = useState([]); 
-   const [selected, setSelected] = React.useState([]);
    const [modalVisible2, setModalVisible2] = useState(false);
-
-
-   const onTerminate = () => {
-
-       // console.log(selected);
-
-        const final = []; 
-
-        for(let s of selected){
-
-            final.push(medias[s])
-        }
-
-     //   console.log(final);
-
-        terminate(final);
-   }
-
-   const takePicture = () => {
-
-
-   }
 
    const onFinish = (media) => {
 
@@ -48,84 +26,52 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
 
    }
 
+  // Android ne renvoie pas toujours le prefixe file://, que RNFS et l'upload attendent.
+  const normalizeUri = (uri) => {
 
+      if(!uri) return uri;
 
+      return Platform.OS === "android" && !uri.startsWith("file://") ? "file://" + uri : uri;
+  }
 
-   const toggleSelection = (index) => {
-    // Vérifiez d'abord si le nombre maximal d'images sélectionnées est atteint
-    if(selected.length < 2 || selected.includes(index)) {
-      // Recherchez l'index de l'image dans la liste des images sélectionnées
-      const selectedIndex = selected.indexOf(index);
-  
-      if (selectedIndex === -1) {
-        // Si l'image n'est pas déjà sélectionnée, l'ajouter à la liste
-        setSelected([...selected, index]);
-      } else {
-        // Si l'image est déjà sélectionnée, la retirer de la liste
-        const updatedSelection = selected.filter((i) => i !== index);
-        setSelected(updatedSelection);
-      }
-    }
-  };
+  // Le selecteur systeme ne demande aucune autorisation de lecture des medias :
+  // c'est ce que recommande Google pour un acces ponctuel a la galerie.
+  const pickFromGallery = () => {
 
-    useEffect(() => {
+      launchImageLibrary(
+        {
+          mediaType: 'photo',
+          quality: 0.3,
+          selectionLimit: MAX_IMAGES,
+        },
+        response => {
 
-       if(isAndroid){
+          if(response.didCancel) return;
 
-        requestCameraRollPermission();
+          if(response.errorCode){
 
-       }else{
-
-         getMediaFromGallery();
-       }
-
-
-    }, [])
-
-    const requestCameraRollPermission = async () => {
-        try {
-          const galleryPermission = Platform.Version >= 33
-            ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-            : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-          const granted = await PermissionsAndroid.request(
-            galleryPermission,
-            {
-              title: language === "English" ? "Photo gallery access permission" : "Permission d'accès à la galerie photo",
-              message: language === "English" ? "This app needs access to your photo gallery." : "Cette application a besoin d'accéder à votre galerie photo.",
-              buttonNeutral: language === "English" ? "Later" : "Plus tard",
-              buttonNegative: language === "English" ? "Cancel" : "Annuler",
-              buttonPositive: 'OK',
-            },
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('Autorisation accordée'); 
-            
-            getMediaFromGallery()
-
-          } else {
-            console.log('Autorisation refusée');
+              console.warn("Sélecteur d'images :", response.errorMessage);
+              return;
           }
-        } catch (err) {
-          console.warn(err);  
-        }
-      };
 
-      const isAndroid = Platform.OS === "android"; 
+          const assets = response.assets || [];
 
-   const getMediaFromGallery = async () => {
-    try {
-      const { edges } = await CameraRoll.getPhotos({
-        first: 100, // Nombre de médias à récupérer
-        assetType: 'Photos', // Récupérer tous les médias (photos et vidéos)
-      });
-      const mediaArray = edges.map((item) => item.node);
-      setMedias(mediaArray);
-      console.log("on y est")
-      console.log(mediaArray.length)
-    } catch (error) {
-      console.log('Erreur : ', error);
-    }
-  };
+          if(assets.length === 0) return;
+
+          // Meme forme que l'ancienne pellicule : les ecrans consommateurs
+          // lisent media.image.uri et media.image.filename.
+          const medias = assets.slice(0, MAX_IMAGES).map((asset) => ({
+              image: {
+                  ...asset,
+                  uri: normalizeUri(asset.uri),
+                  filename: asset.fileName,
+              },
+          }));
+
+          terminate(medias);
+        },
+      );
+  }
 
   const openCamera = () => {
 
@@ -133,30 +79,28 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
 
   }
 
-
-
   function generateUniqueFileName(extension = 'pdf') {
     const now = new Date();
     const uniqueId = uuid.v4();
     const timestamp = now.toISOString().replace(/[-:.]/g, '');
     return `${timestamp}_${uniqueId}.${extension}`;
   }
-  
+
   const selectDoc = async () => {
     try {
-  
+
       const doc = await DocumentPicker.pickSingle({
         type: [DocumentPicker.types.pdf],
       });
-  
+
       const originalFilePath = decodeURIComponent(doc.uri);
-  
+
       // Nouveau chemin où vous voulez déplacer le fichier
       const newFilePath = `${RNFS.DocumentDirectoryPath}/${generateUniqueFileName("pdf")}`;
-  
+
       // Déplacer le fichier
       await RNFS.moveFile(originalFilePath, newFilePath);
-  
+
       doc.uri = `file://${newFilePath}`;
       downloadPdf(doc);
     } catch (err) {
@@ -167,22 +111,55 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
       }
     }
   };
-  
 
   const dismissModall = () => {
 
     setModalVisible2(false);
 }
 
+  const option = (icone, libelle, description, action) => {
+
+      return(
+          <TouchableOpacity onPress={action} style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 18,
+              paddingHorizontal: 20,
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(0,0,0,0.06)",
+          }}>
+              <View style={{
+                  height: SIZES.width * 0.12,
+                  width: SIZES.width * 0.12,
+                  borderRadius: SIZES.width * 0.06,
+                  backgroundColor: "rgb(241, 246, 251)",
+                  alignItems: "center",
+                  justifyContent: "center",
+              }}>
+                  {icone}
+              </View>
+              <View style={{marginLeft: 15, flex: 1}}>
+                  <Text style={{
+                      fontFamily: FONTS.bold,
+                      fontSize: SIZES.h4,
+                      color: COLORS.primary,
+                  }}>{libelle}</Text>
+                  <Text style={{
+                      fontFamily: FONTS.regular,
+                      fontSize: SIZES.h7,
+                      color: "#888",
+                      marginTop: 2,
+                  }}>{description}</Text>
+              </View>
+              <Feather name="chevron-right" size={SIZES.h3} color="#bbb" />
+          </TouchableOpacity>
+      )
+  }
 
   return (
-    <Modal 
+    <Modal
         visible={modalVisible}
-        onRequestClose={() => {
-
-                setSelected([])
-                dismissModal();
-        }}
+        onRequestClose={dismissModal}
         transparent={true}
         animationType="slide"
     >
@@ -190,124 +167,58 @@ export default function DownloadBlModal({modalVisible, dismissModal, terminate, 
 <CameraModal modalVisible={modalVisible2} dismissModal={dismissModall} isFinished={onFinish} />
 
         <View style={{
-            flex: 1, 
+            flex: 1,
             backgroundColor: "#fff"
         }}>
 
             <View style={{
-                paddingTop: Platform.OS === "ios" ? 65 : 17, 
-                backgroundColor: "#fff", 
-                paddingBottom: 17, 
-                alignItems: "center", 
-                flexDirection: "row", 
-                justifyContent: "space-between", 
-                paddingHorizontal: 10, 
-                paddingTop: Platform.OS === "ios" ? 45 : 20
+                backgroundColor: "#fff",
+                paddingBottom: 17,
+                alignItems: "center",
+                flexDirection: "row",
+                paddingHorizontal: 10,
+                paddingTop: Platform.OS === "ios" ? 65 : 20,
+                borderBottomWidth: 1,
+                borderBottomColor: "rgba(0,0,0,0.06)",
             }}>
 
-                <View >
-                    <TouchableOpacity onPress={() => { dismissModal()}}>
-                        <Ionicons name='close' color={"#000"} size={SIZES.h2} />
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={dismissModal}>
+                    <Ionicons name='close' color={"#000"} size={SIZES.h2} />
+                </TouchableOpacity>
 
-                <View style={{
-                  flex: 1, 
-                  alignItems: "center"
-                }}>
+                <View style={{flex: 1, alignItems: "center"}}>
                     <Text style={{
-                        fontFamily: FONTS.bold, 
-                        fontSize: SIZES.h5, 
-                        color: "rgba(0,0,0,0.8)", 
-                        marginLeft: SIZES.h3 + SIZES.h2/2
-                    }}>{language === "English" ? "Camera Roll" : "Pellicule"}</Text>
-                </View>
-
-                <View >
-                 
-                       {
-                        selected.length > 0 ? 
-                        <TouchableOpacity onPress={onTerminate}>
-                            <Text style={{
-                                fontFamily: FONTS.bold, 
-                                color: COLORS.primary, 
-                                fontSize: SIZES.h5
-                            }}>{language === "English" ? "Done" : "Terminer"}</Text>
-                        </TouchableOpacity> : 
-                        <View style={{
-                            flexDirection: "row", 
-                            alignItems: "center"
-                        }}>
-                            <TouchableOpacity onPress={selectDoc} style={{
-                                paddingHorizontal: 10
-                            }}>
-                                <AntDesign name='addfile' color="#000" size={SIZES.h3} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={openCamera}>
-                                <Ionicons name='camera' color="#000" size={SIZES.h2} />
-                            </TouchableOpacity>
-                        </View>
-                       }
-                   
+                        fontFamily: FONTS.bold,
+                        fontSize: SIZES.h5,
+                        color: "rgba(0,0,0,0.8)",
+                        marginRight: SIZES.h2,
+                    }}>{language === "English" ? "Add a document" : "Ajouter un document"}</Text>
                 </View>
 
             </View>
 
-            <View style={{
-                flex: 1,
-                backgroundColor: "rgba(0,0,0,0.2)", 
-            
-            }}>
-            <ScrollView contentContainerStyle={{
-                 flexDirection: "row", 
-                 flexWrap: "wrap", 
-              
-            }}>
+            <View style={{flex: 1}}>
 
-                {
-                    medias.map((item, index) => {
+                {option(
+                    <Ionicons name='images-outline' color={COLORS.primary} size={SIZES.h3} />,
+                    language === "English" ? "Choose a photo" : "Choisir une photo",
+                    language === "English" ? `Up to ${MAX_IMAGES} photos from your gallery` : `Jusqu'à ${MAX_IMAGES} photos de votre galerie`,
+                    pickFromGallery
+                )}
 
-                            return(
-                                <TouchableOpacity
-                                key={index}
-                                onPress={() => toggleSelection(index) } style={{
+                {option(
+                    <Ionicons name='camera-outline' color={COLORS.primary} size={SIZES.h3} />,
+                    language === "English" ? "Take a photo" : "Prendre une photo",
+                    language === "English" ? "Use the camera" : "Utiliser l'appareil photo",
+                    openCamera
+                )}
 
-                                }}>
-                                    <Image 
-                                       
-                                        source={{uri: item.image.uri}}
-                                        style={{width:SIZES.width/3, height: SIZES.height/4.9, resizeMode: "cover", 
-
-                                    borderWidth: 1, borderColor: selected.includes(index) ? COLORS.primary : "#fff"}}
-                                    />
-                                     <View style={{
-                                        position: "absolute", 
-                                        top: 10, 
-                                        right: 10, 
-                                        height: SIZES.width * 0.08, 
-                                        width: SIZES.width * 0.08, 
-                                        borderRadius:SIZES.width * 0.08, 
-                                        borderWidth: 2, 
-                                        borderColor: "#fff", 
-                                        backgroundColor: selected.includes(index) ? COLORS.primary : "transparent", 
-                                        alignItems: "center", 
-                                        justifyContent: "center"
-                                    }} >
-                                        { selected.indexOf(index) !== -1 && <Text style={{
-                                            fontFamily: FONTS.regular, 
-                                            color: "#fff", 
-                                            fontSize: SIZES.width * 0.03
-                                        }}>
-                                            {parseInt(selected.indexOf(index)) + 1 }
-                                        </Text> }
-                                    </View>
-
-                                </TouchableOpacity>
-                            )
-                    })
-                }
-
-</ScrollView>
+                {option(
+                    <AntDesign name='addfile' color={COLORS.primary} size={SIZES.h4} />,
+                    language === "English" ? "Attach a PDF" : "Joindre un PDF",
+                    language === "English" ? "Draft or bill of lading" : "Draft ou connaissement",
+                    selectDoc
+                )}
 
             </View>
 
